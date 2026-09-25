@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaiper — CanSat Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a1220;
+    --deep:#0d1b2e;
+    --teal:#123647;
+    --ice:#8fd9e8;
+    --ice-soft:#c9edf3;
+    --foam:#eef8f8;
+    --coral:#ff6f4d;
+    --line: rgba(143,217,232,0.18);
+    box-sizing:border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:inherit; margin:0; padding:0;}
+  html{scroll-behavior:smooth; scroll-padding-top: env(safe-area-inset-top, 0px);}
+  body{
+    background: var(--navy);
+    color: var(--foam);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.wordmark{ font-family:'Space Grotesk', sans-serif; }
+
+  header{
+    position: sticky; top:0;
+    padding: 1.1rem 6vw;
+    padding-top: calc(1.1rem + env(safe-area-inset-top, 0px));
+    display:flex; justify-content:space-between; align-items:center;
+    background: rgba(10,18,32,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    z-index: 10;
+  }
+  .wordmark{ font-size:1.15rem; font-weight:700; letter-spacing:0.02em; color:var(--foam); text-decoration:none; display:flex; align-items:center; gap:0.55rem;}
+  .wordmark .iso{ width:26px; height:26px; display:block; object-fit:contain; filter: drop-shadow(0 0 6px rgba(255,111,77,0.45)); }
+  nav{ display:flex; gap:1.8rem; }
+  nav a{ color: var(--ice-soft); text-decoration:none; font-size:0.92rem; }
+  nav a:hover{ color: var(--foam); }
+
+  .hero{
+    position:relative;
+    padding: 9rem 6vw 7rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align:center;
+    overflow:hidden;
+  }
+  .hero-ring{
+    position:absolute; top:-120px; left:50%; transform:translateX(-50%);
+    width:640px; height:640px; max-width:150vw;
+    border-radius:50%;
+    border:1px solid var(--line);
+    pointer-events:none;
+  }
+  .hero-ring.r2{ width:820px; height:820px; opacity:0.6; }
+  .hero h1{
+    position:relative;
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    background: linear-gradient(180deg, var(--foam) 20%, var(--ice) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.tag{
+    position:relative;
+    max-width:520px; margin: 1.5rem auto 0;
+    color: var(--ice-soft);
+    font-size:1.05rem;
+  }
+  .hero .meaning{
+    position:relative;
+    margin-top:2.6rem; display:inline-block;
+    padding: 0.7rem 1.3rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:0.88rem; color: var(--ice-soft);
+  }
+
+  section{ padding: 5.5rem 6vw; max-width: 1100px; margin:0 auto; }
+  .eyebrow-free h2{
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight:600; max-width:620px;
+  }
+  .lead{ color: var(--ice-soft); max-width:640px; margin-top:0.9rem; font-size:1.02rem;}
+
+  .descent{
+    margin-top: 3.2rem;
+    border-left: 2px solid var(--line);
+    padding-left: 2.2rem;
+  }
+  .layer{
+    position:relative;
+    padding: 1.8rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .layer:last-child{ border-bottom:none; }
+  .layer::before{
+    content:'';
+    position:absolute; left:-2.47rem; top:2.15rem;
+    width:11px; height:11px; border-radius:50%;
+    background: var(--ice); box-shadow: 0 0 10px var(--ice);
+  }
+  .layer h3{ font-size:1.25rem; font-weight:600; color:var(--foam);}
+  .layer .q{ color:var(--coral); font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; }
+  .layer p{ color:var(--ice-soft); margin-top:0.5rem; max-width:640px; font-size:0.97rem;}
+
+  .team-grid{
+    margin-top:2.6rem;
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+    gap:1px; background: var(--line);
+    border:1px solid var(--line);
+  }
+
+  .member{ background: var(--deep); padding:1.6rem 1.2rem; text-align:center; }
+  .member .photo{
+    width:84px; height:84px; border-radius:50%;
+    margin:0 auto 0.9rem;
+    background: var(--teal);
+    border:1px solid var(--line);
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .member .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .member .role{ color:var(--coral); font-size:0.78rem; margin-bottom:0.3rem;}
+  .member .name{ font-weight:600; color:var(--foam); }
+
+  .sponsor-row{
+    margin-top:2.2rem;
+    display:flex; flex-wrap:wrap; gap:1rem;
+  }
+  .sponsor-slot{
+    flex:1 1 200px;
+    border:1px dashed var(--line);
+    border-radius:10px;
+    padding:1.6rem;
+    text-align:center;
+    color: var(--ice-soft);
+    font-size:0.9rem;
+  }
+
+  footer{
+    padding: 4rem 6vw calc(3rem + env(safe-area-inset-bottom, 0px));
+    border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:2rem; justify-content:space-between; align-items:center;
+    max-width:1100px; margin:0 auto;
+  }
+  .socials{ display:flex; gap:1.4rem; }
+  .socials a{ color:var(--ice-soft); text-decoration:none; font-size:0.92rem; border-bottom:1px solid transparent;}
+  .socials a:hover{ color:var(--foam); border-color:var(--ice);}
+  footer .small{ color:#6f8a96; font-size:0.82rem; }
+
+  @media (max-width:640px){
+    header{ padding: 1rem 5vw; }
+    nav{ gap:1rem; font-size:0.85rem; }
+    section{ padding: 3.6rem 5vw; }
+    .descent{ padding-left:1.5rem; }
+    .layer::before{ left:-1.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="wordmark" href="#top"><img class="iso" src="images/isotipo.png" alt="Kaiper">KAIPER</a>
+  <nav>
+    <a href="#mission">Mission</a>
+    <a href="#team">Team</a>
+    <a href="#sponsors">Sponsors</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div id="top" class="hero">
+  <div class="hero-ring"></div>
+  <div class="hero-ring r2"></div>
+  <h1>KAIPER</h1>
+  <p class="tag">A high school CanSat team. We're building a mini-satellite to explore, during its descent, whether an environment could support liquid water.</p>
+  <div class="meaning">"Kai" — sea / ocean in Hawaiian — + Kuiper Belt</div>
+</div>
+
+<section id="mission" class="eyebrow-free">
+  <h2>The Kaiper Index: mapping an invisible ocean</h2>
+  <p class="lead">Just as the Kuiper Belt hides oceans beneath its icy surface, the atmosphere hides its own invisible ocean. Our CanSat crosses it and measures it in three layers of data during descent.</p>
+
+  <div class="descent">
+    <div class="layer">
+      <div class="q">Could liquid water exist here?</div>
+      <h3>Habitability index</h3>
+      <p>Humidity, temperature, and UV radiation combined into a custom score that rates each stage of the descent.</p>
+    </div>
+    <div class="layer">
+      <div class="q">Is this environment stable?</div>
+      <h3>Atmospheric turbulence map</h3>
+      <p>An inertial sensor (IMU) tracks the stability of the descent — the same data that matters in real parachute and reentry system design.</p>
+    </div>
+    <div class="layer">
+      <div class="q">Would it be shielded from radiation?</div>
+      <h3>Cosmic radiation shielding gradient</h3>
+      <p>We measure how background radiation changes with altitude — the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.</p>
+    </div>
+  </div>
+</section>
+
+<section id="team" class="eyebrow-free">
+  <h2>The team</h2>
+  <p class="lead">High school students working on electronics, structure, programming, and data analysis.</p>
+  <div class="team-grid">
+    <div class="member"><div class="photo"><img src="images/team/matias.jpg" alt="J. Matias Lancheros H" onerror="this.style.display='none'"></div><div class="name">J. Matias Lancheros H</div></div>
+    <div class="member"><div class="photo"><img src="images/team/aleix.jpg" alt="Aleix Vallbona" onerror="this.style.display='none'"></div><div class="name">Aleix Vallbona</div></div>
+    <div class="member"><div class="photo"><img src="images/team/eloi.jpg" alt="Eloi Castaño" onerror="this.style.display='none'"></div><div class="name">Eloi Castaño</div></div>
+    <div class="member"><div class="photo"><img src="images/team/member4.jpg" alt="Name TBD" onerror="this.style.display='none'"></div><div class="name">Name TBD</div></div>
+  </div>
+</section>
+
+<section id="sponsors" class="eyebrow-free">
+  <h2>Sponsors</h2>
+  <p class="lead">Companies supporting team Kaiper.</p>
+  <div class="sponsor-row">
+    <div class="sponsor-slot">Sponsor slot 1</div>
+    <div class="sponsor-slot">Sponsor slot 2</div>
+    <div class="sponsor-slot">Sponsor slot 3</div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div>
+    <div class="wordmark" style="font-size:1rem;"><img class="iso" style="width:20px;height:20px;" src="images/isotipo.png" alt="Kaiper">KAIPER</div>
+    <p class="small" style="margin-top:0.4rem;">CanSat · ESA / ESERO Spain</p>
+  </div>
+  <div class="socials">
+    <a href="https://www.instagram.com/kaiper.cansat" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.tiktok.com/@kaiperteam" target="_blank" rel="noopener">TikTok</a>
+    <a href="mailto:kaiper.cansat@gmail.com">Email</a>
+  </div>
+</footer>
+
+</body>
+</html>
