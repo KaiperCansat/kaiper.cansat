@@ -6,7 +6,7 @@
 <title>Kaiper — CanSat Team</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#0a1220;
@@ -167,6 +167,59 @@
     .descent{ padding-left:1.5rem; }
     .layer::before{ left:-1.78rem; }
   }
+
+  .why{
+    padding: 4.5rem 6vw 1rem;
+    max-width: 1100px; margin:0 auto;
+    display:flex; align-items:center; gap:3.5rem;
+    flex-wrap:wrap;
+  }
+  .why .mascot{ flex:0 0 auto; width:150px; height:150px; }
+  .why .why-text{ flex:1 1 380px; }
+  .why .why-text .signed{ color: var(--coral); font-size:0.85rem; margin-top:1rem; font-weight:500; }
+  .why .why-text p{ color: var(--ice-soft); font-size:1.02rem; max-width:600px; }
+  .why .why-text h2{ font-size: clamp(1.6rem, 3.6vw, 2.1rem); font-weight:600; margin-bottom:1rem; }
+  @keyframes bob{ 0%,100%{ transform: translateY(0px); } 50%{ transform: translateY(-8px); } }
+  .why .mascot svg{ animation: bob 4.5s ease-in-out infinite; }
+  @media (max-width:640px){
+    .why{ padding: 3rem 5vw 0.5rem; flex-direction:column; text-align:center; }
+  }
+
+  .retro-wrap{ display:flex; justify-content:center; padding: 1rem 6vw 3rem; }
+  .retro-counter{
+    font-family:'Press Start 2P', monospace;
+    background:#050a10;
+    border: 3px solid;
+    border-color: #8fd9e8 #0a1220 #0a1220 #8fd9e8;
+    box-shadow: 0 0 0 1px #000, 0 0 18px rgba(143,217,232,0.25);
+    padding: 1rem 1.3rem;
+    text-align:center;
+    max-width: 320px;
+  }
+  .retro-counter .marquee-box{
+    overflow:hidden; white-space:nowrap;
+    border:1px solid #8fd9e8; padding:0.35rem 0; margin-bottom:0.8rem;
+    background:#0a1220;
+  }
+  .retro-counter .marquee-box span{
+    display:inline-block; padding-left:100%;
+    animation: marquee 9s linear infinite;
+    font-size:0.5rem; color: var(--ice);
+  }
+  @keyframes marquee{ 0%{ transform: translateX(0);} 100%{ transform: translateX(-100%);} }
+  .retro-counter .label{ font-size:0.5rem; color:#ff6f4d; margin-bottom:0.7rem; }
+  .retro-counter .label .star{ display:inline-block; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .digits{ display:flex; justify-content:center; gap:3px; margin-bottom:0.8rem; }
+  .digits span{
+    background:#000; color:#39ff6a;
+    border:1px solid #245; border-radius:2px;
+    width:20px; height:28px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.85rem;
+    box-shadow: inset 0 0 4px rgba(57,255,106,0.5);
+  }
+  .retro-counter .fine{ font-size:0.42rem; color:#7f9aa5; line-height:1.8; }
 </style>
 </head>
 <body>
@@ -187,6 +240,20 @@
   <h1>KAIPER</h1>
   <p class="tag">A high school CanSat team. We're building a mini-satellite to explore, during its descent, whether an environment could support liquid water.</p>
   <div class="meaning">"Kai" — sea / ocean in Hawaiian — + Kuiper Belt</div>
+</div>
+
+<div class="why">
+  <div class="mascot"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="86" rx="68" ry="26" fill="none" stroke="#8fd9e8" stroke-width="2" opacity="0.55" transform="rotate(-14 80 86)"/>
+      <circle cx="80" cy="80" r="46" fill="#123647" stroke="#8fd9e8" stroke-width="2"/>
+      <path d="M42 68 Q80 58 118 70" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
+      <path d="M46 96 Q80 104 114 94" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
+    </svg></div>
+  <div class="why-text">
+    <h2>Why Kaiper?</h2>
+    <p>Hi, I'm Matias. This whole project started with a name before it started with a sensor. "Kai" means ocean in Hawaiian, and it's a name I've always loved. When I learned that the Kuiper Belt might hide oceans under its ice, in a place nobody could see, it felt exactly like what our CanSat should go looking for. So Kaiper isn't just a science mission to me &mdash; every reading it sends back on the way down is us asking, in our own small way, whether there's an ocean hiding somewhere nobody's checked yet.</p>
+    <div class="signed">&mdash; Matias, Team Kaiper</div>
+  </div>
 </div>
 
 <section id="mission" class="eyebrow-free">
