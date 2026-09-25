@@ -124,14 +124,23 @@
 
   .member{ background: var(--deep); padding:1.6rem 1.2rem; text-align:center; }
   .member .photo{
+    position:relative;
     width:132px; height:132px; border-radius:50%;
     margin:0 auto 1.1rem;
     background: var(--teal);
     border:1px solid var(--line);
     overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
   }
-  .member .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .member .photo .initials{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif; font-weight:600;
+    font-size:1.35rem; color: var(--ice-soft); letter-spacing:0.02em;
+  }
+  .member .photo img{
+    position:absolute; inset:0;
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
   .member .role{ color:var(--coral); font-size:0.78rem; margin-bottom:0.3rem;}
   .member .name{ font-weight:600; color:var(--foam); }
 
@@ -233,6 +242,11 @@
   .mission-banner .inner{ max-width:1100px; margin:0 auto; }
   .mission-banner h2{ font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight:600; max-width:620px; }
   .mission-banner .lead{ color: var(--ice-soft); max-width:640px; margin-top:0.9rem; font-size:1.02rem; }
+
+  .why-works{ margin-top: 3rem; padding-top: 2.6rem; border-top: 1px solid var(--line); }
+  .why-works h3{ font-size:1.15rem; font-weight:600; color: var(--foam); margin-bottom:0.9rem; }
+  .why-works p{ color: var(--ice-soft); font-size:0.97rem; max-width:700px; margin-bottom:0.9rem; }
+  .why-works p:last-child{ margin-bottom:0; }
 </style>
 </head>
 <body>
@@ -294,17 +308,36 @@
       <p>We measure how background radiation changes with altitude — the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.</p>
     </div>
   </div>
+
+  <div class="why-works">
+    <h3>Why this should actually work</h3>
+    <p>Each of the three sensors on its own is a fairly standard, well-tested piece of kit — that's on purpose, we wanted the mission to be ambitious in what it asks, not in what it risks breaking. The humidity, temperature and UV readings are the same kind of data real habitability studies use to rule places in or out, so our index isn't just a made-up score, it's built the same way scientists actually reason about it.</p>
+    <p>The turbulence data from the IMU is the part we're most confident will simply work, since it's just movement data, and it gives us something almost no other CanSat team measures: a real picture of how rough the descent was, tramo by tramo. That matters beyond the "cool factor" — it's literally the kind of data engineers use to decide if a parachute or landing system design is safe.</p>
+    <p>The radiation sensor is the one honest question mark. It's the hardest part to source and calibrate for a team at our level, so if it doesn't make it into the final build, the mission still stands on the other two layers. If it does work, it lets us actually test — at a tiny, atmospheric scale — the same shielding question astrobiologists ask about Kuiper Belt objects: how much cover does it take to protect something underneath from radiation. That's the number we'd be most excited to bring back.</p>
+  </div>
 </section>
 
 <section id="team" class="eyebrow-free">
   <h2>The team</h2>
   <p class="lead">4th-year ESO students at Escola Vedruna Tona, working on electronics, structure, programming, and data analysis.</p>
   <div class="team-grid">
-    <div class="member"><div class="photo"><img src="images/team/matias.jpg" alt="J. Matias Lancheros H" onerror="this.style.display='none'"></div><div class="name">J. Matias Lancheros H</div></div>
-    <div class="member"><div class="photo"><img src="images/team/aleix.jpg" alt="Aleix Vallbona" onerror="this.style.display='none'"></div><div class="name">Aleix Vallbona</div></div>
-    <div class="member"><div class="photo"><img src="images/team/eloi.jpg" alt="Eloi Castaño" onerror="this.style.display='none'"></div><div class="name">Eloi Castaño</div></div>
-    <div class="member"><div class="photo"><img src="images/team/member4.jpg" alt="Name TBD" onerror="this.style.display='none'"></div><div class="name">Name TBD</div></div>
+    <div class="member"><div class="photo"><div class="initials">JM</div><img src="images/team/matias.jpg" alt="J. Matias Lancheros H" data-base="images/team/matias" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">J. Matias Lancheros H</div></div>
+    <div class="member"><div class="photo"><div class="initials">AV</div><img src="images/team/aleix.jpg" alt="Aleix Vallbona" data-base="images/team/aleix" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Aleix Vallbona</div></div>
+    <div class="member"><div class="photo"><div class="initials">EC</div><img src="images/team/eloi.jpg" alt="Eloi Castaño" data-base="images/team/eloi" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Eloi Castaño</div></div>
+    <div class="member"><div class="photo"><div class="initials">?</div><img src="images/team/member4.jpg" alt="Name TBD" data-base="images/team/member4" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Name TBD</div></div>
   </div>
+  <script>
+    function kaiperPhotoFallback(img){
+      var exts = ['jpeg','JPG','JPEG','png','PNG','webp'];
+      var tried = parseInt(img.getAttribute('data-tried') || '0', 10);
+      if(tried < exts.length){
+        img.setAttribute('data-tried', tried + 1);
+        img.src = img.getAttribute('data-base') + '.' + exts[tried];
+      } else {
+        img.style.display = 'none';
+      }
+    }
+  </script>
 </section>
 
 <section id="sponsors" class="eyebrow-free">
