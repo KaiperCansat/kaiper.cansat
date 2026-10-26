@@ -9,205 +9,161 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0a1220;
-    --deep:#0d1b2e;
-    --teal:#123647;
-    --ice:#8fd9e8;
-    --ice-soft:#c9edf3;
-    --foam:#eef8f8;
-    --coral:#ff6f4d;
+    --navy:#0a1220; --deep:#0d1b2e; --teal:#123647;
+    --ice:#8fd9e8; --ice-soft:#c9edf3; --foam:#eef8f8; --coral:#ff6f4d;
     --line: rgba(143,217,232,0.18);
     box-sizing:border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   *{box-sizing:inherit; margin:0; padding:0;}
-  html{scroll-behavior:smooth; scroll-padding-top: env(safe-area-inset-top, 0px);}
+  html{scroll-behavior:smooth; scroll-padding-top: 5.5rem;}
   body{
-    background: var(--navy);
-    color: var(--foam);
-    font-family:'Inter', sans-serif;
-    line-height:1.6;
-    overflow-x:hidden;
+    background: var(--navy); color: var(--foam);
+    font-family:'Inter','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    line-height:1.6; overflow-x:hidden;
   }
-  h1,h2,h3,.wordmark{ font-family:'Space Grotesk', sans-serif; }
+  h1,h2,h3,.wordmark{ font-family:'Space Grotesk','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; }
 
   header{
     position: sticky; top:0;
     padding: 1.1rem 6vw;
     padding-top: calc(1.1rem + env(safe-area-inset-top, 0px));
-    display:flex; justify-content:space-between; align-items:center;
-    background: rgba(10,18,32,0.85);
+    display:flex; justify-content:space-between; align-items:center; gap:1.2rem;
+    background: rgba(10,18,32,0.88);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
-    z-index: 10;
+    z-index: 20;
   }
   .wordmark{ font-size:1.15rem; font-weight:700; letter-spacing:0.02em; color:var(--foam); text-decoration:none; display:flex; align-items:center; gap:0.55rem;}
   .wordmark .iso{ width:26px; height:26px; display:block; object-fit:contain; filter: drop-shadow(0 0 6px rgba(255,111,77,0.45)); }
-  nav{ display:flex; gap:1.8rem; }
-  nav a{ color: var(--ice-soft); text-decoration:none; font-size:0.92rem; }
+  nav{ display:flex; gap:1.5rem; margin-left:auto; }
+  nav a{ color: var(--ice-soft); text-decoration:none; font-size:0.9rem; white-space:nowrap; }
   nav a:hover{ color: var(--foam); }
 
-  .hero{
-    position:relative;
-    padding: 9rem 6vw 7rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align:center;
-    overflow:hidden;
+  .lang{ position:relative; }
+  .lang-btn{
+    display:flex; align-items:center; gap:0.45rem;
+    background: transparent; color: var(--foam);
+    border:1px solid var(--line); border-radius:999px;
+    padding:0.4rem 0.8rem; font: 500 0.85rem 'Inter','PingFang SC','Microsoft YaHei',sans-serif;
+    cursor:pointer;
   }
-  .hero-ring{
-    position:absolute; top:-120px; left:50%; transform:translateX(-50%);
-    width:640px; height:640px; max-width:150vw;
-    border-radius:50%;
-    border:1px solid var(--line);
-    pointer-events:none;
+  .lang-btn:hover{ border-color: var(--ice); }
+  .lang-btn svg{ width:16px; height:16px; stroke: var(--ice); fill:none; stroke-width:1.6; }
+  .lang-menu{
+    position:absolute; right:0; top:calc(100% + 8px);
+    min-width:150px; list-style:none;
+    background: var(--deep); border:1px solid var(--line); border-radius:10px;
+    padding:0.35rem; box-shadow: 0 12px 30px rgba(0,0,0,0.45);
   }
+  .lang-menu[hidden]{ display:none; }
+  .lang-menu button{
+    width:100%; text-align:left; background:transparent; border:0; color: var(--ice-soft);
+    padding:0.55rem 0.8rem; border-radius:7px; cursor:pointer;
+    font: 400 0.9rem 'Inter','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  .lang-menu button:hover{ background: rgba(143,217,232,0.1); color: var(--foam); }
+  .lang-menu button[aria-current="true"]{ color: var(--coral); }
+
+  .hero{ position:relative; padding: 9rem 6vw 7rem; max-width:1100px; margin:0 auto; text-align:center; overflow:hidden; }
+  .hero-ring{ position:absolute; top:-120px; left:50%; transform:translateX(-50%); width:640px; height:640px; max-width:150vw; border-radius:50%; border:1px solid var(--line); pointer-events:none; }
   .hero-ring.r2{ width:820px; height:820px; opacity:0.6; }
   .hero h1{
-    position:relative;
-    font-size: clamp(3rem, 9vw, 6.5rem);
-    font-weight:700;
-    letter-spacing:-0.02em;
+    position:relative; font-size: clamp(3rem, 9vw, 6.5rem); font-weight:700; letter-spacing:-0.02em;
     background: linear-gradient(180deg, var(--foam) 20%, var(--ice) 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .hero p.tag{
-    position:relative;
-    max-width:520px; margin: 1.5rem auto 0;
-    color: var(--ice-soft);
-    font-size:1.05rem;
-  }
-  .hero .meaning{
-    position:relative;
-    margin-top:2.6rem; display:inline-block;
-    padding: 0.7rem 1.3rem;
-    border:1px solid var(--line);
-    border-radius:999px;
-    font-size:0.88rem; color: var(--ice-soft);
-  }
+  .hero p.tag{ position:relative; max-width:560px; margin:1.5rem auto 0; color: var(--ice-soft); font-size:1.05rem; }
+  .hero .meaning{ position:relative; margin-top:2.6rem; display:inline-block; padding:0.7rem 1.3rem; border:1px solid var(--line); border-radius:999px; font-size:0.88rem; color: var(--ice-soft); }
 
-  section{ padding: 5.5rem 6vw; max-width: 1100px; margin:0 auto; }
-  .eyebrow-free h2{
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    font-weight:600; max-width:620px;
-  }
-  .lead{ color: var(--ice-soft); max-width:640px; margin-top:0.9rem; font-size:1.02rem;}
+  section{ padding: 5.5rem 6vw; max-width:1100px; margin:0 auto; }
+  .eyebrow-free h2{ font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight:600; max-width:620px; }
+  .lead{ color: var(--ice-soft); max-width:660px; margin-top:0.9rem; font-size:1.02rem; }
 
-  .why{
-    padding: 4.5rem 6vw 1rem;
-    max-width: 1100px; margin:0 auto;
-    display:flex; align-items:center; gap:3.5rem;
-    flex-wrap:wrap;
-  }
+  .steps{ margin-top:2.8rem; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:2rem; }
+  .step{ border-top:1px solid var(--line); padding-top:1.1rem; }
+  .step .num{ font-family:'Space Grotesk',sans-serif; color: var(--coral); font-size:0.85rem; font-weight:600; letter-spacing:0.08em; }
+  .step h3{ font-size:1.2rem; font-weight:600; margin:0.35rem 0 0.5rem; }
+  .step p{ color: var(--ice-soft); font-size:0.95rem; }
+  .more{ display:inline-block; margin-top:2rem; color: var(--ice); font-size:0.92rem; text-decoration:none; border-bottom:1px solid var(--line); }
+  .more:hover{ border-color: var(--ice); }
+
+  .why{ padding: 2rem 6vw 1rem; max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:3.5rem; flex-wrap:wrap; }
   .why .mascot{ flex:0 0 auto; width:150px; height:150px; }
   .why .why-text{ flex:1 1 380px; }
   .why .why-text .signed{ color: var(--coral); font-size:0.85rem; margin-top:1rem; font-weight:500; }
-  .why .why-text p{ color: var(--ice-soft); font-size:1.02rem; max-width:600px; }
+  .why .why-text p{ color: var(--ice-soft); font-size:1.02rem; max-width:620px; }
   .why .why-text h2{ font-size: clamp(1.6rem, 3.6vw, 2.1rem); font-weight:600; margin-bottom:1rem; }
-  @keyframes bob{ 0%,100%{ transform: translateY(0px); } 50%{ transform: translateY(-8px); } }
+  @keyframes bob{ 0%,100%{ transform: translateY(0px);} 50%{ transform: translateY(-8px);} }
   .why .mascot svg{ animation: bob 4.5s ease-in-out infinite; }
 
   .mission-banner{
-    position:relative;
-    padding: 4.5rem 6vw;
+    position:relative; padding:4.5rem 6vw; margin-top:3rem;
     background-color: var(--navy);
-    background-image:
-      linear-gradient(90deg, rgba(10,18,32,0.92) 0%, rgba(10,18,32,0.55) 55%, rgba(10,18,32,0.25) 100%),
-      url('images/mission-bg.gif');
-    background-size: cover;
-    background-position: center;
+    background-image: linear-gradient(90deg, rgba(10,18,32,0.92) 0%, rgba(10,18,32,0.55) 55%, rgba(10,18,32,0.25) 100%), url('images/mission-bg.gif');
+    background-size: cover; background-position:center;
   }
   .mission-banner .inner{ max-width:1100px; margin:0 auto; }
   .mission-banner h2{ font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight:600; max-width:620px; }
   .mission-banner .lead{ color: var(--ice-soft); max-width:640px; margin-top:0.9rem; font-size:1.02rem; }
 
-  .descent{
-    margin-top: 0.5rem;
-    border-left: 2px solid var(--line);
-    padding-left: 2.2rem;
-  }
-  .layer{
-    position:relative;
-    padding: 1.8rem 0;
-    border-bottom: 1px solid var(--line);
-  }
+  .descent{ margin-top:0.5rem; border-left:2px solid var(--line); padding-left:2.2rem; }
+  .layer{ position:relative; padding:1.8rem 0; border-bottom:1px solid var(--line); }
   .layer:last-child{ border-bottom:none; }
-  .layer::before{
-    content:'';
-    position:absolute; left:-2.47rem; top:2.15rem;
-    width:11px; height:11px; border-radius:50%;
-    background: var(--ice); box-shadow: 0 0 10px var(--ice);
-  }
-  .layer h3{ font-size:1.25rem; font-weight:600; color:var(--foam);}
-  .layer .q{ color:var(--coral); font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; }
-  .layer p{ color:var(--ice-soft); margin-top:0.5rem; max-width:640px; font-size:0.97rem;}
+  .layer::before{ content:''; position:absolute; left:-2.47rem; top:2.15rem; width:11px; height:11px; border-radius:50%; background: var(--ice); box-shadow: 0 0 10px var(--ice); }
+  .layer h3{ font-size:1.25rem; font-weight:600; color: var(--foam); }
+  .layer .q{ color: var(--coral); font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; }
+  .layer p{ color: var(--ice-soft); margin-top:0.5rem; max-width:640px; font-size:0.97rem; }
 
-  .why-works{ margin-top: 3rem; padding-top: 2.6rem; border-top: 1px solid var(--line); }
+  .why-works{ margin-top:3rem; padding-top:2.6rem; border-top:1px solid var(--line); }
   .why-works h3{ font-size:1.15rem; font-weight:600; color: var(--foam); margin-bottom:0.9rem; }
   .why-works p{ color: var(--ice-soft); font-size:0.97rem; max-width:700px; margin-bottom:0.9rem; }
   .why-works p:last-child{ margin-bottom:0; }
 
-  .team-grid{
-    margin-top:2.6rem;
-    display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-    gap:1px; background: var(--line);
-    border:1px solid var(--line);
-  }
+  .wip-group{ margin-top:3rem; }
+  .wip-group h3{ font-size:1.25rem; font-weight:600; }
+  .wip-group .gnote{ color: var(--ice-soft); font-size:0.95rem; margin-top:0.3rem; }
+  .wip-grid{ margin-top:1.2rem; display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:0.9rem; }
+  .wip-grid figure{ aspect-ratio: 4/3; border-radius:10px; overflow:hidden; border:1px solid var(--line); background: var(--deep); cursor:zoom-in; }
+  .wip-grid img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform .35s ease; }
+  .wip-grid figure:hover img{ transform: scale(1.04); }
+  .wip-empty{ margin-top:1.2rem; border:1px dashed var(--line); border-radius:10px; padding:1.6rem; text-align:center; color: var(--ice-soft); font-size:0.9rem; }
+  .wip-empty[hidden]{ display:none; }
+
+  #lightbox{ position:fixed; inset:0; background: rgba(5,9,16,0.92); display:flex; align-items:center; justify-content:center; padding:4vw; z-index:50; cursor:zoom-out; }
+  #lightbox[hidden]{ display:none; }
+  #lightbox img{ max-width:100%; max-height:100%; border-radius:8px; }
+
+  .team-grid{ margin-top:2.6rem; display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1px; background: var(--line); border:1px solid var(--line); }
   .member{ background: var(--deep); padding:1.6rem 1.2rem; text-align:center; }
-  .member .photo{
-    position:relative;
-    width:132px; height:132px; border-radius:50%;
-    margin:0 auto 1.1rem;
-    background: var(--teal);
-    border:1px solid var(--line);
-    overflow:hidden;
-  }
-  .member .photo .initials{
-    position:absolute; inset:0;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Space Grotesk', sans-serif; font-weight:600;
-    font-size:1.35rem; color: var(--ice-soft); letter-spacing:0.02em;
-  }
-  .member .photo img{
-    position:absolute; inset:0;
-    width:100%; height:100%; object-fit:cover; display:block;
-  }
-  .member .name{ font-weight:600; color:var(--foam); }
+  .member .photo{ position:relative; width:132px; height:132px; border-radius:50%; margin:0 auto 1.1rem; background: var(--teal); border:1px solid var(--line); overflow:hidden; }
+  .member .photo .initials{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.35rem; color: var(--ice-soft); letter-spacing:0.02em; }
+  .member .photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .member .name{ font-weight:600; color: var(--foam); }
 
-  .sponsor-row{
-    margin-top:2.2rem;
-    display:flex; flex-wrap:wrap; gap:1rem;
-  }
-  .sponsor-slot{
-    flex:1 1 200px;
-    border:1px dashed var(--line);
-    border-radius:10px;
-    padding:1.6rem;
-    text-align:center;
-    color: var(--ice-soft);
-    font-size:0.9rem;
-  }
+  .sponsor-row{ margin-top:2.2rem; display:flex; flex-wrap:wrap; gap:1rem; }
+  .sponsor-slot{ flex:1 1 200px; border:1px dashed var(--line); border-radius:10px; padding:1.6rem; text-align:center; color: var(--ice-soft); font-size:0.9rem; }
 
-  footer{
-    padding: 4rem 6vw calc(3rem + env(safe-area-inset-bottom, 0px));
-    border-top:1px solid var(--line);
-    display:flex; flex-wrap:wrap; gap:2rem; justify-content:space-between; align-items:center;
-    max-width:1100px; margin:0 auto;
-  }
+  footer{ padding:4rem 6vw calc(3rem + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:2rem; justify-content:space-between; align-items:center; max-width:1100px; margin:0 auto; }
   .socials{ display:flex; gap:1.4rem; }
-  .socials a{ color:var(--ice-soft); text-decoration:none; font-size:0.92rem; border-bottom:1px solid transparent;}
-  .socials a:hover{ color:var(--foam); border-color:var(--ice);}
+  .socials a{ color: var(--ice-soft); text-decoration:none; font-size:0.92rem; border-bottom:1px solid transparent; }
+  .socials a:hover{ color: var(--foam); border-color: var(--ice); }
   footer .small{ color:#6f8a96; font-size:0.82rem; }
 
+  @media (max-width:900px){
+    header{ flex-wrap:wrap; padding:0.9rem 5vw; row-gap:0.6rem; }
+    .lang{ margin-left:auto; }
+    nav{ order:3; width:100%; margin-left:0; overflow-x:auto; gap:1.3rem; padding-bottom:0.2rem; }
+    html{ scroll-padding-top: 8rem; }
+  }
   @media (max-width:640px){
-    header{ padding: 1rem 5vw; }
-    nav{ gap:1rem; font-size:0.85rem; }
-    section{ padding: 3.6rem 5vw; }
-    .mission-banner{ padding: 3rem 5vw; }
+    section{ padding:3.6rem 5vw; }
+    .hero{ padding:6.5rem 5vw 5rem; }
+    .mission-banner{ padding:3rem 5vw; }
     .descent{ padding-left:1.5rem; }
     .layer::before{ left:-1.78rem; }
-    .why{ padding: 3rem 5vw 0.5rem; flex-direction:column; text-align:center; }
+    .why{ padding:1.5rem 5vw 0.5rem; flex-direction:column; text-align:center; }
   }
 </style>
 </head>
@@ -216,20 +172,46 @@
 <header>
   <a class="wordmark" href="#top"><img class="iso" src="images/isotipo.png" alt="Kaiper">KAIPER</a>
   <nav>
-    <a href="#mission">Mission</a>
-    <a href="#team">Team</a>
-    <a href="#sponsors">Sponsors</a>
-    <a href="#contact">Contact</a>
+    <a href="#cansat" data-i18n="nav_cansat">CanSat</a>
+    <a href="#mission" data-i18n="nav_mission">Mission</a>
+    <a href="#progress" data-i18n="nav_progress">Progress</a>
+    <a href="#team" data-i18n="nav_team">Team</a>
+    <a href="#sponsors" data-i18n="nav_sponsors">Sponsors</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
   </nav>
+  <div class="lang">
+    <button class="lang-btn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Language">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>
+      <span id="langCur">EN</span>
+    </button>
+    <ul class="lang-menu" id="langMenu" hidden>
+      <li><button type="button" data-lang="en">English</button></li>
+      <li><button type="button" data-lang="ca">Català</button></li>
+      <li><button type="button" data-lang="es">Castellano</button></li>
+      <li><button type="button" data-lang="zh">中文</button></li>
+    </ul>
+  </div>
 </header>
 
 <div id="top" class="hero">
   <div class="hero-ring"></div>
   <div class="hero-ring r2"></div>
   <h1>KAIPER</h1>
-  <p class="tag">A high school CanSat team. We're building a mini-satellite to explore, during its descent, whether an environment could support liquid water.</p>
-  <div class="meaning">"Kai": sea / ocean in Hawaiian, plus Kuiper Belt</div>
+  <p class="tag" data-i18n="hero_tag">A high school CanSat team. We’re building a mini-satellite to explore, during its descent, whether an environment could support liquid water.</p>
+  <div class="meaning" data-i18n="hero_meaning">“Kai”: sea / ocean in Hawaiian, plus Kuiper Belt</div>
 </div>
+
+<section id="cansat" class="eyebrow-free">
+  <h2 data-i18n="cs_title">What is CanSat?</h2>
+  <p class="lead" data-i18n="cs_lead">CanSat is an educational program of the European Space Agency (ESA), run in Spain together with ESERO. Student teams build a mini-satellite the size of a soda can, with its own sensors, radio and parachute.</p>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h3 data-i18n="cs1_t">Build</h3><p data-i18n="cs1_p">Fit everything inside a can-sized cylinder, 66 mm wide and 115 mm tall: sensors, a microcontroller, a radio and a parachute.</p></div>
+    <div class="step"><div class="num">02</div><h3 data-i18n="cs2_t">Launch</h3><p data-i18n="cs2_p">The CanSat is taken up high, usually around a kilometre, and released. It then falls back under its parachute.</p></div>
+    <div class="step"><div class="num">03</div><h3 data-i18n="cs3_t">Measure</h3><p data-i18n="cs3_p">While it descends it measures temperature and pressure (the primary mission) plus a second mission chosen by each team, and sends everything by radio to a ground station.</p></div>
+    <div class="step"><div class="num">04</div><h3 data-i18n="cs4_t">Compete</h3><p data-i18n="cs4_p">The best teams of each country go on to the European CanSat competition, organised by ESA.</p></div>
+  </div>
+  <a class="more" href="https://www.esa.int/Education/CanSat" target="_blank" rel="noopener" data-i18n="cs_more">Learn more on the ESA CanSat page</a>
+</section>
 
 <div class="why">
   <div class="mascot"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
@@ -239,90 +221,205 @@
       <path d="M46 96 Q80 104 114 94" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
     </svg></div>
   <div class="why-text">
-    <h2>Why Kaiper?</h2>
-    <p>Hi, I'm Matias. This whole project started with a name before it started with a sensor. "Kai" means ocean in Hawaiian, and it's also the name my partner and I would love to give our future son one day. So when I learned that the Kuiper Belt might hide oceans under its ice, in a place nobody could see, it felt like this project was meant to carry that name. Kaiper isn't just a science mission to me. Every reading it sends back on the way down is us asking, in our own small way, whether there's an ocean hiding somewhere nobody's checked yet.</p>
-    <div class="signed">Matias, Team Kaiper</div>
+    <h2 data-i18n="why_title">Why Kaiper?</h2>
+    <p data-i18n="why_p">Hi, I’m Matias. This whole project started with a name before it started with a sensor. “Kai” means ocean in Hawaiian, and it’s also the name my partner and I would love to give our future son one day. So when I learned that the Kuiper Belt might hide oceans under its ice, in a place nobody could see, it felt like this project was meant to carry that name. Kaiper isn’t just a science mission to me. Every reading it sends back on the way down is us asking, in our own small way, whether there’s an ocean hiding somewhere nobody’s checked yet.</p>
+    <div class="signed" data-i18n="why_signed">Matias, Team Kaiper</div>
   </div>
 </div>
 
 <div class="mission-banner" id="mission">
   <div class="inner">
-    <h2>The Kaiper Index: mapping an invisible ocean</h2>
-    <p class="lead">Just as the Kuiper Belt hides oceans beneath its icy surface, the atmosphere hides its own invisible ocean. Our CanSat crosses it and measures it in three layers of data during descent.</p>
+    <h2 data-i18n="mis_title">The Kaiper Index: mapping an invisible ocean</h2>
+    <p class="lead" data-i18n="mis_lead">Just as the Kuiper Belt hides oceans beneath its icy surface, the atmosphere hides its own invisible ocean. Our CanSat crosses it and measures it in three layers of data during descent.</p>
   </div>
 </div>
 
 <section class="eyebrow-free">
   <div class="descent">
-    <div class="layer">
-      <div class="q">Could liquid water exist here?</div>
-      <h3>Habitability index</h3>
-      <p>Humidity, temperature, and UV radiation combined into a custom score that rates each stage of the descent.</p>
-    </div>
-    <div class="layer">
-      <div class="q">Is this environment stable?</div>
-      <h3>Atmospheric turbulence map</h3>
-      <p>An inertial sensor (IMU) tracks the stability of the descent, the same data that matters in real parachute and reentry system design.</p>
-    </div>
-    <div class="layer">
-      <div class="q">Would it be shielded from radiation?</div>
-      <h3>Cosmic radiation shielding gradient</h3>
-      <p>We measure how background radiation changes with altitude, the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.</p>
-    </div>
+    <div class="layer"><div class="q" data-i18n="l1_q">Could liquid water exist here?</div><h3 data-i18n="l1_t">Habitability index</h3><p data-i18n="l1_p">Humidity, temperature, and UV radiation combined into a custom score that rates each stage of the descent.</p></div>
+    <div class="layer"><div class="q" data-i18n="l2_q">Is this environment stable?</div><h3 data-i18n="l2_t">Atmospheric turbulence map</h3><p data-i18n="l2_p">An inertial sensor (IMU) tracks the stability of the descent, the same data that matters in real parachute and reentry system design.</p></div>
+    <div class="layer"><div class="q" data-i18n="l3_q">Would it be shielded from radiation?</div><h3 data-i18n="l3_t">Cosmic radiation shielding gradient</h3><p data-i18n="l3_p">We measure how background radiation changes with altitude, the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.</p></div>
+  </div>
+  <div class="why-works">
+    <h3 data-i18n="ww_title">Why this should actually work</h3>
+    <p data-i18n="ww_p1">Each of the three sensors on its own is a fairly standard, well-tested piece of kit. That’s on purpose, we wanted the mission to be ambitious in what it asks, not in what it risks breaking. The humidity, temperature and UV readings are the same kind of data real habitability studies use to rule places in or out, so our index isn’t just a made-up score, it’s built the same way scientists actually reason about it.</p>
+    <p data-i18n="ww_p2">The turbulence data from the IMU is the part we’re most confident will simply work, since it’s just movement data, and it gives us something almost no other CanSat team measures: a real picture of how rough the descent was, stage by stage. That matters beyond the “cool factor”: it’s literally the kind of data engineers use to decide if a parachute or landing system design is safe.</p>
+    <p data-i18n="ww_p3">The radiation sensor is the one honest question mark. It’s the hardest part to source and calibrate for a team at our level, so if it doesn’t make it into the final build, the mission still stands on the other two layers. If it does work, it lets us actually test, at a tiny atmospheric scale, the same shielding question astrobiologists ask about Kuiper Belt objects: how much cover does it take to protect something underneath from radiation. That’s the number we’d be most excited to bring back.</p>
+  </div>
+</section>
+
+<section id="progress" class="eyebrow-free">
+  <h2 data-i18n="wip_title">Work in progress</h2>
+  <p class="lead" data-i18n="wip_lead">Here is how Kaiper is coming together: our first 3D-printed can and the sessions with our mentor, who works for ESA.</p>
+
+  <div class="wip-group">
+    <h3 data-i18n="wip_print_title">3D printing the can</h3>
+    <p class="gnote" data-i18n="wip_print_p">The first prints of our can, made on a 3D printer.</p>
+    <div class="wip-grid" id="grid-printing"></div>
+    <div class="wip-empty" id="empty-printing" hidden data-i18n="wip_empty">Photos coming soon.</div>
   </div>
 
-  <div class="why-works">
-    <h3>Why this should actually work</h3>
-    <p>Each of the three sensors on its own is a fairly standard, well-tested piece of kit. That's on purpose, we wanted the mission to be ambitious in what it asks, not in what it risks breaking. The humidity, temperature and UV readings are the same kind of data real habitability studies use to rule places in or out, so our index isn't just a made-up score, it's built the same way scientists actually reason about it.</p>
-    <p>The turbulence data from the IMU is the part we're most confident will simply work, since it's just movement data, and it gives us something almost no other CanSat team measures: a real picture of how rough the descent was, stage by stage. That matters beyond the "cool factor": it's literally the kind of data engineers use to decide if a parachute or landing system design is safe.</p>
-    <p>The radiation sensor is the one honest question mark. It's the hardest part to source and calibrate for a team at our level, so if it doesn't make it into the final build, the mission still stands on the other two layers. If it does work, it lets us actually test, at a tiny atmospheric scale, the same shielding question astrobiologists ask about Kuiper Belt objects: how much cover does it take to protect something underneath from radiation. That's the number we'd be most excited to bring back.</p>
+  <div class="wip-group">
+    <h3 data-i18n="wip_mentor_title">Learning from our mentor</h3>
+    <p class="gnote" data-i18n="wip_mentor_p">All of us listening to our mentor, who works for ESA.</p>
+    <div class="wip-grid" id="grid-mentor"></div>
+    <div class="wip-empty" id="empty-mentor" hidden data-i18n="wip_empty">Photos coming soon.</div>
   </div>
 </section>
 
 <section id="team" class="eyebrow-free">
-  <h2>The team</h2>
-  <p class="lead">4th-year ESO students at Escola Vedruna Tona, working on electronics, structure, programming, and data analysis.</p>
+  <h2 data-i18n="team_title">The team</h2>
+  <p class="lead" data-i18n="team_lead">4th-year ESO students at Escola Vedruna Tona, working on electronics, structure, programming, and data analysis.</p>
   <div class="team-grid">
-    <div class="member"><div class="photo"><div class="initials">JM</div><img src="images/team:/matias.jpg" alt="J. Matias Lancheros H" data-base="images/team:/matias" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">J. Matias Lancheros H</div></div>
-    <div class="member"><div class="photo"><div class="initials">AV</div><img src="images/team:/aleix.jpg" alt="Aleix Vallbona" data-base="images/team:/aleix" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Aleix Vallbona</div></div>
-    <div class="member"><div class="photo"><div class="initials">EC</div><img src="images/team:/eloi.jpg" alt="Eloi Castaño" data-base="images/team:/eloi" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Eloi Castaño</div></div>
-    <div class="member"><div class="photo"><div class="initials">AL</div><img src="images/team:/alex-v.jpg" alt="Alex Vilarrasa" data-base="images/team:/alex-v" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Alex Vilarrasa</div></div>
+    <div class="member"><div class="photo"><div class="initials">JM</div><img src="images/team/matias.jpg" alt="J. Matias Lancheros H" data-base="images/team/matias" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">J. Matias Lancheros H</div></div>
+    <div class="member"><div class="photo"><div class="initials">AV</div><img src="images/team/aleix.jpg" alt="Aleix Vallbona" data-base="images/team/aleix" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Aleix Vallbona</div></div>
+    <div class="member"><div class="photo"><div class="initials">EC</div><img src="images/team/eloi.jpg" alt="Eloi Castaño" data-base="images/team/eloi" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Eloi Castaño</div></div>
+    <div class="member"><div class="photo"><div class="initials">AL</div><img src="images/team/alex-v.jpg" alt="Alex Vilarrasa" data-base="images/team/alex-v" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Alex Vilarrasa</div></div>
   </div>
-  <script>
-    function kaiperPhotoFallback(img){
-      var exts = ['jpeg','JPG','JPEG','png','PNG','webp'];
-      var tried = parseInt(img.getAttribute('data-tried') || '0', 10);
-      if(tried < exts.length){
-        img.setAttribute('data-tried', tried + 1);
-        img.src = img.getAttribute('data-base') + '.' + exts[tried];
-      } else {
-        img.style.display = 'none';
-      }
-    }
-  </script>
 </section>
 
 <section id="sponsors" class="eyebrow-free">
-  <h2>Sponsors</h2>
-  <p class="lead">Companies supporting team Kaiper.</p>
+  <h2 data-i18n="sp_title">Sponsors</h2>
+  <p class="lead" data-i18n="sp_lead">Companies supporting team Kaiper.</p>
   <div class="sponsor-row">
-    <div class="sponsor-slot">Sponsor slot 1</div>
-    <div class="sponsor-slot">Sponsor slot 2</div>
-    <div class="sponsor-slot">Sponsor slot 3</div>
+    <div class="sponsor-slot" data-i18n="sp_slot" data-n="1">Sponsor slot 1</div>
+    <div class="sponsor-slot" data-i18n="sp_slot" data-n="2">Sponsor slot 2</div>
+    <div class="sponsor-slot" data-i18n="sp_slot" data-n="3">Sponsor slot 3</div>
   </div>
 </section>
 
 <footer id="contact">
   <div>
     <div class="wordmark" style="font-size:1rem;"><img class="iso" style="width:20px;height:20px;" src="images/isotipo.png" alt="Kaiper">KAIPER</div>
-    <p class="small" style="margin-top:0.4rem;">CanSat · ESA / ESERO Spain</p>
+    <p class="small" style="margin-top:0.4rem;" data-i18n="foot_small">CanSat · ESA / ESERO Spain</p>
   </div>
   <div class="socials">
     <a href="https://www.instagram.com/kaiper.cansat" target="_blank" rel="noopener">Instagram</a>
     <a href="https://www.tiktok.com/@kaiperteam" target="_blank" rel="noopener">TikTok</a>
-    <a href="mailto:kaiper.cansat@gmail.com">Email</a>
+    <a href="mailto:kaiper.cansat@gmail.com" data-i18n="foot_email">Email</a>
   </div>
 </footer>
+
+<div id="lightbox" hidden><img alt=""></div>
+
+<script>
+var I18N = {"en": {"title": "Kaiper | CanSat Team", "nav_cansat": "CanSat", "nav_mission": "Mission", "nav_progress": "Progress", "nav_team": "Team", "nav_sponsors": "Sponsors", "nav_contact": "Contact", "hero_tag": "A high school CanSat team. We’re building a mini-satellite to explore, during its descent, whether an environment could support liquid water.", "hero_meaning": "“Kai”: sea / ocean in Hawaiian, plus Kuiper Belt", "cs_title": "What is CanSat?", "cs_lead": "CanSat is an educational program of the European Space Agency (ESA), run in Spain together with ESERO. Student teams build a mini-satellite the size of a soda can, with its own sensors, radio and parachute.", "cs1_t": "Build", "cs1_p": "Fit everything inside a can-sized cylinder, 66 mm wide and 115 mm tall: sensors, a microcontroller, a radio and a parachute.", "cs2_t": "Launch", "cs2_p": "The CanSat is taken up high, usually around a kilometre, and released. It then falls back under its parachute.", "cs3_t": "Measure", "cs3_p": "While it descends it measures temperature and pressure (the primary mission) plus a second mission chosen by each team, and sends everything by radio to a ground station.", "cs4_t": "Compete", "cs4_p": "The best teams of each country go on to the European CanSat competition, organised by ESA.", "cs_more": "Learn more on the ESA CanSat page", "why_title": "Why Kaiper?", "why_p": "Hi, I’m Matias. This whole project started with a name before it started with a sensor. “Kai” means ocean in Hawaiian, and it’s also the name my partner and I would love to give our future son one day. So when I learned that the Kuiper Belt might hide oceans under its ice, in a place nobody could see, it felt like this project was meant to carry that name. Kaiper isn’t just a science mission to me. Every reading it sends back on the way down is us asking, in our own small way, whether there’s an ocean hiding somewhere nobody’s checked yet.", "why_signed": "Matias, Team Kaiper", "mis_title": "The Kaiper Index: mapping an invisible ocean", "mis_lead": "Just as the Kuiper Belt hides oceans beneath its icy surface, the atmosphere hides its own invisible ocean. Our CanSat crosses it and measures it in three layers of data during descent.", "l1_q": "Could liquid water exist here?", "l1_t": "Habitability index", "l1_p": "Humidity, temperature, and UV radiation combined into a custom score that rates each stage of the descent.", "l2_q": "Is this environment stable?", "l2_t": "Atmospheric turbulence map", "l2_p": "An inertial sensor (IMU) tracks the stability of the descent, the same data that matters in real parachute and reentry system design.", "l3_q": "Would it be shielded from radiation?", "l3_t": "Cosmic radiation shielding gradient", "l3_p": "We measure how background radiation changes with altitude, the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.", "ww_title": "Why this should actually work", "ww_p1": "Each of the three sensors on its own is a fairly standard, well-tested piece of kit. That’s on purpose, we wanted the mission to be ambitious in what it asks, not in what it risks breaking. The humidity, temperature and UV readings are the same kind of data real habitability studies use to rule places in or out, so our index isn’t just a made-up score, it’s built the same way scientists actually reason about it.", "ww_p2": "The turbulence data from the IMU is the part we’re most confident will simply work, since it’s just movement data, and it gives us something almost no other CanSat team measures: a real picture of how rough the descent was, stage by stage. That matters beyond the “cool factor”: it’s literally the kind of data engineers use to decide if a parachute or landing system design is safe.", "ww_p3": "The radiation sensor is the one honest question mark. It’s the hardest part to source and calibrate for a team at our level, so if it doesn’t make it into the final build, the mission still stands on the other two layers. If it does work, it lets us actually test, at a tiny atmospheric scale, the same shielding question astrobiologists ask about Kuiper Belt objects: how much cover does it take to protect something underneath from radiation. That’s the number we’d be most excited to bring back.", "wip_title": "Work in progress", "wip_lead": "Here is how Kaiper is coming together: our first 3D-printed can and the sessions with our mentor, who works for ESA.", "wip_print_title": "3D printing the can", "wip_print_p": "The first prints of our can, made on a 3D printer.", "wip_mentor_title": "Learning from our mentor", "wip_mentor_p": "All of us listening to our mentor, who works for ESA.", "wip_empty": "Photos coming soon.", "team_title": "The team", "team_lead": "4th-year ESO students at Escola Vedruna Tona, working on electronics, structure, programming, and data analysis.", "sp_title": "Sponsors", "sp_lead": "Companies supporting team Kaiper.", "sp_slot": "Sponsor slot {n}", "foot_small": "CanSat · ESA / ESERO Spain", "foot_email": "Email", "lang_aria": "Language"}, "ca": {"title": "Kaiper | Equip CanSat", "nav_cansat": "CanSat", "nav_mission": "Missió", "nav_progress": "Procés", "nav_team": "Equip", "nav_sponsors": "Patrocinadors", "nav_contact": "Contacte", "hero_tag": "Un equip de CanSat d’ESO. Construïm un minisatèl·lit per explorar, durant el seu descens, si un entorn podria sostenir aigua líquida.", "hero_meaning": "«Kai»: mar / oceà en hawaià, més el cinturó de Kuiper", "cs_title": "Què és CanSat?", "cs_lead": "CanSat és un programa educatiu de l’Agència Espacial Europea (ESA), que a Espanya funciona amb ESERO. Equips d’estudiants construeixen un minisatèl·lit de la mida d’una llauna de refresc, amb sensors, ràdio i paracaigudes propis.", "cs1_t": "Construir", "cs1_p": "Encabir-ho tot dins d’un cilindre de la mida d’una llauna, de 66 mm d’ample i 115 mm d’alt: sensors, un microcontrolador, una ràdio i un paracaigudes.", "cs2_t": "Llançar", "cs2_p": "El CanSat es puja a gran alçada, normalment uns mil metres, i s’allibera. Després cau amb el seu paracaigudes.", "cs3_t": "Mesurar", "cs3_p": "Mentre davalla mesura la temperatura i la pressió (la missió primària) i una segona missió que tria cada equip, i ho envia tot per ràdio a una estació de terra.", "cs4_t": "Competir", "cs4_p": "Els millors equips de cada país passen a la competició europea CanSat, organitzada per l’ESA.", "cs_more": "Més informació a la pàgina de CanSat de l’ESA", "why_title": "Per què Kaiper?", "why_p": "Hola, sóc el Matias. Aquest projecte va començar amb un nom abans que amb un sensor. «Kai» vol dir oceà en hawaià, i també és el nom que la meva parella i jo voldríem posar al nostre futur fill algun dia. Així que quan vaig saber que el cinturó de Kuiper podria amagar oceans sota el gel, en un lloc que ningú pot veure, vaig sentir que aquest projecte havia de portar aquest nom. Kaiper no és només una missió científica per a mi. Cada mesura que envia durant el descens és la nostra manera, petita, de preguntar si hi ha un oceà amagat en algun lloc on ningú ha mirat encara.", "why_signed": "Matias, equip Kaiper", "mis_title": "L’Índex Kaiper: cartografiant un oceà invisible", "mis_lead": "Igual que el cinturó de Kuiper amaga oceans sota la seva superfície gelada, l’atmosfera amaga el seu propi oceà invisible. El nostre CanSat el travessa i el mesura en tres capes de dades durant el descens.", "l1_q": "Podria existir aigua líquida aquí?", "l1_t": "Índex d’habitabilitat", "l1_p": "Humitat, temperatura i radiació UV combinades en una puntuació pròpia que valora cada tram del descens.", "l2_q": "És estable aquest entorn?", "l2_t": "Mapa de turbulència atmosfèrica", "l2_p": "Un sensor inercial (IMU) registra l’estabilitat del descens, les mateixes dades que importen en el disseny real de paracaigudes i sistemes de reentrada.", "l3_q": "Estaria protegit de la radiació?", "l3_t": "Gradient de blindatge davant la radiació còsmica", "l3_p": "Mesurem com canvia la radiació de fons amb l’altitud, la mateixa pregunta que es fan els astrobiòlegs sobre si el gel dels objectes del cinturó de Kuiper podria blindar un oceà subterrani.", "ww_title": "Per què hauria de funcionar de debò", "ww_p1": "Cadascun dels tres sensors és un material força estàndard i ben provat. Ho hem fet així a propòsit: volíem que la missió fos ambiciosa en el que pregunta, no en el que pot trencar-se. Les lectures d’humitat, temperatura i UV són el mateix tipus de dades que fan servir els estudis reals d’habitabilitat per descartar o acceptar llocs, així que el nostre índex no és una puntuació inventada: està construït igual que raonen els científics de debò.", "ww_p2": "Les dades de turbulència de l’IMU són la part de la qual estem més segurs que funcionarà, perquè només són dades de moviment, i ens donen una cosa que gairebé cap altre equip CanSat mesura: una imatge real de com d’accidentat va ser el descens, tram a tram. Això importa més enllà de l’efecte «guai»: són literalment les dades que fan servir els enginyers per decidir si el disseny d’un paracaigudes o d’un sistema d’aterratge és segur.", "ww_p3": "El sensor de radiació és l’única incògnita honesta. És la part més difícil d’aconseguir i calibrar per a un equip del nostre nivell, de manera que, si no arriba a la versió final, la missió continua aguantant-se amb les altres dues capes. Si funciona, ens permet provar, a una escala atmosfèrica minúscula, la mateixa pregunta de blindatge que es fan els astrobiòlegs sobre els objectes del cinturó de Kuiper: quanta cobertura cal per protegir de la radiació alguna cosa que hi ha a sota. Aquest és el número que ens faria més il·lusió portar.", "wip_title": "Treball en curs", "wip_lead": "Així va agafant forma Kaiper: la nostra primera llauna impresa en 3D i les sessions amb el nostre mentor, que treballa per a l’ESA.", "wip_print_title": "Impressió 3D de la llauna", "wip_print_p": "Les primeres impressions de la nostra llauna, fetes amb una impressora 3D.", "wip_mentor_title": "Aprenent del nostre mentor", "wip_mentor_p": "Tots nosaltres escoltant el nostre mentor, que treballa per a l’ESA.", "wip_empty": "Les fotos arribaran aviat.", "team_title": "L’equip", "team_lead": "Alumnes de 4t d’ESO de l’Escola Vedruna Tona, treballant en electrònica, estructura, programació i anàlisi de dades.", "sp_title": "Patrocinadors", "sp_lead": "Empreses que donen suport a l’equip Kaiper.", "sp_slot": "Espai per a patrocinador {n}", "foot_small": "CanSat · ESA / ESERO Espanya", "foot_email": "Correu", "lang_aria": "Idioma"}, "es": {"title": "Kaiper | Equipo CanSat", "nav_cansat": "CanSat", "nav_mission": "Misión", "nav_progress": "Progreso", "nav_team": "Equipo", "nav_sponsors": "Patrocinadores", "nav_contact": "Contacto", "hero_tag": "Un equipo de CanSat de secundaria. Construimos un minisatélite para explorar, durante su descenso, si un entorno podría sostener agua líquida.", "hero_meaning": "«Kai»: mar / océano en hawaiano, más el cinturón de Kuiper", "cs_title": "¿Qué es CanSat?", "cs_lead": "CanSat es un programa educativo de la Agencia Espacial Europea (ESA), que en España funciona junto con ESERO. Equipos de estudiantes construyen un minisatélite del tamaño de una lata de refresco, con sus propios sensores, radio y paracaídas.", "cs1_t": "Construir", "cs1_p": "Meterlo todo dentro de un cilindro del tamaño de una lata, de 66 mm de ancho y 115 mm de alto: sensores, un microcontrolador, una radio y un paracaídas.", "cs2_t": "Lanzar", "cs2_p": "El CanSat se sube a gran altura, normalmente alrededor de un kilómetro, y se suelta. Después cae con su paracaídas.", "cs3_t": "Medir", "cs3_p": "Mientras desciende mide la temperatura y la presión (la misión primaria) y una segunda misión que elige cada equipo, y lo envía todo por radio a una estación de tierra.", "cs4_t": "Competir", "cs4_p": "Los mejores equipos de cada país pasan a la competición europea de CanSat, organizada por la ESA.", "cs_more": "Más información en la página de CanSat de la ESA", "why_title": "¿Por qué Kaiper?", "why_p": "Hola, soy Matias. Este proyecto empezó con un nombre antes que con un sensor. «Kai» significa océano en hawaiano, y además es el nombre que mi pareja y yo querríamos ponerle a nuestro futuro hijo algún día. Así que cuando supe que el cinturón de Kuiper podría esconder océanos bajo el hielo, en un lugar que nadie puede ver, sentí que este proyecto tenía que llevar ese nombre. Kaiper no es solo una misión científica para mí. Cada lectura que envía durante el descenso es nuestra manera, pequeña, de preguntar si hay un océano escondido en algún sitio donde nadie ha mirado todavía.", "why_signed": "Matias, equipo Kaiper", "mis_title": "El Índice Kaiper: cartografiando un océano invisible", "mis_lead": "Igual que el cinturón de Kuiper esconde océanos bajo su superficie helada, la atmósfera esconde su propio océano invisible. Nuestro CanSat lo atraviesa y lo mide en tres capas de datos durante el descenso.", "l1_q": "¿Podría existir agua líquida aquí?", "l1_t": "Índice de habitabilidad", "l1_p": "Humedad, temperatura y radiación UV combinadas en una puntuación propia que valora cada tramo del descenso.", "l2_q": "¿Es estable este entorno?", "l2_t": "Mapa de turbulencia atmosférica", "l2_p": "Un sensor inercial (IMU) registra la estabilidad del descenso, los mismos datos que importan en el diseño real de paracaídas y sistemas de reentrada.", "l3_q": "¿Estaría protegido de la radiación?", "l3_t": "Gradiente de blindaje frente a la radiación cósmica", "l3_p": "Medimos cómo cambia la radiación de fondo con la altitud, la misma pregunta que se hacen los astrobiólogos sobre si el hielo de los objetos del cinturón de Kuiper podría blindar un océano subterráneo.", "ww_title": "Por qué debería funcionar de verdad", "ww_p1": "Cada uno de los tres sensores es, por sí solo, un material bastante estándar y bien probado. Es a propósito: queríamos que la misión fuera ambiciosa en lo que pregunta, no en lo que puede romperse. Las lecturas de humedad, temperatura y UV son el mismo tipo de datos que usan los estudios reales de habitabilidad para descartar o aceptar lugares, así que nuestro índice no es una puntuación inventada: está construido igual que razonan los científicos de verdad.", "ww_p2": "Los datos de turbulencia del IMU son la parte que más seguros estamos de que funcionará, porque son simplemente datos de movimiento, y nos dan algo que casi ningún otro equipo CanSat mide: una imagen real de lo accidentado que fue el descenso, tramo a tramo. Eso importa más allá del factor «guay»: son literalmente los datos que usan los ingenieros para decidir si el diseño de un paracaídas o de un sistema de aterrizaje es seguro.", "ww_p3": "El sensor de radiación es la única incógnita honesta. Es la parte más difícil de conseguir y calibrar para un equipo de nuestro nivel, así que, si no llega a la versión final, la misión sigue sosteniéndose con las otras dos capas. Si funciona, nos permite probar, a una escala atmosférica diminuta, la misma pregunta de blindaje que se hacen los astrobiólogos sobre los objetos del cinturón de Kuiper: cuánta cobertura hace falta para proteger de la radiación algo que está debajo. Ese es el número que más ilusión nos haría traer.", "wip_title": "Trabajo en curso", "wip_lead": "Así va tomando forma Kaiper: nuestra primera lata impresa en 3D y las sesiones con nuestro mentor, que trabaja para la ESA.", "wip_print_title": "Impresión 3D de la lata", "wip_print_p": "Las primeras impresiones de nuestra lata, hechas con una impresora 3D.", "wip_mentor_title": "Aprendiendo de nuestro mentor", "wip_mentor_p": "Todos nosotros escuchando a nuestro mentor, que trabaja para la ESA.", "wip_empty": "Las fotos llegarán pronto.", "team_title": "El equipo", "team_lead": "Alumnos de 4º de ESO de la Escola Vedruna Tona, trabajando en electrónica, estructura, programación y análisis de datos.", "sp_title": "Patrocinadores", "sp_lead": "Empresas que apoyan al equipo Kaiper.", "sp_slot": "Espacio para patrocinador {n}", "foot_small": "CanSat · ESA / ESERO España", "foot_email": "Correo", "lang_aria": "Idioma"}, "zh": {"title": "Kaiper | CanSat 团队", "nav_cansat": "CanSat", "nav_mission": "任务", "nav_progress": "进展", "nav_team": "团队", "nav_sponsors": "赞助商", "nav_contact": "联系", "hero_tag": "一支中学生 CanSat 团队。我们正在制作一颗迷你卫星，在下降过程中探测某个环境是否可能存在液态水。", "hero_meaning": "“Kai”：夏威夷语中的“海洋”，加上柯伊伯带", "cs_title": "什么是 CanSat？", "cs_lead": "CanSat 是欧洲航天局（ESA）的教育项目，在西班牙与 ESERO 合作开展。学生团队要制作一颗汽水罐大小的迷你卫星，配有自己的传感器、无线电和降落伞。", "cs1_t": "制作", "cs1_p": "把所有东西装进一个罐子大小的圆柱体里，直径 66 毫米、高 115 毫米：传感器、微控制器、无线电和降落伞。", "cs2_t": "发射", "cs2_p": "CanSat 被送到高空，通常约一公里，然后释放，再借助降落伞落回地面。", "cs3_t": "测量", "cs3_p": "下降过程中，它测量温度和气压（主要任务），以及各团队自选的第二项任务，并把所有数据通过无线电发送到地面站。", "cs4_t": "参赛", "cs4_p": "各国的优胜团队将晋级由 ESA 组织的欧洲 CanSat 竞赛。", "cs_more": "在 ESA 的 CanSat 页面了解更多", "why_title": "为什么叫 Kaiper？", "why_p": "大家好，我是 Matias。这个项目是先有名字，后有传感器的。“Kai”在夏威夷语中是“海洋”的意思，也是我和我的伴侣将来想给儿子取的名字。所以当我得知柯伊伯带的冰层下可能藏着海洋，而且在没人看得到的地方，我觉得这个项目就应该叫这个名字。对我来说，Kaiper 不只是一次科学任务。它在下降过程中传回的每一个数据，都是我们用自己的小小方式在问：在某个还没有人查看过的地方，是不是藏着一片海洋？", "why_signed": "Matias，Kaiper 团队", "mis_title": "Kaiper 指数：绘制一片看不见的海洋", "mis_lead": "正如柯伊伯带在冰冷的表面之下可能藏着海洋，大气层也藏着一片看不见的海洋。我们的 CanSat 在下降过程中穿过它，并用三层数据对它进行测量。", "l1_q": "这里可能存在液态水吗？", "l1_t": "宜居指数", "l1_p": "把湿度、温度和紫外线辐射合成一个我们自己的评分，对下降的每个阶段进行评估。", "l2_q": "这个环境稳定吗？", "l2_t": "大气湍流图", "l2_p": "惯性传感器（IMU）记录下降过程的稳定性，这与真实降落伞和再入系统设计中所关注的数据相同。", "l3_q": "它能抵御辐射吗？", "l3_t": "宇宙辐射屏蔽梯度", "l3_p": "我们测量背景辐射随海拔的变化，这和天体生物学家提出的问题一样：柯伊伯带天体上的冰层能否屏蔽地下海洋免受辐射。", "ww_title": "为什么它真的行得通", "ww_p1": "这三种传感器单独来看，都是相当常见、经过充分验证的器材。这是我们有意为之：我们希望任务在提出的问题上有野心，而不是在容易出故障的地方冒险。湿度、温度和紫外线读数，与真实宜居性研究用来判断一个地方是否可行的数据类型相同，所以我们的指数不是随便编出来的分数，而是按照科学家真正的思路构建的。", "ww_p2": "IMU 的湍流数据是我们最有把握能正常工作的部分，因为它只是运动数据，却能给我们几乎没有其他 CanSat 团队测量过的东西：一幅下降过程有多颠簸的真实图景，一个阶段接一个阶段。这不只是“很酷”：工程师正是用这类数据来判断降落伞或着陆系统的设计是否安全。", "ww_p3": "辐射传感器是唯一让我们心里没底的部分。对我们这个水平的团队来说，它最难采购和校准，所以如果它没能进入最终版本，任务仍然可以靠另外两层数据成立。如果它能工作，我们就能在极小的大气尺度上检验天体生物学家对柯伊伯带天体提出的同一个屏蔽问题：需要多厚的覆盖层，才能保护下面的东西不受辐射。这是我们最希望带回来的数据。", "wip_title": "项目进展", "wip_lead": "这是 Kaiper 逐渐成形的过程：我们第一个 3D 打印的罐体，以及与在 ESA 工作的导师一起的交流。", "wip_print_title": "3D 打印罐体", "wip_print_p": "我们罐体的第一批 3D 打印件。", "wip_mentor_title": "向导师学习", "wip_mentor_p": "我们全体同学正在听在 ESA 工作的导师讲解。", "wip_empty": "照片即将上传。", "team_title": "团队", "team_lead": "Escola Vedruna Tona 的 ESO 四年级学生，负责电子、结构、编程和数据分析。", "sp_title": "赞助商", "sp_lead": "支持 Kaiper 团队的企业。", "sp_slot": "赞助商位置 {n}", "foot_small": "CanSat · ESA / ESERO 西班牙", "foot_email": "邮箱", "lang_aria": "语言"}};
+var LANG = 'en';
+var LABELS = {en:'EN', ca:'CA', es:'ES', zh:'中文'};
+
+function t(key){
+  var d = I18N[LANG] || I18N.en;
+  return (d[key] !== undefined ? d[key] : I18N.en[key]) || '';
+}
+
+function applyLang(l){
+  if(!I18N[l]) l = 'en';
+  LANG = l;
+  document.documentElement.lang = l;
+  document.title = t('title');
+  var nodes = document.querySelectorAll('[data-i18n]');
+  for(var i = 0; i < nodes.length; i++){
+    var el = nodes[i];
+    var s = t(el.getAttribute('data-i18n'));
+    var n = el.getAttribute('data-n');
+    if(n) s = s.replace('{n}', n);
+    el.textContent = s;
+  }
+  var alts = document.querySelectorAll('[data-alt-key]');
+  for(var j = 0; j < alts.length; j++){
+    alts[j].alt = t(alts[j].getAttribute('data-alt-key')) + ' ' + alts[j].getAttribute('data-n');
+  }
+  document.getElementById('langCur').textContent = LABELS[l];
+  document.getElementById('langBtn').setAttribute('aria-label', t('lang_aria'));
+  var items = document.querySelectorAll('#langMenu button');
+  for(var k = 0; k < items.length; k++){
+    items[k].setAttribute('aria-current', items[k].getAttribute('data-lang') === l ? 'true' : 'false');
+  }
+  try{ localStorage.setItem('kaiperLang', l); }catch(e){}
+}
+
+(function langMenu(){
+  var btn = document.getElementById('langBtn');
+  var menu = document.getElementById('langMenu');
+  function close(){ menu.hidden = true; btn.setAttribute('aria-expanded','false'); }
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = menu.hidden;
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  menu.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-lang]');
+    if(b){ applyLang(b.getAttribute('data-lang')); close(); }
+  });
+  document.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ close(); closeLightbox(); } });
+})();
+
+var saved = null;
+try{ saved = localStorage.getItem('kaiperLang'); }catch(e){}
+var urlLang = (new URLSearchParams(location.search)).get('lang');
+applyLang(urlLang && I18N[urlLang] ? urlLang : (saved && I18N[saved] ? saved : 'en'));
+
+/* Team photos: try other extensions, then keep the initials */
+function kaiperPhotoFallback(img){
+  var exts = ['jpeg','JPG','JPEG','png','PNG','webp'];
+  var tried = parseInt(img.getAttribute('data-tried') || '0', 10);
+  if(tried < exts.length){
+    img.setAttribute('data-tried', tried + 1);
+    img.src = img.getAttribute('data-base') + '.' + exts[tried];
+  } else {
+    img.style.display = 'none';
+  }
+}
+
+/* Work in progress gallery: images/wip/printing-1.jpg, printing-2.jpg ... and mentor-1.jpg ...
+   Photos are picked up automatically, in order, until a number is missing. */
+var WIP_GROUPS = [
+  {id:'printing', base:'images/wip/printing-', altKey:'wip_print_title'},
+  {id:'mentor',   base:'images/wip/mentor-',   altKey:'wip_mentor_title'}
+];
+var WIP_EXTS = ['jpg','jpeg','png','webp','JPG','JPEG','PNG'];
+
+function tryExt(base, idx, done){
+  if(idx >= WIP_EXTS.length){ done(null); return; }
+  var im = new Image();
+  im.onload = function(){ done(base + '.' + WIP_EXTS[idx]); };
+  im.onerror = function(){ tryExt(base, idx + 1, done); };
+  im.src = base + '.' + WIP_EXTS[idx];
+}
+
+function loadGroup(g){
+  var grid = document.getElementById('grid-' + g.id);
+  var empty = document.getElementById('empty-' + g.id);
+  var count = 0;
+  (function next(i){
+    if(i > 30){ finish(); return; }
+    tryExt(g.base + i, 0, function(src){
+      if(!src){ finish(); return; }
+      var fig = document.createElement('figure');
+      var im = document.createElement('img');
+      im.src = src;
+      im.loading = 'lazy';
+      im.setAttribute('data-alt-key', g.altKey);
+      im.setAttribute('data-n', i);
+      im.alt = t(g.altKey) + ' ' + i;
+      fig.appendChild(im);
+      fig.addEventListener('click', function(){ openLightbox(src, im.alt); });
+      grid.appendChild(fig);
+      count++;
+      next(i + 1);
+    });
+  })(1);
+  function finish(){ if(count === 0) empty.hidden = false; }
+}
+for(var gi = 0; gi < WIP_GROUPS.length; gi++){ loadGroup(WIP_GROUPS[gi]); }
+
+var lb = document.getElementById('lightbox');
+function openLightbox(src, alt){ lb.querySelector('img').src = src; lb.querySelector('img').alt = alt; lb.hidden = false; }
+function closeLightbox(){ lb.hidden = true; }
+lb.addEventListener('click', closeLightbox);
+</script>
 
 </body>
 </html>
