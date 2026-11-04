@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estació de terra Kaiper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#0a1220; --deep:#0d1b2e; --teal:#123647; --ice:#8fd9e8; --ice-soft:#c9edf3; --foam:#eef8f8; --coral:#ff6f4d; --line:rgba(143,217,232,0.18); }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--navy); color:var(--foam); font-family:'Inter','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; line-height:1.55; }
+  h1,h2,.num{ font-family:'Space Grotesk','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:1.6rem 5vw 4rem; }
+  .top{ display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:0.6rem; font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:0.02em; }
+  .brand img{ width:26px; height:26px; object-fit:contain; }
+  .langs button{ background:transparent; color:var(--ice-soft); border:1px solid var(--line); padding:0.3rem 0.65rem; border-radius:999px; cursor:pointer; font:500 0.8rem 'Inter',sans-serif; margin-left:0.3rem; }
+  .langs button[aria-pressed="true"]{ color:var(--navy); background:var(--ice); border-color:var(--ice); }
+  h1{ font-size:clamp(1.7rem,4vw,2.4rem); margin-top:1.6rem; font-weight:600; }
+  .sub{ color:var(--ice-soft); max-width:640px; margin-top:0.5rem; }
+
+  .bar{ display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:1.6rem; }
+  .btn{ background:transparent; color:var(--foam); border:1px solid var(--line); border-radius:8px; padding:0.6rem 1rem; cursor:pointer; font:500 0.9rem 'Inter',sans-serif; }
+  .btn:hover{ border-color:var(--ice); }
+  .btn.main{ background:var(--coral); border-color:var(--coral); color:#1a0b06; font-weight:600; }
+  .btn.main.on{ background:transparent; color:var(--coral); }
+  .btn[disabled]{ opacity:0.4; cursor:not-allowed; }
+  .status{ margin-top:0.9rem; font-size:0.9rem; color:var(--ice-soft); display:flex; align-items:center; gap:0.5rem; }
+  .dot{ width:9px; height:9px; border-radius:50%; background:#6f8a96; }
+  .dot.live{ background:#39ff6a; box-shadow:0 0 8px #39ff6a; }
+  .dot.err{ background:var(--coral); }
+
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:1.6rem; }
+  .stat{ background:var(--deep); padding:1rem 1.1rem; }
+  .stat .k{ font-size:0.78rem; color:var(--ice-soft); }
+  .stat .num{ font-size:1.7rem; font-weight:600; margin-top:0.1rem; }
+  .stat.hot .num{ color:var(--coral); }
+
+  .chartbox{ margin-top:1.4rem; border:1px solid var(--line); border-radius:12px; padding:1rem 1rem 0.8rem; background:rgba(13,27,46,0.6); }
+  .chartbox svg{ width:100%; height:auto; display:block; }
+  .legend{ display:flex; flex-wrap:wrap; gap:1.2rem; font-size:0.82rem; color:var(--ice-soft); margin-top:0.4rem; }
+  .legend i{ display:inline-block; width:18px; height:3px; margin-right:0.45rem; vertical-align:middle; border-radius:2px; }
+  .opts{ display:flex; flex-wrap:wrap; gap:1.4rem; margin-top:1rem; font-size:0.85rem; color:var(--ice-soft); align-items:center; }
+  .opts input, .opts select{ background:var(--deep); color:var(--foam); border:1px solid var(--line); border-radius:6px; padding:0.3rem 0.5rem; font:inherit; width:4.4rem; }
+  .opts select{ width:auto; }
+
+  .cols{ display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin-top:1.6rem; }
+  @media (max-width:760px){ .cols{ grid-template-columns:1fr; } }
+  .panel{ border:1px solid var(--line); border-radius:12px; padding:1rem 1.1rem; }
+  .panel h2{ font-size:1rem; font-weight:600; margin-bottom:0.6rem; }
+  table{ width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th,td{ text-align:left; padding:0.3rem 0.4rem; border-bottom:1px solid var(--line); }
+  th{ color:var(--ice-soft); font-weight:500; }
+  .scroll{ max-height:220px; overflow:auto; }
+  .logline{ font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.8rem; color:var(--ice-soft); padding:0.15rem 0; border-bottom:1px solid var(--line); word-break:break-word; }
+  .empty{ color:#6f8a96; font-size:0.85rem; }
+  .tips{ margin-top:1.6rem; border-left:3px solid var(--coral); padding:0.4rem 1rem; color:var(--ice-soft); font-size:0.88rem; }
+  .tips strong{ color:var(--foam); }
+  .tips li{ margin-left:1.1rem; margin-top:0.25rem; }
+  .note{ margin-top:0.5rem; font-size:0.8rem; color:#6f8a96; }
+  body.embedded h1, body.embedded .sub{ display:none; }
+  body.embedded .wrap{ padding-top:0.8rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><img src="images/isotipo.png" alt="" onerror="this.style.display='none'">KAIPER</div>
+    <div class="langs" id="langs">
+      <button type="button" data-l="ca">CA</button><button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button><button type="button" data-l="zh">中文</button>
+    </div>
+  </div>
+
+  <h1 data-i="title"></h1>
+  <p class="sub" data-i="sub"></p>
+
+  <div class="bar">
+    <button class="btn main" id="bConnect" type="button" data-i="connect"></button>
+    <button class="btn" id="bDemo" type="button" data-i="demo"></button>
+    <button class="btn" id="bSD" type="button" data-i="open_sd"></button>
+    <input type="file" id="fSD" accept=".txt,.csv,text/plain" hidden>
+    <button class="btn" id="bXlsx" type="button" data-i="dl_xlsx" disabled></button>
+    <button class="btn" id="bRaw" type="button" data-i="dl_raw" disabled></button>
+    <button class="btn" id="bClear" type="button" data-i="clear" disabled></button>
+  </div>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusTxt"></span></div>
+
+  <div class="stats">
+    <div class="stat hot"><div class="k" data-i="s_last"></div><div class="num" id="sLast">-</div></div>
+    <div class="stat"><div class="k" data-i="s_avg"></div><div class="num" id="sAvg">-</div></div>
+    <div class="stat"><div class="k" data-i="s_min"></div><div class="num" id="sMin">-</div></div>
+    <div class="stat"><div class="k" data-i="s_max"></div><div class="num" id="sMax">-</div></div>
+    <div class="stat"><div class="k" data-i="s_count"></div><div class="num" id="sCount">0</div></div>
+  </div>
+
+  <div class="chartbox">
+    <div id="chart"></div>
+    <div class="legend">
+      <span><i style="background:#8fd9e8"></i><span data-i="leg_temp"></span></span>
+      <span><i style="background:#ff6f4d"></i><span data-i="leg_ma"></span></span>
+      <span><i style="background:#eef8f8;opacity:.7"></i><span data-i="leg_avg"></span></span>
+    </div>
+    <div class="opts">
+      <label><span data-i="opt_window"></span> <input type="number" id="oWin" min="2" max="100" value="10"></label>
+      <label><span data-i="opt_col"></span> <input type="number" id="oCol" min="1" max="30" value="1"></label>
+      <label><span data-i="opt_team"></span> <input type="text" id="oTeam" maxlength="8" placeholder="KAI" style="width:5.5rem"></label>
+      <label><span data-i="opt_view"></span> <select id="oView"><option value="all" data-i="view_all"></option><option value="60" data-i="view_60"></option></select></label>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="panel"><h2 data-i="tb_title"></h2><div class="scroll"><table><thead><tr><th data-i="tb_time"></th><th data-i="tb_temp"></th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+    <div class="panel"><h2 data-i="log_title"></h2><div class="scroll" id="log"></div></div>
+  </div>
+
+  <div class="tips">
+    <strong data-i="tip_title"></strong>
+    <ul><li data-i="tip1"></li><li data-i="tip2"></li><li data-i="tip3"></li><li data-i="tip4"></li></ul>
+  </div>
+  <p class="note" id="sdNote" hidden></p>
+</div>
+
+<script>
+var I18N = {
+ca:{title:"Estació de terra Kaiper",sub:"Rebem la temperatura del CanSat per ràdio, la dibuixem en directe i la guardem en un Excel.",
+ connect:"Connecta la ràdio",disconnect:"Desconnecta",demo:"Simulació",demo_stop:"Atura la simulació",open_sd:"Obre CAPTURA.TXT de la SD",clear:"Esborra tot",dl_xlsx:"Descarrega Excel (.xlsx)",dl_raw:"Registre en brut (.txt)",
+ st_idle:"Sense connexió. Connecta la ràdio de terra per començar.",st_connected:"Connectat. Esperant dades del CanSat...",st_unsupported:"Aquest navegador no pot llegir el port. Obre la pàgina amb Chrome o Edge.",st_error:"Error: ",st_demo:"Simulació en marxa (dades inventades per provar).",st_sd:"Dades carregades de la SD.",
+ s_last:"Última (°C)",s_avg:"Mitjana (°C)",s_min:"Mínima (°C)",s_max:"Màxima (°C)",s_count:"Mostres",
+ opt_team:"Filtre d'equip (lletres, buit = tots)",tip4:"La trama comença amb les lletres de l'equip (per exemple KAI;23.45;): la pàgina les reconeix soles.", opt_window:"Finestra de la mitjana mòbil (mostres)",opt_col:"Columna de la temperatura a la trama",opt_view:"Veure",view_all:"Tot el vol",view_60:"Últims 60 s",
+ leg_temp:"Temperatura",leg_ma:"Mitjana mòbil",leg_avg:"Mitjana total",ch_empty:"Encara no hi ha dades",ch_x:"Temps (s)",ch_y:"Temperatura (°C)",
+ tb_title:"Últimes mostres",tb_time:"Temps (s)",tb_temp:"Temp. (°C)",log_title:"Missatges de la ràdio",log_empty:"Cap missatge encara",
+ tip_title:"Abans de començar",tip1:"Tanqueu Tera Term: només un programa alhora pot fer servir el port de la ràdio.",tip2:"Ràdio de terra a l'adaptador USB, a 9600 bps (el mateix que el Serial.begin).",tip3:"Descarregueu l'Excel abans de tancar la pàgina: les dades només viuen aquí.",
+ sd_note:"Les dades de la SD no porten hora: es suposa 1 mostra cada segon.",confirm_replace:"Hi ha dades de la ràdio. Les vols substituir per les de la SD?",leave_warn:"Hi ha dades sense descarregar.",
+ x_sheet:"Dades",x_time:"Temps (s)",x_temp:"Temperatura (°C)",x_ma:"Mitjana mòbil (°C)",x_count:"Mostres",x_avg:"Mitjana (°C)",x_min:"Mínima (°C)",x_max:"Màxima (°C)",x_last:"Última (°C)",x_chart:"Temperatura del CanSat Kaiper"},
+es:{title:"Estación de tierra Kaiper",sub:"Recibimos la temperatura del CanSat por radio, la dibujamos en directo y la guardamos en un Excel.",
+ connect:"Conectar la radio",disconnect:"Desconectar",demo:"Simulación",demo_stop:"Parar la simulación",open_sd:"Abrir CAPTURA.TXT de la SD",clear:"Borrar todo",dl_xlsx:"Descargar Excel (.xlsx)",dl_raw:"Registro en bruto (.txt)",
+ st_idle:"Sin conexión. Conecta la radio de tierra para empezar.",st_connected:"Conectado. Esperando datos del CanSat...",st_unsupported:"Este navegador no puede leer el puerto. Abre la página con Chrome o Edge.",st_error:"Error: ",st_demo:"Simulación en marcha (datos inventados para probar).",st_sd:"Datos cargados de la SD.",
+ s_last:"Última (°C)",s_avg:"Media (°C)",s_min:"Mínima (°C)",s_max:"Máxima (°C)",s_count:"Muestras",
+ opt_team:"Filtro de equipo (letras, vacío = todos)",tip4:"La trama empieza con las letras del equipo (por ejemplo KAI;23.45;): la página las reconoce sola.", opt_window:"Ventana de la media móvil (muestras)",opt_col:"Columna de la temperatura en la trama",opt_view:"Ver",view_all:"Todo el vuelo",view_60:"Últimos 60 s",
+ leg_temp:"Temperatura",leg_ma:"Media móvil",leg_avg:"Media total",ch_empty:"Todavía no hay datos",ch_x:"Tiempo (s)",ch_y:"Temperatura (°C)",
+ tb_title:"Últimas muestras",tb_time:"Tiempo (s)",tb_temp:"Temp. (°C)",log_title:"Mensajes de la radio",log_empty:"Ningún mensaje todavía",
+ tip_title:"Antes de empezar",tip1:"Cierra Tera Term: solo un programa a la vez puede usar el puerto de la radio.",tip2:"Radio de tierra en el adaptador USB, a 9600 bps (lo mismo que el Serial.begin).",tip3:"Descarga el Excel antes de cerrar la página: los datos solo viven aquí.",
+ sd_note:"Los datos de la SD no llevan hora: se supone 1 muestra cada segundo.",confirm_replace:"Hay datos de la radio. ¿Quieres sustituirlos por los de la SD?",leave_warn:"Hay datos sin descargar.",
+ x_sheet:"Datos",x_time:"Tiempo (s)",x_temp:"Temperatura (°C)",x_ma:"Media móvil (°C)",x_count:"Muestras",x_avg:"Media (°C)",x_min:"Mínima (°C)",x_max:"Máxima (°C)",x_last:"Última (°C)",x_chart:"Temperatura del CanSat Kaiper"},
+en:{title:"Kaiper ground station",sub:"We receive the CanSat temperature by radio, plot it live and save it in an Excel file.",
+ connect:"Connect the radio",disconnect:"Disconnect",demo:"Simulation",demo_stop:"Stop simulation",open_sd:"Open CAPTURA.TXT from the SD",clear:"Clear all",dl_xlsx:"Download Excel (.xlsx)",dl_raw:"Raw log (.txt)",
+ st_idle:"Not connected. Connect the ground radio to start.",st_connected:"Connected. Waiting for CanSat data...",st_unsupported:"This browser cannot read the port. Open the page with Chrome or Edge.",st_error:"Error: ",st_demo:"Simulation running (made-up data for testing).",st_sd:"Data loaded from the SD.",
+ s_last:"Latest (°C)",s_avg:"Average (°C)",s_min:"Minimum (°C)",s_max:"Maximum (°C)",s_count:"Samples",
+ opt_team:"Team filter (letters, empty = all)",tip4:"The frame starts with the team letters (for example KAI;23.45;): the page recognises them by itself.", opt_window:"Moving average window (samples)",opt_col:"Temperature column in the frame",opt_view:"View",view_all:"Whole flight",view_60:"Last 60 s",
+ leg_temp:"Temperature",leg_ma:"Moving average",leg_avg:"Overall average",ch_empty:"No data yet",ch_x:"Time (s)",ch_y:"Temperature (°C)",
+ tb_title:"Latest samples",tb_time:"Time (s)",tb_temp:"Temp. (°C)",log_title:"Radio messages",log_empty:"No messages yet",
+ tip_title:"Before you start",tip1:"Close Tera Term: only one program at a time can use the radio port.",tip2:"Ground radio on the USB adapter, at 9600 bps (same as Serial.begin).",tip3:"Download the Excel before closing the page: the data only lives here.",
+ sd_note:"SD data has no timestamps: we assume 1 sample per second.",confirm_replace:"There is radio data. Replace it with the SD data?",leave_warn:"There is data that has not been downloaded.",
+ x_sheet:"Data",x_time:"Time (s)",x_temp:"Temperature (°C)",x_ma:"Moving average (°C)",x_count:"Samples",x_avg:"Average (°C)",x_min:"Minimum (°C)",x_max:"Maximum (°C)",x_last:"Latest (°C)",x_chart:"Kaiper CanSat temperature"},
+zh:{title:"Kaiper 地面站",sub:"通过无线电接收 CanSat 的温度，实时绘制曲线，并保存为 Excel 文件。",
+ connect:"连接无线电",disconnect:"断开连接",demo:"模拟",demo_stop:"停止模拟",open_sd:"打开 SD 卡中的 CAPTURA.TXT",clear:"全部清除",dl_xlsx:"下载 Excel (.xlsx)",dl_raw:"原始记录 (.txt)",
+ st_idle:"未连接。连接地面无线电即可开始。",st_connected:"已连接。正在等待 CanSat 的数据……",st_unsupported:"此浏览器无法读取串口。请使用 Chrome 或 Edge 打开本页。",st_error:"错误：",st_demo:"模拟进行中（用于测试的虚构数据）。",st_sd:"已从 SD 卡载入数据。",
+ s_last:"最新 (°C)",s_avg:"平均 (°C)",s_min:"最低 (°C)",s_max:"最高 (°C)",s_count:"样本数",
+ opt_window:"移动平均窗口（样本数）",opt_col:"数据帧中的温度列",opt_team:"队伍筛选（字母，留空 = 全部）",opt_view:"查看",view_all:"整个飞行",view_60:"最近 60 秒",
+ leg_temp:"温度",leg_ma:"移动平均",leg_avg:"总平均",ch_empty:"暂无数据",ch_x:"时间 (s)",ch_y:"温度 (°C)",
+ tb_title:"最新样本",tb_time:"时间 (s)",tb_temp:"温度 (°C)",log_title:"无线电消息",log_empty:"暂无消息",
+ tip_title:"开始之前",tip1:"请关闭 Tera Term：同一时间只有一个程序可以使用无线电的端口。",tip2:"地面无线电接在 USB 适配器上，速率 9600 bps（与 Serial.begin 相同）。",tip3:"关闭页面前请先下载 Excel：数据只保存在这个页面里。",tip4:"数据帧以队伍字母开头（例如 KAI;23.45;），页面会自动识别。",
+ sd_note:"SD 卡数据没有时间戳：默认每秒一个样本。",confirm_replace:"当前有来自无线电的数据。要用 SD 卡数据替换吗？",leave_warn:"有尚未下载的数据。",
+ x_sheet:"Data",x_time:"时间 (s)",x_temp:"温度 (°C)",x_ma:"移动平均 (°C)",x_count:"样本数",x_avg:"平均 (°C)",x_min:"最低 (°C)",x_max:"最高 (°C)",x_last:"最新 (°C)",x_chart:"Kaiper CanSat 温度"}
+};
+var LANG = 'ca';
+function T(k){ return (I18N[LANG] && I18N[LANG][k] !== undefined) ? I18N[LANG][k] : I18N.ca[k]; }
+
+/* ---------------- state ---------------- */
+var S = { rows:[], raw:[], log:[], t0:null, port:null, reader:null, loop:null, demo:null, status:'idle', statusExtra:'', source:'radio', dirty:false };
+
+/* ---------------- parsing and stats (pure) ---------------- */
+/* A frame looks like  KAI;23.45;  (team letters first) or, later,  KAI;23.45;22.10;1013.2;...;15/3/27;10:05:07;
+   col = which value after the team letters (1 = first value). Old frames without letters (23.45;) also work. */
+function parseFrame(line, col){
+  var tok = line.split(';').map(function(x){ return x.trim(); });
+  while(tok.length && tok[tok.length - 1] === '') tok.pop();
+  if(!tok.length) return null;
+  var tag = '';
+  if(/^[A-Za-z][A-Za-z0-9]{0,7}$/.test(tok[0])){ tag = tok[0]; tok = tok.slice(1); }
+  else if(line.indexOf(';') < 0) return null;          // plain text message, not a data frame
+  if(!tok.length || col > tok.length) return null;
+  var one = tok[col - 1];
+  if(!/^[+-]?\d+([.,]\d+)?$/.test(one)) return null;
+  return { tag: tag, value: parseFloat(one.replace(',', '.')) };
+}
+function parseLine(line, col){ var f = parseFrame(line, col); return f ? f.value : null; }
+function acceptFrame(f, team){
+  if(!f) return false;
+  if(team && f.tag.toUpperCase() !== team.toUpperCase()) return false;
+  return true;
+}
+function movingAvg(vals, w){
+  var out = [], sum = 0;
+  for(var i = 0; i < vals.length; i++){
+    sum += vals[i];
+    if(i >= w) sum -= vals[i - w];
+    out.push(sum / Math.min(i + 1, w));
+  }
+  return out;
+}
+function stats(rows){
+  if(!rows.length) return null;
+  var v = rows.map(function(r){ return r.v; });
+  var sum = 0, mn = v[0], mx = v[0];
+  for(var i = 0; i < v.length; i++){ sum += v[i]; if(v[i] < mn) mn = v[i]; if(v[i] > mx) mx = v[i]; }
+  return { n:v.length, last:v[v.length - 1], avg:sum / v.length, min:mn, max:mx };
+}
+function niceStep(raw){ var p = Math.pow(10, Math.floor(Math.log10(raw))); var f = raw / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+function fmt(x){ return (Math.round(x * 100) / 100).toFixed(2); }
+
+/* ---------------- chart (inline SVG) ---------------- */
+function chartSVG(rows, win, view){
+  var W = 900, H = 380, L = 58, R = 18, Tp = 16, B = 50;
+  var pw = W - L - R, ph = H - Tp - B;
+  if(!rows.length){
+    return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg"><text x="'+(W/2)+'" y="'+(H/2)+'" fill="#6f8a96" font-size="16" text-anchor="middle" font-family="Inter,sans-serif">'+T('ch_empty')+'</text></svg>';
+  }
+  var ma = movingAvg(rows.map(function(r){ return r.v; }), win);
+  var st = stats(rows);
+  var tmax = rows[rows.length - 1].t;
+  var x0 = 0, x1 = Math.max(tmax, 10);
+  if(view === '60'){ x1 = Math.max(tmax, 10); x0 = Math.max(0, x1 - 60); }
+  var idx = []; for(var i = 0; i < rows.length; i++){ if(rows[i].t >= x0) idx.push(i); }
+  var ymin = Infinity, ymax = -Infinity;
+  idx.forEach(function(i){ ymin = Math.min(ymin, rows[i].v, ma[i]); ymax = Math.max(ymax, rows[i].v, ma[i]); });
+  ymin = Math.min(ymin, st.avg); ymax = Math.max(ymax, st.avg);
+  var span = Math.max(ymax - ymin, 2);
+  var step = niceStep(span / 5);
+  var lo = Math.floor((ymin - span * 0.08) / step) * step;
+  var hi = Math.ceil((ymax + span * 0.08) / step) * step;
+  function X(t){ return L + (t - x0) / (x1 - x0) * pw; }
+  function Y(v){ return Tp + (1 - (v - lo) / (hi - lo)) * ph; }
+  var g = '';
+  for(var yv = lo; yv <= hi + 1e-9; yv += step){
+    var yy = Y(yv).toFixed(1);
+    g += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(143,217,232,0.15)"/>';
+    g += '<text x="'+(L-8)+'" y="'+(parseFloat(yy)+4)+'" fill="#c9edf3" font-size="12" text-anchor="end" font-family="Inter,sans-serif">'+(Math.round(yv*100)/100)+'</text>';
+  }
+  var xstep = niceStep((x1 - x0) / 6);
+  for(var xv = Math.ceil(x0 / xstep) * xstep; xv <= x1 + 1e-9; xv += xstep){
+    var xx = X(xv).toFixed(1);
+    g += '<line x1="'+xx+'" x2="'+xx+'" y1="'+Tp+'" y2="'+(Tp+ph)+'" stroke="rgba(143,217,232,0.08)"/>';
+    g += '<text x="'+xx+'" y="'+(Tp+ph+18)+'" fill="#c9edf3" font-size="12" text-anchor="middle" font-family="Inter,sans-serif">'+(Math.round(xv*10)/10)+'</text>';
+  }
+  g += '<text x="'+(L+pw/2)+'" y="'+(H-8)+'" fill="#8fd9e8" font-size="12" text-anchor="middle" font-family="Inter,sans-serif">'+T('ch_x')+'</text>';
+  g += '<text transform="translate(14 '+(Tp+ph/2)+') rotate(-90)" fill="#8fd9e8" font-size="12" text-anchor="middle" font-family="Inter,sans-serif">'+T('ch_y')+'</text>';
+  var ya = Y(st.avg).toFixed(1);
+  g += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+ya+'" y2="'+ya+'" stroke="#eef8f8" stroke-opacity="0.55" stroke-dasharray="6 5"/>';
+  function line(vals, color, w){
+    var pts = idx.map(function(i){ return X(rows[i].t).toFixed(1) + ',' + Y(vals[i]).toFixed(1); }).join(' ');
+    return '<polyline fill="none" stroke="'+color+'" stroke-width="'+w+'" stroke-linejoin="round" stroke-linecap="round" points="'+pts+'"/>';
+  }
+  g += line(rows.map(function(r){ return r.v; }), '#8fd9e8', 2.4);
+  g += line(ma, '#ff6f4d', 2);
+  var lastI = rows.length - 1;
+  g += '<circle cx="'+X(rows[lastI].t).toFixed(1)+'" cy="'+Y(rows[lastI].v).toFixed(1)+'" r="4.5" fill="#ff6f4d"/>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+g+'</svg>';
+}
+
+/* ---------------- xlsx writer (no libraries) ---------------- */
+var CRC_T = (function(){ var t = [], c; for(var n = 0; n < 256; n++){ c = n; for(var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+function crc32(b){ var c = 0xFFFFFFFF; for(var i = 0; i < b.length; i++) c = CRC_T[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  var enc = new TextEncoder(), parts = [], central = [], offset = 0;
+  var now = new Date();
+  var dtime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+  var ddate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  function u16(n){ return [n & 255, (n >> 8) & 255]; }
+  function u32(n){ return [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >>> 24) & 255]; }
+  files.forEach(function(f){
+    var name = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+    var head = [0x50,0x4b,0x03,0x04].concat(u16(20), u16(0x0800), u16(0), u16(dtime), u16(ddate), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0));
+    parts.push(new Uint8Array(head), name, data);
+    var cen = [0x50,0x4b,0x01,0x02].concat(u16(20), u16(20), u16(0x0800), u16(0), u16(dtime), u16(ddate), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset));
+    central.push(new Uint8Array(cen), name);
+    offset += head.length + name.length + data.length;
+  });
+  var cenSize = 0; central.forEach(function(c){ cenSize += c.length; });
+  var end = [0x50,0x4b,0x05,0x06].concat(u16(0), u16(0), u16(files.length), u16(files.length), u32(cenSize), u32(offset), u16(0));
+  var all = parts.concat(central, [new Uint8Array(end)]);
+  var total = 0; all.forEach(function(p){ total += p.length; });
+  var out = new Uint8Array(total), pos = 0;
+  all.forEach(function(p){ out.set(p, pos); pos += p.length; });
+  return out;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function buildXlsx(rows, win, L){
+  var N = rows.length + 1;
+  var vals = rows.map(function(r){ return r.v; });
+  var ma = movingAvg(vals, win), st = stats(rows);
+  var XM = 'http://schemas.openxmlformats.org/';
+  var head = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  function s(ref, text, style){ return '<c r="'+ref+'" t="inlineStr" s="'+style+'"><is><t>'+esc(text)+'</t></is></c>'; }
+  function n(ref, v, style){ return '<c r="'+ref+'" s="'+style+'"><v>'+v+'</v></c>'; }
+  function f(ref, formula, v, style){ return '<c r="'+ref+'" s="'+style+'"><f>'+formula+'</f><v>'+v+'</v></c>'; }
+  var stat = [
+    [L.count, 'COUNT(B2:B'+N+')', st.n, 4],
+    [L.avg, 'AVERAGE(B2:B'+N+')', st.avg, 1],
+    [L.min, 'MIN(B2:B'+N+')', st.min, 1],
+    [L.max, 'MAX(B2:B'+N+')', st.max, 1],
+    [L.last, 'B'+N, st.last, 1]
+  ];
+  var sd = '';
+  var lastRow = Math.max(N, 5);
+  for(var r = 1; r <= lastRow; r++){
+    var cells = '';
+    if(r === 1){ cells += s('A1', L.time, 2) + s('B1', L.temp, 2) + s('C1', L.ma, 2); }
+    else if(r <= N){
+      var d = r - 2, from = Math.max(2, r - win + 1);
+      cells += n('A'+r, Math.round(rows[d].t * 10) / 10, 3) + n('B'+r, rows[d].v, 1) + f('C'+r, 'AVERAGE(B'+from+':B'+r+')', ma[d], 1);
+    }
+    if(r <= 5){ var sx = stat[r - 1]; cells += s('E'+r, sx[0], 2) + f('F'+r, sx[1], sx[2], sx[3]); }
+    sd += '<row r="'+r+'">' + cells + '</row>';
+  }
+  var sheet = head + '<worksheet xmlns="'+XM+'spreadsheetml/2006/main" xmlns:r="'+XM+'officeDocument/2006/relationships">'
+    + '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'
+    + '<cols><col min="1" max="1" width="12" customWidth="1"/><col min="2" max="3" width="22" customWidth="1"/><col min="4" max="4" width="4" customWidth="1"/><col min="5" max="5" width="16" customWidth="1"/><col min="6" max="6" width="12" customWidth="1"/></cols>'
+    + '<sheetData>' + sd + '</sheetData>'
+    + '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/><drawing r:id="rId1"/></worksheet>';
+
+  var sh = L.sheet;
+  function ser(idx, col, color, width, dash){
+    return '<c:ser><c:idx val="'+idx+'"/><c:order val="'+idx+'"/><c:tx><c:strRef><c:f>'+sh+'!$'+col+'$1</c:f></c:strRef></c:tx>'
+      + '<c:spPr><a:ln w="'+width+'" cap="rnd"><a:solidFill><a:srgbClr val="'+color+'"/></a:solidFill>'+(dash?'<a:prstDash val="dash"/>':'')+'<a:round/></a:ln></c:spPr>'
+      + '<c:marker><c:symbol val="none"/></c:marker>'
+      + '<c:xVal><c:numRef><c:f>'+sh+'!$A$2:$A$'+N+'</c:f></c:numRef></c:xVal>'
+      + '<c:yVal><c:numRef><c:f>'+sh+'!$'+col+'$2:$'+col+'$'+N+'</c:f></c:numRef></c:yVal><c:smooth val="0"/></c:ser>';
+  }
+  function ttl(text, size, bold){ return '<c:title><c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="'+size+'" b="'+bold+'"/></a:pPr><a:r><a:rPr lang="en-US" sz="'+size+'" b="'+bold+'"/><a:t>'+esc(text)+'</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title>'; }
+  var chart = head + '<c:chartSpace xmlns:c="'+XM+'drawingml/2006/chart" xmlns:a="'+XM+'drawingml/2006/main" xmlns:r="'+XM+'officeDocument/2006/relationships">'
+    + '<c:roundedCorners val="0"/><c:chart>' + ttl(L.chart, 1400, 1) + '<c:autoTitleDeleted val="0"/><c:plotArea><c:layout/>'
+    + '<c:scatterChart><c:scatterStyle val="lineMarker"/><c:varyColors val="0"/>' + ser(0, 'B', '1F77B4', 28575, false) + ser(1, 'C', 'FF6F4D', 22225, false)
+    + '<c:axId val="500000001"/><c:axId val="500000002"/></c:scatterChart>'
+    + '<c:valAx><c:axId val="500000001"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="b"/>' + ttl(L.time, 1000, 0) + '<c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="out"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:crossAx val="500000002"/><c:crosses val="autoZero"/><c:crossBetween val="midCat"/></c:valAx>'
+    + '<c:valAx><c:axId val="500000002"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="l"/><c:majorGridlines/>' + ttl(L.temp, 1000, 0) + '<c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="out"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:crossAx val="500000001"/><c:crosses val="autoZero"/><c:crossBetween val="midCat"/></c:valAx>'
+    + '</c:plotArea><c:legend><c:legendPos val="b"/><c:overlay val="0"/></c:legend><c:plotVisOnly val="1"/><c:dispBlanksAs val="gap"/></c:chart></c:chartSpace>';
+
+  var drawing = head + '<xdr:wsDr xmlns:xdr="'+XM+'drawingml/2006/spreadsheetDrawing" xmlns:a="'+XM+'drawingml/2006/main"><xdr:twoCellAnchor>'
+    + '<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>7</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>'
+    + '<xdr:to><xdr:col>14</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>28</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>'
+    + '<xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="2" name="Chart 1"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm>'
+    + '<a:graphic><a:graphicData uri="'+XM+'drawingml/2006/chart"><c:chart xmlns:c="'+XM+'drawingml/2006/chart" xmlns:r="'+XM+'officeDocument/2006/relationships" r:id="rId1"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor></xdr:wsDr>';
+
+  var styles = head + '<styleSheet xmlns="'+XM+'spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="0.0"/></numFmts>'
+    + '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>'
+    + '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>'
+    + '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'
+    + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
+    + '<cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
+    + '<xf numFmtId="2" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>'
+    + '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+    + '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>'
+    + '<xf numFmtId="1" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs>'
+    + '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+
+  var files = [
+    {name:'[Content_Types].xml', data: head + '<Types xmlns="'+XM+'package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
+      + '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
+      + '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
+      + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'
+      + '<Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>'
+      + '<Override PartName="/xl/charts/chart1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/></Types>'},
+    {name:'_rels/.rels', data: head + '<Relationships xmlns="'+XM+'package/2006/relationships"><Relationship Id="rId1" Type="'+XM+'officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {name:'xl/workbook.xml', data: head + '<workbook xmlns="'+XM+'spreadsheetml/2006/main" xmlns:r="'+XM+'officeDocument/2006/relationships"><sheets><sheet name="'+esc(sh)+'" sheetId="1" r:id="rId1"/></sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>'},
+    {name:'xl/_rels/workbook.xml.rels', data: head + '<Relationships xmlns="'+XM+'package/2006/relationships"><Relationship Id="rId1" Type="'+XM+'officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+XM+'officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:'xl/styles.xml', data: styles},
+    {name:'xl/worksheets/sheet1.xml', data: sheet},
+    {name:'xl/worksheets/_rels/sheet1.xml.rels', data: head + '<Relationships xmlns="'+XM+'package/2006/relationships"><Relationship Id="rId1" Type="'+XM+'officeDocument/2006/relationships/drawing" Target="../drawings/drawing1.xml"/></Relationships>'},
+    {name:'xl/drawings/drawing1.xml', data: drawing},
+    {name:'xl/drawings/_rels/drawing1.xml.rels', data: head + '<Relationships xmlns="'+XM+'package/2006/relationships"><Relationship Id="rId1" Type="'+XM+'officeDocument/2006/relationships/chart" Target="../charts/chart1.xml"/></Relationships>'},
+    {name:'xl/charts/chart1.xml', data: chart}
+  ];
+  return zipStore(files);
+}
+
+/* ---------------- UI ---------------- */
+function $(id){ return document.getElementById(id); }
+function winVal(){ var v = parseInt($('oWin').value, 10); return (isNaN(v) || v < 2) ? 10 : Math.min(v, 100); }
+function teamVal(){ return ($('oTeam').value || '').trim(); }
+function colVal(){ var v = parseInt($('oCol').value, 10); return (isNaN(v) || v < 1) ? 1 : v; }
+
+function setStatus(kind, extra){
+  S.status = kind; S.statusExtra = extra || '';
+  var key = {idle:'st_idle', live:'st_connected', demo:'st_demo', sd:'st_sd', unsupported:'st_unsupported', error:'st_error'}[kind];
+  $('statusTxt').textContent = T(key) + (kind === 'error' ? S.statusExtra : '');
+  $('dot').className = 'dot' + ((kind === 'live' || kind === 'demo') ? ' live' : (kind === 'error' || kind === 'unsupported') ? ' err' : '');
+}
+
+function render(){
+  var st = stats(S.rows);
+  $('sLast').textContent = st ? fmt(st.last) : '-';
+  $('sAvg').textContent = st ? fmt(st.avg) : '-';
+  $('sMin').textContent = st ? fmt(st.min) : '-';
+  $('sMax').textContent = st ? fmt(st.max) : '-';
+  $('sCount').textContent = st ? st.n : 0;
+  $('chart').innerHTML = chartSVG(S.rows, winVal(), $('oView').value);
+  var tb = '', from = Math.max(0, S.rows.length - 60);
+  for(var i = S.rows.length - 1; i >= from; i--){ tb += '<tr><td>' + (Math.round(S.rows[i].t * 10) / 10) + '</td><td>' + fmt(S.rows[i].v) + '</td></tr>'; }
+  $('tbody').innerHTML = tb;
+  var lg = '';
+  for(var j = S.log.length - 1; j >= Math.max(0, S.log.length - 40); j--){ lg += '<div class="logline"></div>'; }
+  var logEl = $('log');
+  if(!S.log.length){ logEl.innerHTML = '<div class="empty">' + T('log_empty') + '</div>'; }
+  else { logEl.innerHTML = lg; var kids = logEl.children, k = 0; for(var m = S.log.length - 1; m >= Math.max(0, S.log.length - 40); m--){ kids[k++].textContent = S.log[m]; } }
+  var has = S.rows.length > 0;
+  $('bXlsx').disabled = !has; $('bRaw').disabled = !has && !S.raw.length; $('bClear').disabled = !has && !S.raw.length;
+}
+
+function addSample(v, t){ S.rows.push({t:t, v:v}); S.dirty = true; }
+function handleLine(line){
+  line = line.trim();
+  if(!line) return;
+  S.raw.push(line);
+  var f = parseFrame(line, colVal());
+  if(!acceptFrame(f, teamVal())){ S.log.push(line); }
+  else { addSample(f.value, (Date.now() - S.t0) / 1000); }
+  render();
+}
+
+function applyLang(l){
+  LANG = I18N[l] ? l : 'ca';
+  document.documentElement.lang = LANG;
+  document.title = T('title');
+  var els = document.querySelectorAll('[data-i]');
+  for(var i = 0; i < els.length; i++){ els[i].textContent = T(els[i].getAttribute('data-i')); }
+  $('bConnect').textContent = S.port ? T('disconnect') : T('connect');
+  $('bDemo').textContent = S.demo ? T('demo_stop') : T('demo');
+  var bs = document.querySelectorAll('#langs button');
+  for(var j = 0; j < bs.length; j++){ bs[j].setAttribute('aria-pressed', bs[j].getAttribute('data-l') === LANG ? 'true' : 'false'); }
+  $('sdNote').textContent = T('sd_note');
+  setStatus(S.status, S.statusExtra);
+  try{ localStorage.setItem('kaiperEstacioLang', LANG); }catch(e){}
+  render();
+}
+
+/* serial */
+async function readLoop(port){
+  var decoder = new TextDecoder(), buf = '';
+  while(port.readable && S.port === port){
+    var reader = port.readable.getReader(); S.reader = reader;
+    try{
+      while(true){
+        var r = await reader.read();
+        if(r.done) break;
+        buf += decoder.decode(r.value, {stream:true});
+        var parts = buf.split('\n'); buf = parts.pop();
+        for(var i = 0; i < parts.length; i++) handleLine(parts[i]);
+      }
+    }catch(e){ if(S.port === port) setStatus('error', e.message); }
+    finally{ reader.releaseLock(); }
+  }
+}
+async function connect(){
+  if(!('serial' in navigator)){ setStatus('unsupported'); return; }
+  try{
+    var port = await navigator.serial.requestPort();
+    await port.open({baudRate:9600, dataBits:8, stopBits:1, parity:'none', flowControl:'none'});
+    stopDemo();
+    S.port = port; S.source = 'radio'; if(S.t0 === null) S.t0 = Date.now();
+    $('sdNote').hidden = true;
+    setStatus('live'); $('bConnect').textContent = T('disconnect');
+    S.loop = readLoop(port);
+  }catch(e){ if(e && e.name !== 'NotFoundError') setStatus('error', e.message); }
+}
+async function disconnect(){
+  var p = S.port; S.port = null;
+  try{ if(S.reader) await S.reader.cancel(); }catch(e){}
+  try{ if(S.loop) await S.loop; }catch(e){}
+  try{ if(p) await p.close(); }catch(e){}
+  S.reader = null; S.loop = null;
+  $('bConnect').textContent = T('connect'); setStatus('idle');
+}
+
+/* demo */
+function startDemo(){
+  if(S.port) return;
+  if(S.t0 === null) S.t0 = Date.now();
+  S.demo = setInterval(function(){
+    var t = (Date.now() - S.t0) / 1000;
+    var v = 24 + 3.5 * Math.sin(t / 9) - 0.04 * t + (Math.random() - 0.5) * 0.6;
+    var line = v.toFixed(2) + ';';
+    handleLine(line);
+  }, 1000);
+  $('bDemo').textContent = T('demo_stop'); setStatus('demo');
+}
+function stopDemo(){ if(S.demo){ clearInterval(S.demo); S.demo = null; $('bDemo').textContent = T('demo'); if(S.status === 'demo') setStatus('idle'); } }
+
+/* SD file */
+function loadSD(text){
+  stopDemo();
+  S.rows = []; S.raw = []; S.log = []; S.t0 = null; S.source = 'sd';
+  var lines = text.split(/\r?\n/), c = colVal(), t = 0;
+  for(var i = 0; i < lines.length; i++){
+    var ln = lines[i].trim(); if(!ln) continue;
+    S.raw.push(ln);
+    var f = parseFrame(ln, c);
+    if(!acceptFrame(f, teamVal())) S.log.push(ln); else { addSample(f.value, t); t += 1; }
+  }
+  $('sdNote').hidden = false; setStatus('sd'); render();
+}
+
+/* downloads */
+function download(bytes, name, mime){
+  var blob = new Blob([bytes], {type:mime}), a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function stamp(){ var d = new Date(), p = function(n){ return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes()); }
+function labels(){ return {sheet:T('x_sheet'), time:T('x_time'), temp:T('x_temp'), ma:T('x_ma'), count:T('x_count'), avg:T('x_avg'), min:T('x_min'), max:T('x_max'), last:T('x_last'), chart:T('x_chart')}; }
+
+/* events */
+$('bConnect').addEventListener('click', function(){ if(S.port) disconnect(); else connect(); });
+$('bDemo').addEventListener('click', function(){ if(S.demo) stopDemo(); else startDemo(); });
+$('bSD').addEventListener('click', function(){ $('fSD').click(); });
+$('fSD').addEventListener('change', function(e){
+  var f = e.target.files[0]; if(!f) return;
+  if(S.rows.length && S.source !== 'sd' && !confirm(T('confirm_replace'))){ e.target.value = ''; return; }
+  var rd = new FileReader(); rd.onload = function(){ loadSD(String(rd.result)); }; rd.readAsText(f); e.target.value = '';
+});
+$('bXlsx').addEventListener('click', function(){
+  download(buildXlsx(S.rows, winVal(), labels()), 'kaiper_temperatura_' + stamp() + '.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  S.dirty = false;
+});
+$('bRaw').addEventListener('click', function(){ download(S.raw.join('\r\n') + '\r\n', 'kaiper_registre_' + stamp() + '.txt', 'text/plain'); S.dirty = false; });
+$('bClear').addEventListener('click', function(){ S.rows = []; S.raw = []; S.log = []; S.t0 = S.port || S.demo ? Date.now() : null; S.dirty = false; render(); });
+['oWin','oCol','oTeam','oView'].forEach(function(id){ $(id).addEventListener('input', render); });
+document.querySelectorAll('#langs button').forEach(function(b){ b.addEventListener('click', function(){ applyLang(b.getAttribute('data-l')); }); });
+window.addEventListener('beforeunload', function(e){ if(S.dirty && S.rows.length){ e.preventDefault(); e.returnValue = T('leave_warn'); } });
+
+var savedLang = null; try{ savedLang = localStorage.getItem('kaiperEstacioLang'); }catch(e){}
+var urlLang = null; try{ urlLang = new URLSearchParams(location.search).get('lang'); }catch(e){}
+applyLang(urlLang && I18N[urlLang] ? urlLang : (savedLang || 'ca'));
+window.addEventListener('message', function(e){ var d = e.data; if(d && d.kaiperLang && I18N[d.kaiperLang]) applyLang(d.kaiperLang); });
+if(window.self !== window.top) document.body.classList.add('embedded');
+if(!('serial' in navigator)) setStatus('unsupported');
+</script>
+</body>
+</html>
