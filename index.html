@@ -166,6 +166,15 @@
   .vwrap{ margin-top:1.1rem; max-width:860px; }
   .vwrap video{ width:100%; max-height:72vh; border-radius:12px; border:1px solid var(--line); background:#000; display:block; }
 
+  /* ---------- kaiper core (entry of Work in progress) ---------- */
+  .corefigs{ margin-top:1.4rem; display:grid; grid-template-columns:1.1fr 0.6fr 1.15fr; gap:1.4rem; align-items:end; }
+  .corefig{ text-align:center; }
+  .corefig .imgbox{ height:340px; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:14px; padding:1rem; background:rgba(13,27,46,0.6); }
+  .corefig img{ max-width:100%; max-height:100%; object-fit:contain; cursor:zoom-in; }
+  .corefig figcaption{ margin-top:0.7rem; font-size:0.88rem; color:var(--ice-soft); }
+  .corepost .steps{ margin-top:2rem; }
+  @media (max-width:900px){ .corefigs{ grid-template-columns:1fr; } .corefig .imgbox{ height:300px; } }
+
   /* ---------- footer ---------- */
   footer{ border-top:1px solid var(--line); padding:1.4rem 5vw calc(1.4rem + env(safe-area-inset-bottom, 0px)); display:flex; flex-wrap:wrap; gap:1rem; justify-content:space-between; align-items:center; }
   footer .small{ color:#6f8a96; font-size:0.82rem; }
@@ -276,6 +285,20 @@
   <div class="page">
     <h2 data-i18n="wip_title">Work in progress</h2>
     <p class="lead" data-i18n="wip_lead">Here is how Kaiper is coming together: our first 3D-printed can and the sessions with our mentor, who works for ESA.</p>
+    <div class="post corepost">
+      <h3 data-i18n="core_title">Kaiper Core</h3>
+      <p class="gnote" data-i18n="core_lead">Our new can, designed in three parts: shell, core and sled.</p>
+      <div class="corefigs">
+        <figure class="corefig"><div class="imgbox"><img data-src="images/core/montado.png" data-alt-i18n="core_v1" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v1">Assembled</figcaption></figure>
+        <figure class="corefig"><div class="imgbox"><img data-src="images/core/despiece.png" data-alt-i18n="core_v2" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v2">Exploded view: core, sled and shell</figcaption></figure>
+        <figure class="corefig"><div class="imgbox"><img data-src="images/core/corte.png" data-alt-i18n="core_v3" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v3">Cut-away: column, panel and sled</figcaption></figure>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="num">01</div><h3 data-i18n="core_p1_t">Shell</h3><p data-i18n="core_p1_p">The outer skin of the can. It has a faceted diamond pattern, a band of horizontal vents and a tapered base.</p></div>
+        <div class="step"><div class="num">02</div><h3 data-i18n="core_p2_t">Core</h3><p data-i18n="core_p2_p">The blue lid with its openings and a perforated panel that hangs from it, full of holes and slots.</p></div>
+        <div class="step"><div class="num">03</div><h3 data-i18n="core_p3_t">Sled</h3><p data-i18n="core_p3_p">The orange tray at the base, with compartments. The panel stands on it, inside the shell.</p></div>
+      </div>
+    </div>
     <div id="posts"></div>
   </div>
 </section>
@@ -434,6 +457,17 @@ var I18N = {
   "wip_logo_title": "Creating the logo",
   "wip_logo_p": "A short video of how we made our logo.",
   "wip_video_empty": "Video coming soon.",
+  "core_title": "Kaiper Core",
+  "core_lead": "Our new can, designed in three parts: shell, core and sled.",
+  "core_v1": "Assembled",
+  "core_v2": "Exploded view: core, sled and shell",
+  "core_v3": "Cut-away: column, panel and sled",
+  "core_p1_t": "Shell",
+  "core_p1_p": "The outer skin of the can. It has a faceted diamond pattern, a band of horizontal vents and a tapered base.",
+  "core_p2_t": "Core",
+  "core_p2_p": "The blue lid with its openings and a perforated panel that hangs from it, full of holes and slots.",
+  "core_p3_t": "Sled",
+  "core_p3_p": "The orange tray at the base, with compartments. The panel stands on it, inside the shell.",
   "contact_block": "Find us",
   "card_cansat_d": "How a satellite the size of a soda can works.",
   "card_mission_d": "Our mission: mapping an invisible ocean.",
@@ -509,6 +543,17 @@ var I18N = {
   "wip_logo_title": "Creant el logo",
   "wip_logo_p": "Un vídeo curt de com vam fer el nostre logo.",
   "wip_video_empty": "El vídeo arribarà aviat.",
+  "core_title": "Kaiper Core",
+  "core_lead": "La nostra nova llauna, dissenyada en tres peces: corteça, nucli i trineu.",
+  "core_v1": "Muntada",
+  "core_v2": "Desplegada: nucli, trineu i corteça",
+  "core_v3": "Tall: columna, panell i trineu",
+  "core_p1_t": "Corteça",
+  "core_p1_p": "La pell exterior de la llauna. Té un patró facetat de rombes, una banda de ventilacions horitzontals i una base cònica.",
+  "core_p2_t": "Nucli",
+  "core_p2_p": "La tapa blava amb les seves obertures i un panell perforat que en penja, ple de forats i ranures.",
+  "core_p3_t": "Trineu",
+  "core_p3_p": "La safata taronja de la base, amb compartiments. El panell s’hi recolza, dins de la corteça.",
   "contact_block": "On trobar-nos",
   "card_cansat_d": "Com funciona un satèl·lit de la mida d’una llauna.",
   "card_mission_d": "La nostra missió: cartografiar un oceà invisible.",
@@ -584,6 +629,17 @@ var I18N = {
   "wip_logo_title": "Creando el logo",
   "wip_logo_p": "Un vídeo corto de cómo hicimos nuestro logo.",
   "wip_video_empty": "El vídeo llegará pronto.",
+  "core_title": "Kaiper Core",
+  "core_lead": "Nuestra nueva lata, diseñada en tres piezas: corteza, núcleo y trineo.",
+  "core_v1": "Montado",
+  "core_v2": "Despiece: núcleo, trineo y corteza",
+  "core_v3": "Corte: columna, panel y trineo",
+  "core_p1_t": "Corteza",
+  "core_p1_p": "La piel exterior de la lata. Tiene un patrón facetado de rombos, una banda de ventilaciones horizontales y una base cónica.",
+  "core_p2_t": "Núcleo",
+  "core_p2_p": "La tapa azul con sus aberturas y un panel perforado que cuelga de ella, lleno de agujeros y ranuras.",
+  "core_p3_t": "Trineo",
+  "core_p3_p": "La bandeja naranja de la base, con compartimentos. El panel se apoya en ella, dentro de la corteza.",
   "contact_block": "Dónde encontrarnos",
   "card_cansat_d": "Cómo funciona un satélite del tamaño de una lata.",
   "card_mission_d": "Nuestra misión: cartografiar un océano invisible.",
@@ -659,6 +715,17 @@ var I18N = {
   "wip_logo_title": "创作标志",
   "wip_logo_p": "一段简短的视频，展示我们是如何制作标志的。",
   "wip_video_empty": "视频即将上传。",
+  "core_title": "Kaiper Core",
+  "core_lead": "我们的新罐体，由三个部分组成：外壳、核心和托架。",
+  "core_v1": "组装好",
+  "core_v2": "分解图：核心、托架和外壳",
+  "core_v3": "剖面图：立柱、面板和托架",
+  "core_p1_t": "外壳",
+  "core_p1_p": "罐体的外层。表面是棱形切面图案，中部有一圈水平通风缝，底部呈锥形。",
+  "core_p2_t": "核心",
+  "core_p2_p": "带开孔的蓝色顶盖，以及从顶盖垂下、布满孔和槽的多孔面板。",
+  "core_p3_t": "托架",
+  "core_p3_p": "底部的橙色托盘，带有分隔槽。面板立在它上面，位于外壳之内。",
   "contact_block": "找到我们",
   "card_cansat_d": "汽水罐大小的卫星是如何工作的。",
   "card_mission_d": "我们的任务：绘制一片看不见的海洋。",
@@ -785,6 +852,8 @@ function applyLang(l){
     if(n) s = s.replace('{n}', n);
     el.textContent = s;
   }
+  var alts = document.querySelectorAll('[data-alt-i18n]');
+  for(var a = 0; a < alts.length; a++){ alts[a].alt = t(alts[a].getAttribute('data-alt-i18n')); }
   document.getElementById('langCur').textContent = LABELS[l];
   document.getElementById('langBtn').setAttribute('aria-label', t('lang_aria'));
   var items = document.querySelectorAll('#langMenu button');
@@ -930,6 +999,10 @@ var lb = document.getElementById('lightbox');
 function openLightbox(src, alt){ lb.querySelector('img').src = src; lb.querySelector('img').alt = alt; lb.hidden = false; }
 function closeLightbox(){ lb.hidden = true; }
 lb.addEventListener('click', closeLightbox);
+document.addEventListener('click', function(e){
+  var im = e.target.closest ? e.target.closest('.corefig img') : null;
+  if(im) openLightbox(im.src, im.alt);
+});
 
 /* ---------- images (logo, team photos, mission banner) ---------- */
 function initAssets(){
