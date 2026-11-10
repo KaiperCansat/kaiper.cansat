@@ -449,6 +449,14 @@
     display:grid; place-items:center; aspect-ratio:3/2; padding:.6rem; border:1px dashed var(--line-2); border-radius:var(--r-sm);
     text-align:center; color:var(--dim); font-size:.82rem; line-height:1.3;
   }
+  .sponsor-logo{
+    display:grid; place-items:center; aspect-ratio:3/2; padding:.8rem; overflow:hidden;
+    border-radius:var(--r-sm); background:var(--foam); color:var(--ink);
+    font-weight:650; font-size:.85rem; line-height:1.25; text-align:center; text-decoration:none;
+  }
+  .sponsor-logo img{ display:block; max-width:100%; max-height:100%; object-fit:contain; }
+  a.sponsor-logo{ transition:box-shadow .2s ease; }
+  a.sponsor-logo:hover{ box-shadow:0 0 0 2px var(--ice); }
 
   /* ---------- footer ---------- */
   footer{
@@ -826,11 +834,7 @@
       <div class="sponsor-col">
         <h3 class="col-title" data-i18n="sp_title">Sponsors</h3>
         <p class="lead" data-i18n="sp_lead">Companies supporting team Kaiper.</p>
-        <div class="slots">
-          <div class="sponsor-slot" data-i18n="sp_slot" data-n="1">Sponsor slot 1</div>
-          <div class="sponsor-slot" data-i18n="sp_slot" data-n="2">Sponsor slot 2</div>
-          <div class="sponsor-slot" data-i18n="sp_slot" data-n="3">Sponsor slot 3</div>
-        </div>
+        <div class="slots" id="slots"></div>
         <a class="btn" href="mailto:kaiper.cansat@gmail.com" data-i18n="sp_cta">Become a sponsor</a>
       </div>
     </div>
@@ -1322,6 +1326,13 @@ var POSTS = [
  }
 ];
 
+/* Sponsors: put each logo in images/sponsors/ and add a line here.
+   "url" is optional: if set, the logo becomes a link. */
+var SPONSORS = [
+ { name: 'Patrocinador 1', logo: 'images/sponsors/patrocinador1.png', url: '' },
+ { name: 'Patrocinador 2', logo: 'images/sponsors/patrocinador2.png', url: '' }
+];
+
 /* Where the images live. On GitHub Pages (or opened as a local file) the relative paths work.
    Inside Google Sites the page runs in an isolated frame, so it needs the full address of the repository. */
 var GH_BASE = 'https://kaipercansat.github.io/kaiper.cansat/';
@@ -1531,6 +1542,7 @@ function applyLang(l){
     items[k].setAttribute('aria-current', items[k].getAttribute('data-lang') === l ? 'true' : 'false');
   }
   renderPosts();
+  renderSponsors();
   syncApp();
   Descent.refresh();
   try{ localStorage.setItem('kaiperLang', l); }catch(e){}
@@ -1742,6 +1754,30 @@ function updateHomeCard(){
     var c = document.getElementById('cardProgress');
     c.style.setProperty('--bg', 'url("' + first + '")');
     c.classList.add('has-photo');
+  }
+}
+
+/* ---------- sponsors ---------- */
+function renderSponsors(){
+  var host = document.getElementById('slots');
+  if(!host) return;
+  host.innerHTML = '';
+  SPONSORS.forEach(function(s){
+    var el = document.createElement(s.url ? 'a' : 'div');
+    el.className = 'sponsor-logo';
+    if(s.url){ el.href = s.url; el.target = '_blank'; el.rel = 'noopener'; }
+    el.title = s.name;
+    var im = document.createElement('img');
+    im.src = ASSET_BASE + s.logo; im.alt = s.name; im.loading = 'lazy';
+    im.onerror = function(){ im.remove(); el.textContent = s.name; };
+    el.appendChild(im);
+    host.appendChild(el);
+  });
+  for(var n = SPONSORS.length + 1; n <= 3; n++){
+    var d = document.createElement('div');
+    d.className = 'sponsor-slot';
+    d.textContent = t('sp_slot').replace('{n}', n);
+    host.appendChild(d);
   }
 }
 
