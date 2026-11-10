@@ -4,206 +4,543 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kaiper | CanSat Team</title>
+<meta name="description" content="Kaiper is a high school CanSat team from Escola Vedruna Tona building a mini-satellite that asks, during its descent, whether an environment could support liquid water.">
+<meta name="theme-color" content="#0b1630">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kaiper | CanSat Team">
+<meta property="og:description" content="A high school CanSat team mapping an invisible ocean in the atmosphere.">
+<meta property="og:url" content="https://kaipercansat.github.io/kaiper.cansat/">
+<meta property="og:image" content="https://kaipercansat.github.io/kaiper.cansat/images/isotipo.png">
+<link rel="icon" href="images/isotipo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
 <style>
+  /* =========================================================
+     KAIPER — the atmosphere drawn like an ocean chart.
+     Ice = the environment. Coral = the CanSat and its data.
+     ========================================================= */
   :root{
-    --navy:#0a1220; --deep:#0d1b2e; --teal:#123647;
-    --ice:#8fd9e8; --ice-soft:#c9edf3; --foam:#eef8f8; --coral:#ff6f4d;
-    --line: rgba(143,217,232,0.18);
-    box-sizing:border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --ink:#0b1630;            /* high sky, page background */
+    --d1:#0f1e3b;             /* panels */
+    --d2:#132a4c;
+    --d3:#18385d;
+    --d4:#1e4869;             /* low, dense air */
+    --ice:#8fd9e8;            /* isolines, environment */
+    --foam:#eef8f8;           /* text */
+    --mist:#b3cfd8;           /* secondary text */
+    --dim:#86a5b3;            /* small print */
+    --coral:#ff6f4d;          /* the CanSat, its data, actions */
+    --on-coral:#1f0a04;
+    --lid:#3f8fd8;            /* blue lid of Kaiper Core */
+    --line:rgba(143,217,232,0.15);
+    --line-2:rgba(143,217,232,0.3);
+    --r-lg:24px; --r-md:16px; --r-sm:10px;
+    --g:max(16px, 5vw);
+    --maxw:1160px;
+    --edge:max(var(--g), calc((100% - var(--maxw)) / 2 + var(--g)));   /* lines the header and footer up with the content column */
+    --font:'Bricolage Grotesque','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',system-ui,-apple-system,'Segoe UI',sans-serif;
+    color-scheme:dark;
   }
-  *{ box-sizing:inherit; margin:0; padding:0; }
+  *, *::before, *::after{ box-sizing:border-box; margin:0; padding:0; }
   [hidden]{ display:none !important; }
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   body{
-    background: var(--navy); color: var(--foam);
-    font-family:'Inter','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
-    line-height:1.6; overflow-x:hidden; min-height:100vh; display:flex; flex-direction:column;
+    min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
+    background:var(--ink); color:var(--foam);
+    font-family:var(--font); font-size:1rem; line-height:1.6; font-optical-sizing:auto;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
-  h1,h2,h3,.wordmark{ font-family:'Space Grotesk','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; }
   main{ flex:1; }
+  main:focus{ outline:none; }
+  img{ max-width:100%; }
+  h1, h2, h3, h4{ line-height:1.1; letter-spacing:-0.015em; font-weight:700; }
+  :lang(zh) h1, :lang(zh) h2, :lang(zh) h3, :lang(zh) h4, :lang(zh) .q{ letter-spacing:0; }
+  :focus-visible{ outline:2px solid var(--ice); outline-offset:3px; border-radius:6px; }
+  [tabindex="-1"]:focus{ outline:none; }
+  .num, .readout dd, .alt-labels, .dim-big{ font-variant-numeric:tabular-nums; }
+
+  .skip{
+    position:absolute; left:16px; top:-80px; z-index:100;
+    background:var(--foam); color:var(--ink); padding:.6rem 1rem; border-radius:var(--r-sm);
+    font-weight:600; text-decoration:none;
+  }
+  .skip:focus{ top:12px; }
 
   /* ---------- header ---------- */
-  header{
-    position:sticky; top:0; z-index:20;
-    padding:0.9rem 5vw; padding-top:calc(0.9rem + env(safe-area-inset-top, 0px));
-    display:flex; align-items:center; gap:1.4rem;
-    background: rgba(10,18,32,0.9); backdrop-filter: blur(8px);
+  .top{
+    position:sticky; top:0; z-index:30;
+    display:flex; align-items:center; gap:1.25rem;
+    padding:.7rem var(--edge); padding-top:calc(.7rem + env(safe-area-inset-top, 0px));
+    background:rgba(11,22,48,0.84);
+    -webkit-backdrop-filter:saturate(140%) blur(10px); backdrop-filter:saturate(140%) blur(10px);
     border-bottom:1px solid var(--line);
   }
-  .wordmark{ font-size:1.15rem; font-weight:700; letter-spacing:0.02em; color:var(--foam); text-decoration:none; display:flex; align-items:center; gap:0.55rem; }
-  .wordmark .iso{ width:26px; height:26px; display:block; object-fit:contain; filter: drop-shadow(0 0 6px rgba(255,111,77,0.45)); }
-  nav{ display:flex; gap:0.3rem; margin-left:auto; }
-  nav a{ color: var(--ice-soft); text-decoration:none; font-size:0.9rem; white-space:nowrap; padding:0.45rem 0.8rem; border-radius:8px; border-bottom:2px solid transparent; }
-  nav a:hover{ color: var(--foam); background: rgba(143,217,232,0.08); }
-  nav a[aria-current="page"]{ color: var(--foam); border-bottom-color: var(--coral); border-radius:8px 8px 0 0; }
+  .brand{
+    display:flex; align-items:center; gap:.55rem; flex:none;
+    color:var(--foam); text-decoration:none;
+    font-weight:800; font-stretch:85%; font-size:1.2rem; letter-spacing:.05em;
+  }
+  .brand .iso{ width:28px; height:28px; display:block; object-fit:contain; }
+  nav.main{ position:relative; display:flex; gap:.15rem; margin-left:auto; }
+  nav.main a{
+    position:relative; padding:.5rem .8rem; border-radius:999px;
+    color:var(--mist); text-decoration:none; font-size:.93rem; font-weight:500; white-space:nowrap;
+    transition:color .15s ease, background-color .15s ease;
+  }
+  nav.main a:hover{ color:var(--foam); background:rgba(143,217,232,0.08); }
+  nav.main a[aria-current="page"]{ color:var(--foam); background:rgba(143,217,232,0.13); }
+  nav.main a[aria-current="page"]::after{
+    content:''; position:absolute; left:50%; bottom:3px; width:4px; height:4px; margin-left:-2px;
+    border-radius:50%; background:var(--coral);
+  }
 
-  .lang{ position:relative; }
-  .lang-btn{ display:flex; align-items:center; gap:0.45rem; background:transparent; color:var(--foam); border:1px solid var(--line); border-radius:999px; padding:0.4rem 0.8rem; font:500 0.85rem 'Inter','PingFang SC','Microsoft YaHei',sans-serif; cursor:pointer; }
-  .lang-btn:hover{ border-color: var(--ice); }
-  .lang-btn svg{ width:16px; height:16px; stroke: var(--ice); fill:none; stroke-width:1.6; }
-  .lang-menu{ position:absolute; right:0; top:calc(100% + 8px); min-width:150px; list-style:none; background: var(--deep); border:1px solid var(--line); border-radius:10px; padding:0.35rem; box-shadow:0 12px 30px rgba(0,0,0,0.45); }
-  .lang-menu button{ width:100%; text-align:left; background:transparent; border:0; color: var(--ice-soft); padding:0.55rem 0.8rem; border-radius:7px; cursor:pointer; font:400 0.9rem 'Inter','PingFang SC','Microsoft YaHei',sans-serif; }
-  .lang-menu button:hover{ background: rgba(143,217,232,0.1); color: var(--foam); }
-  .lang-menu button[aria-current="true"]{ color: var(--coral); }
+  .lang{ position:relative; flex:none; }
+  .lang-btn{
+    display:flex; align-items:center; gap:.45rem; min-height:38px;
+    background:transparent; color:var(--foam); border:1px solid var(--line-2); border-radius:999px;
+    padding:.35rem .8rem; font:500 .85rem var(--font); cursor:pointer;
+  }
+  .lang-btn:hover{ border-color:var(--ice); }
+  .lang-btn svg{ width:16px; height:16px; stroke:var(--ice); fill:none; stroke-width:1.6; }
+  .lang-menu{
+    position:absolute; right:0; top:calc(100% + 8px); min-width:160px; list-style:none; z-index:40;
+    background:var(--d1); border:1px solid var(--line-2); border-radius:var(--r-sm); padding:.35rem;
+    box-shadow:0 18px 40px rgba(3,8,20,0.55);
+  }
+  .lang-menu button{
+    width:100%; text-align:left; background:transparent; border:0; color:var(--mist);
+    padding:.6rem .8rem; border-radius:7px; cursor:pointer; font:400 .92rem var(--font);
+  }
+  .lang-menu button:hover{ background:rgba(143,217,232,0.1); color:var(--foam); }
+  .lang-menu button[aria-current="true"]{ color:var(--coral); font-weight:600; }
 
   /* ---------- shared ---------- */
-  .page{ max-width:1100px; margin:0 auto; padding:2.6rem 5vw 3rem; }
-  .page > h2{ font-size:clamp(1.8rem,4vw,2.5rem); font-weight:600; }
-  .lead{ color: var(--ice-soft); max-width:680px; margin-top:0.7rem; font-size:1.02rem; }
-  .view{ animation: fade .35s ease; }
-  @keyframes fade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  .view{ animation:viewIn .35s ease both; }
+  @keyframes viewIn{ from{ opacity:0; } to{ opacity:1; } }
+  .page{ max-width:var(--maxw); margin:0 auto; padding:clamp(2.4rem,6vw,4.2rem) var(--g) clamp(3.5rem,7vw,5.5rem); }
+  .page-head{ max-width:780px; }
+  .page-head h2{ font-size:clamp(2.3rem,6.5vw,3.8rem); font-weight:750; font-stretch:84%; line-height:1.02; }
+  .lead{ margin-top:.9rem; max-width:60ch; color:var(--mist); font-size:clamp(1.03rem,1.6vw,1.17rem); }
 
-  /* ---------- home ---------- */
-  .hero{ position:relative; padding:3.6rem 5vw 2.2rem; max-width:1100px; margin:0 auto; text-align:center; overflow:hidden; }
-  .hero-ring{ position:absolute; top:-210px; left:50%; transform:translateX(-50%); width:560px; height:560px; max-width:150vw; border-radius:50%; border:1px solid var(--line); pointer-events:none; }
-  .hero-ring.r2{ width:740px; height:740px; top:-300px; opacity:0.6; }
-  .hero h1{ position:relative; font-size:clamp(2.8rem,8vw,5rem); font-weight:700; letter-spacing:-0.02em; line-height:1.05; background:linear-gradient(180deg,var(--foam) 20%,var(--ice) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .hero p.tag{ position:relative; max-width:560px; margin:1rem auto 0; color:var(--ice-soft); font-size:1.02rem; }
-  .hero .meaning{ position:relative; margin-top:1.3rem; display:inline-block; padding:0.55rem 1.1rem; border:1px solid var(--line); border-radius:999px; font-size:0.85rem; color:var(--ice-soft); }
-
-  .cards{ max-width:1100px; margin:0 auto; padding:0.6rem 5vw 3rem; display:grid; grid-template-columns:repeat(6,1fr); gap:1rem; }
-  .card{
-    position:relative; display:flex; flex-direction:column; justify-content:flex-end;
-    min-height:158px; padding:1.3rem 1.4rem; text-decoration:none; color:var(--foam);
-    background: var(--deep); border:1px solid var(--line); border-radius:14px; overflow:hidden;
-    transition: border-color .2s ease, transform .2s ease;
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; min-height:46px;
+    padding:.7rem 1.3rem; border-radius:999px; border:1px solid var(--coral);
+    background:var(--coral); color:var(--on-coral); font-weight:650; font-size:.98rem;
+    text-decoration:none; white-space:nowrap; transition:filter .15s ease, border-color .15s ease;
   }
-  .card:hover{ border-color: var(--coral); transform:translateY(-3px); }
-  .card h2{ font-size:1.25rem; font-weight:600; padding-right:2rem; }
-  .card p{ color:var(--ice-soft); font-size:0.9rem; margin-top:0.25rem; }
-  .card .arrow{ position:absolute; top:1.1rem; right:1.3rem; color:var(--coral); font-size:1.3rem; transition: transform .2s ease; }
-  .card:hover .arrow{ transform:translateX(4px); }
-  .card{ grid-column:span 2; }
-  .card.big{ grid-column:span 4; min-height:180px; }
-  .card.wide{ grid-column:span 6; min-height:110px; }
-  .card.photo{ background-image: linear-gradient(180deg, rgba(10,18,32,0.25), rgba(10,18,32,0.92)), var(--bg, none); background-size:cover; background-position:center; }
+  .btn:hover{ filter:brightness(1.08); }
+  .btn.ghost{ background:transparent; color:var(--foam); border-color:var(--line-2); }
+  .btn.ghost:hover{ border-color:var(--ice); filter:none; }
 
-  /* ---------- cansat ---------- */
-  .steps{ margin-top:2.4rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:2rem; }
-  .step{ border-top:1px solid var(--line); padding-top:1.1rem; }
-  .step .num{ font-family:'Space Grotesk',sans-serif; color:var(--coral); font-size:0.85rem; font-weight:600; letter-spacing:0.08em; }
-  .step h3{ font-size:1.2rem; font-weight:600; margin:0.35rem 0 0.5rem; }
-  .step p{ color:var(--ice-soft); font-size:0.95rem; }
-  .more{ display:inline-block; margin-top:2rem; color:var(--ice); font-size:0.92rem; text-decoration:none; border-bottom:1px solid var(--line); }
-  .more:hover{ border-color:var(--ice); }
+  /* =========================================================
+     HOME — the sky chart
+     ========================================================= */
+  .sky{
+    position:relative; isolation:isolate; overflow:hidden;
+    display:flex; align-items:center;
+    min-height:clamp(580px, calc(100svh - 62px), 900px);
+    background:var(--ink);
+  }
+  .chart{
+    position:absolute; inset:0; z-index:0;
+    background:linear-gradient(180deg, var(--ink) 0%, var(--d1) 30%, var(--d2) 60%, var(--d4) 92%, var(--ink) 92%);
+  }
+  #isolines{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  #isolines path{ fill:none; stroke:var(--ice); stroke-opacity:.16; stroke-width:1; vector-effect:non-scaling-stroke; }
+  #isolines path.major{ stroke-opacity:.32; }
+  #isolines path.ground{ stroke-opacity:.6; stroke-width:1.5; }
+  .alt-labels span{
+    position:absolute; right:var(--g); transform:translateY(-140%);
+    font-size:.72rem; line-height:1; color:var(--dim); letter-spacing:.02em;
+  }
+  .alt-labels span.major, .alt-labels span.ground{ color:var(--mist); }
+  .trail{ position:absolute; inset:0; pointer-events:none; transition:opacity .45s ease; }
+  .trail i{ position:absolute; left:0; top:0; width:5px; height:5px; border-radius:50%; background:var(--coral); opacity:.55; }
+  .probe{
+    position:absolute; left:0; top:0; z-index:1; width:46px; height:84px;
+    transform-origin:50% 16%; will-change:transform; transition:opacity .45s ease;
+  }
+  .probe svg{ display:block; width:100%; height:100%; filter:drop-shadow(0 0 12px rgba(255,111,77,0.35)); }
+  .readout{
+    position:absolute; left:0; top:0; z-index:1; width:220px;
+    padding:.85rem 1rem .9rem; border:1px solid var(--line-2); border-radius:var(--r-sm);
+    background:rgba(11,22,48,0.8); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
+  .readout::before{ content:''; position:absolute; top:50%; right:100%; width:30px; border-top:1px dashed rgba(255,111,77,0.75); }
+  .readout.flip::before{ right:auto; left:100%; }
+  .ro-title{ display:flex; align-items:center; gap:.5rem; margin-bottom:.55rem; font-size:.76rem; color:var(--mist); }
+  .ro-title::before{ content:''; width:7px; height:7px; border-radius:2px; background:var(--coral); flex:none; }
+  .readout dl{ display:grid; gap:.35rem; }
+  .readout dl div{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem; }
+  .readout dt{ font-size:.8rem; color:var(--mist); }
+  .readout dd{ font-size:1.15rem; font-weight:650; white-space:nowrap; }
+  .readout dd small{ margin-left:.2rem; font-size:.72rem; font-weight:500; color:var(--mist); }
 
-  /* ---------- mission ---------- */
-  .mission-banner{
-    padding:3.4rem 5vw;
-    background-color:var(--navy);
-    background-image: linear-gradient(90deg, rgba(10,18,32,0.92) 0%, rgba(10,18,32,0.55) 55%, rgba(10,18,32,0.25) 100%), var(--mission-bg, none);
+  .hero-copy{ position:relative; z-index:2; width:100%; max-width:var(--maxw); margin:0 auto; padding:clamp(3rem,8vh,5.5rem) var(--g); }
+  .hero-copy h1{
+    font-size:clamp(4.6rem,15vw,10.5rem); font-weight:800; font-stretch:76%;
+    letter-spacing:-0.035em; line-height:.86; padding:.06em 0 .02em; color:var(--foam);
+  }
+  /* the waterline: the lower part of the name sits in the invisible ocean */
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .hero-copy h1{
+      background:linear-gradient(180deg, var(--foam) 0 56%, var(--ice) 56% 100%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+  }
+  .hero-copy .tag{ margin-top:1.5rem; max-width:34ch; font-size:clamp(1.1rem,1.7vw,1.3rem); line-height:1.5; }
+  .meaning{ display:flex; align-items:center; gap:.65rem; margin-top:1.1rem; max-width:44ch; color:var(--mist); font-size:.93rem; line-height:1.4; }
+  .meaning svg{ flex:none; width:30px; height:10px; stroke:var(--ice); fill:none; stroke-width:1.5; }
+  .cta-row{ display:flex; flex-wrap:wrap; gap:.7rem; margin-top:2.1rem; }
+
+  @media (prefers-reduced-motion:no-preference){
+    .sky.intro #isolines{ animation:wipe 1.9s cubic-bezier(.2,.7,.2,1) both; }
+    .sky.intro .alt-labels{ animation:fadeIn .8s .9s both; }
+    .sky.intro h1{ animation:rise .9s .1s cubic-bezier(.2,.7,.2,1) both; }
+    .sky.intro .tag{ animation:rise .8s .3s cubic-bezier(.2,.7,.2,1) both; }
+    .sky.intro .meaning, .sky.intro .cta-row{ animation:rise .8s .45s cubic-bezier(.2,.7,.2,1) both; }
+    .sky.intro .probe, .sky.intro .readout, .sky.intro .trail{ animation:fadeIn .7s 1.1s both; }
+  }
+  @keyframes wipe{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0 0 0 0); } }
+  @keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+  @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+
+  /* ---------- home index ---------- */
+  .index{
+    max-width:var(--maxw); margin:0 auto;
+    padding:clamp(1.6rem,3vw,2.4rem) var(--g) clamp(3.5rem,7vw,5.5rem);
+    display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:14px;
+  }
+  .tile{
+    position:relative; display:flex; flex-direction:column; min-height:220px;
+    padding:1.4rem 1.5rem 1.5rem; border:1px solid var(--line); border-radius:var(--r-md);
+    background:var(--d1); color:var(--foam); text-decoration:none; overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .tile:hover{ border-color:var(--line-2); }
+  .tile .prev{ margin-bottom:auto; padding:0 2.6rem 1.4rem 0; }
+  .tile h2{ position:relative; font-size:1.4rem; font-stretch:88%; }
+  .tile p{ position:relative; margin-top:.3rem; max-width:46ch; color:var(--mist); font-size:.95rem; line-height:1.5; }
+  .go{
+    position:absolute; top:1rem; right:1rem; z-index:2; width:36px; height:36px; border-radius:50%;
+    display:grid; place-items:center; border:1px solid var(--line-2); color:var(--ice);
+    background:rgba(11,22,48,0.5); transition:background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .go svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .tile:hover .go{ background:var(--coral); border-color:var(--coral); color:var(--on-coral); }
+
+  .t-progress{
+    grid-column:1 / 8; grid-row:1 / 3; min-height:470px; justify-content:flex-end; border-radius:var(--r-lg);
+    background-color:var(--d2);
+    background-image:linear-gradient(180deg, rgba(11,22,48,0) 35%, rgba(11,22,48,0.94) 100%), var(--bg, none);
     background-size:cover; background-position:center;
   }
-  .mission-banner .inner{ max-width:1100px; margin:0 auto; }
-  .mission-banner h1{ font-size:clamp(1.8rem,4vw,2.6rem); font-weight:600; max-width:640px; }
-  .mission-banner .lead{ max-width:640px; }
-  .layers{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.6rem; }
-  .layer{ position:relative; border-top:1px solid var(--line); padding-top:1.3rem; }
-  .layer::before{ content:''; position:absolute; top:-6px; left:0; width:11px; height:11px; border-radius:50%; background:var(--ice); box-shadow:0 0 10px var(--ice); }
-  .layer .q{ color:var(--coral); font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; }
-  .layer h3{ font-size:1.2rem; font-weight:600; }
-  .layer p{ color:var(--ice-soft); margin-top:0.5rem; font-size:0.95rem; }
-  details.ww{ margin-top:2.4rem; border:1px solid var(--line); border-radius:12px; padding:0 1.3rem; background:rgba(13,27,46,0.5); }
-  details.ww summary{ cursor:pointer; padding:1rem 0; font-family:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif; font-weight:600; font-size:1.05rem; list-style:none; display:flex; justify-content:space-between; align-items:center; }
-  details.ww summary::-webkit-details-marker{ display:none; }
-  details.ww summary::after{ content:'+'; color:var(--coral); font-size:1.4rem; line-height:1; }
-  details.ww[open] summary::after{ content:'\2212'; }
-  details.ww .body{ padding:0.2rem 0 1.2rem; }
-  details.ww p{ color:var(--ice-soft); font-size:0.95rem; max-width:760px; margin-bottom:0.9rem; }
-  details.ww p:last-child{ margin-bottom:0; }
+  .t-progress::before{
+    content:''; position:absolute; inset:0;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:28px 28px; background-position:-1px -1px;
+    -webkit-mask-image:linear-gradient(180deg, #000 20%, transparent 85%); mask-image:linear-gradient(180deg, #000 20%, transparent 85%);
+  }
+  .t-progress .fallback{ position:absolute; top:7%; right:7%; height:64%; max-width:62%; width:auto; object-fit:contain; }
+  .t-progress.has-photo::before, .t-progress.has-photo .fallback{ display:none; }
+  .t-progress h2{ font-size:clamp(1.9rem,3.4vw,2.6rem); font-stretch:84%; }
+  .t-progress p{ font-size:1rem; }
 
-  /* ---------- progress / blog ---------- */
-  .post{ margin-top:2.6rem; }
-  .post h3{ font-size:1.3rem; font-weight:600; display:flex; align-items:baseline; gap:0.8rem; flex-wrap:wrap; }
-  .post .pdate{ font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:500; color:var(--coral); }
-  .post .gnote{ color:var(--ice-soft); font-size:0.95rem; margin-top:0.3rem; max-width:700px; }
-  .wip-grid{ margin-top:1.1rem; display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:0.9rem; }
-  .wip-grid figure{ aspect-ratio:4/3; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:var(--deep); cursor:zoom-in; }
+  .t-mission{ grid-column:8 / 13; grid-row:1; }
+  .t-cansat{ grid-column:8 / 13; grid-row:2; }
+  .t-team{ grid-column:1 / 5; }
+  .t-apps{ grid-column:5 / 9; }
+  .t-contact{ grid-column:9 / 13; }
+
+  .qs{ list-style:none; display:grid; gap:.6rem; }
+  .qs li{ display:flex; gap:.6rem; align-items:flex-start; font-size:.98rem; line-height:1.35; }
+  .qs svg{ flex:none; width:18px; height:18px; margin-top:.05rem; stroke:var(--ice); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+
+  .t-cansat .prev{ display:flex; align-items:flex-end; gap:1.1rem; }
+  .t-cansat .prev svg{ width:40px; height:70px; flex:none; }
+  .dim-big{ font-size:2rem; font-weight:750; font-stretch:80%; line-height:1; }
+  .dim-big small{ margin-left:.3rem; font-size:.9rem; font-weight:500; color:var(--mist); }
+
+  .avs{ display:flex; }
+  .av{
+    position:relative; width:52px; height:52px; margin-left:-10px; border-radius:50%; overflow:hidden;
+    display:grid; place-items:center; background:var(--d3); border:2px solid var(--d1);
+    font-weight:700; font-size:.82rem; color:var(--mist);
+  }
+  .av:first-child{ margin-left:0; }
+  .av img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+  .spark{ display:block; width:100%; max-width:240px; height:64px; }
+  .handles{ display:grid; gap:.2rem; font-size:1.02rem; font-weight:600; }
+  .handles span:last-child{ color:var(--mist); font-weight:500; }
+
+  /* =========================================================
+     CANSAT
+     ========================================================= */
+  .cs-grid{ display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:clamp(2rem,6vw,5rem); margin-top:clamp(2.2rem,5vw,3.4rem); align-items:start; }
+  .blueprint{
+    position:sticky; top:96px; padding:1.4rem 1.4rem 1.2rem; border:1px solid var(--line); border-radius:var(--r-lg);
+    background-color:var(--d1);
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:24px 24px; background-position:-1px -1px;
+  }
+  .blueprint svg{ display:block; width:100%; max-width:340px; height:auto; margin:0 auto; }
+  .blueprint figcaption{ margin-top:.6rem; text-align:center; color:var(--mist); font-size:.9rem; }
+  .flight{ list-style:none; }
+  .flight li{ position:relative; padding:0 0 2.5rem 4.4rem; }
+  .flight li:last-child{ padding-bottom:0; }
+  .flight li::before{ content:''; position:absolute; left:1.45rem; top:3.2rem; bottom:.3rem; border-left:1px dashed var(--line-2); }
+  .flight li:last-child::before{ display:none; }
+  .flight .num{
+    position:absolute; left:0; top:0; width:2.9rem; height:2.9rem; border-radius:50%;
+    display:grid; place-items:center; border:1px solid var(--line-2); background:var(--ink);
+    color:var(--coral); font-weight:700; font-size:.9rem;
+  }
+  .flight h3{ padding-top:.5rem; font-size:clamp(1.35rem,2.4vw,1.7rem); font-stretch:88%; }
+  .flight p{ margin-top:.45rem; max-width:52ch; color:var(--mist); }
+  .more{ display:inline-block; margin-top:2.6rem; color:var(--ice); text-decoration:none; border-bottom:1px solid var(--line-2); padding-bottom:.1rem; }
+  .more:hover{ border-color:var(--ice); }
+
+  /* =========================================================
+     MISSION
+     ========================================================= */
+  .mission-banner{
+    padding:clamp(3.6rem,9vw,7rem) 0 clamp(3rem,7vw,5.5rem);
+    background-color:var(--ink);
+    background-image:
+      linear-gradient(90deg, rgba(11,22,48,0.95) 0%, rgba(11,22,48,0.6) 55%, rgba(11,22,48,0.28) 100%),
+      linear-gradient(0deg, var(--ink) 0%, rgba(11,22,48,0) 45%),
+      var(--mission-bg, none);
+    background-size:cover; background-position:center;
+  }
+  .mission-banner .inner{ max-width:var(--maxw); margin:0 auto; padding:0 var(--g); }
+  .mission-banner h2{ max-width:15ch; font-size:clamp(2.4rem,6.5vw,4.2rem); font-weight:750; font-stretch:82%; line-height:1.02; }
+  .mission-body{ padding-top:clamp(1.6rem,4vw,2.6rem); }
+  .layer{
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(1.2rem,5vw,4.5rem);
+    padding:2.6rem 0 2.4rem;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='8' viewBox='0 0 96 8'%3E%3Cpath d='M0 4 Q12 0 24 4 T48 4 T72 4 T96 4' fill='none' stroke='%238fd9e8' stroke-opacity='.4'/%3E%3C/svg%3E") repeat-x 0 0 / 96px 8px;
+  }
+  .lq{ display:flex; gap:1rem; align-items:flex-start; }
+  .ic{ flex:none; width:44px; height:44px; padding:10px; border-radius:50%; border:1px solid var(--line-2); stroke:var(--ice); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .q{ font-size:clamp(1.55rem,3.2vw,2.3rem); font-weight:650; font-stretch:86%; line-height:1.12; letter-spacing:-0.01em; }
+  .lb h3{ font-size:1.2rem; }
+  .lb p{ margin-top:.5rem; max-width:54ch; color:var(--mist); }
+  .chip{
+    display:inline-flex; align-items:center; gap:.45rem; margin-top:1rem; padding:.3rem .75rem;
+    border:1px solid var(--line-2); border-radius:999px; color:var(--ice); font-size:.82rem; font-weight:500;
+  }
+  .chip::before{ content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .chip.open{ color:var(--coral); border-style:dashed; border-color:rgba(255,111,77,0.55); }
+  .chip.open::before{ background:transparent; border:1.5px solid currentColor; }
+
+  details.ww{ margin-top:2rem; border:1px solid var(--line); border-radius:var(--r-lg); background:var(--d1); }
+  details.ww summary{
+    display:flex; justify-content:space-between; align-items:center; gap:1rem; cursor:pointer; list-style:none;
+    padding:1.3rem 1.5rem; border-radius:var(--r-lg);
+    font-weight:700; font-stretch:90%; font-size:clamp(1.12rem,2vw,1.35rem);
+  }
+  details.ww summary::-webkit-details-marker{ display:none; }
+  details.ww summary::after{
+    content:''; flex:none; width:36px; height:36px; border-radius:50%; border:1px solid var(--line-2);
+    background:linear-gradient(var(--coral),var(--coral)) center / 12px 2px no-repeat, linear-gradient(var(--coral),var(--coral)) center / 2px 12px no-repeat;
+  }
+  details.ww[open] summary::after{ background:linear-gradient(var(--coral),var(--coral)) center / 12px 2px no-repeat; }
+  details.ww .body{ display:grid; gap:1rem; padding:0 1.5rem 1.7rem; }
+  details.ww p{ max-width:68ch; color:var(--mist); }
+
+  /* =========================================================
+     PROGRESS — a mission log
+     ========================================================= */
+  .log{ --lp:clamp(1.4rem,3vw,2.4rem); position:relative; margin-top:clamp(2.4rem,5vw,3.6rem); padding-left:var(--lp); border-left:1px solid var(--line-2); }
+  .post{ position:relative; padding-bottom:clamp(2.8rem,6vw,4rem); }
+  .post:last-child{ padding-bottom:.5rem; }
+  .post::before{
+    content:''; position:absolute; left:calc(-1 * var(--lp) - 6px); top:.45rem; width:11px; height:11px;
+    border-radius:50%; background:var(--ink); border:2px solid var(--ice);
+  }
+  .corepost::before{ background:var(--coral); border-color:var(--coral); box-shadow:0 0 0 5px rgba(255,111,77,0.18); }
+  .post h3{ display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; font-size:clamp(1.4rem,2.6vw,1.8rem); font-stretch:88%; }
+  .post .pdate{ font-size:.82rem; font-weight:500; color:var(--coral); font-stretch:100%; letter-spacing:0; }
+  .post .gnote{ margin-top:.4rem; max-width:62ch; color:var(--mist); }
+  #posts .post:first-child{ padding-top:0; }
+
+  .corefigs{ margin-top:1.4rem; display:grid; grid-template-columns:1.1fr .6fr 1.15fr; gap:1rem; align-items:end; }
+  .corefig{ text-align:center; }
+  .corefig .imgbox{
+    height:320px; display:flex; align-items:center; justify-content:center; padding:1rem;
+    border:1px solid var(--line); border-radius:var(--r-md); background-color:var(--d1);
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:24px 24px; background-position:-1px -1px;
+  }
+  .corefig img{ max-width:100%; max-height:100%; object-fit:contain; cursor:zoom-in; }
+  .corefig figcaption{ margin-top:.7rem; font-size:.88rem; color:var(--mist); }
+  .parts{ list-style:none; margin-top:1.8rem; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1.5rem; }
+  .parts li{ display:flex; gap:.85rem; align-items:flex-start; }
+  .sw{ flex:none; width:22px; height:22px; margin-top:.15rem; border-radius:6px; }
+  .sw-shell{ border:2px solid var(--mist); }
+  .sw-core{ background:var(--lid); }
+  .sw-sled{ background:var(--coral); }
+  .parts h4{ font-size:1.12rem; }
+  .parts p{ margin-top:.25rem; color:var(--mist); font-size:.95rem; }
+
+  .wip-grid{ margin-top:1.2rem; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:.8rem; }
+  .wip-grid figure{ aspect-ratio:4/3; border-radius:var(--r-sm); overflow:hidden; border:1px solid var(--line); background:var(--d1); cursor:zoom-in; }
   .wip-grid img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease; }
   .wip-grid figure:hover img{ transform:scale(1.04); }
-  .wip-empty{ margin-top:1.1rem; border:1px dashed var(--line); border-radius:10px; padding:1.5rem; text-align:center; color:var(--ice-soft); font-size:0.9rem; }
-  #lightbox{ position:fixed; inset:0; background:rgba(5,9,16,0.92); display:flex; align-items:center; justify-content:center; padding:4vw; z-index:50; cursor:zoom-out; }
-  #lightbox img{ max-width:100%; max-height:100%; border-radius:8px; }
+  .wip-empty{ margin-top:1.1rem; padding:1.5rem; border:1px dashed var(--line-2); border-radius:var(--r-sm); text-align:center; color:var(--mist); font-size:.92rem; }
+  .vwrap{ margin-top:1.2rem; max-width:860px; }
+  .vwrap video{ display:block; width:100%; max-height:72vh; border-radius:var(--r-md); border:1px solid var(--line); background:#000; }
 
-  /* ---------- team ---------- */
-  .twocol{ margin-top:2.2rem; display:grid; grid-template-columns:1.05fr 1fr; gap:3rem; align-items:start; }
-  .story{ display:flex; gap:1.6rem; align-items:flex-start; }
-  .story .mascot{ flex:0 0 auto; width:104px; height:104px; }
-  .story .mascot svg{ width:100%; height:100%; animation: bob 4.5s ease-in-out infinite; }
-  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-7px);} }
-  .story h3{ font-size:1.35rem; font-weight:600; margin-bottom:0.7rem; }
-  .story p{ color:var(--ice-soft); font-size:0.98rem; }
-  .story .signed{ color:var(--coral); font-size:0.85rem; margin-top:0.9rem; font-weight:500; }
-  .team-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
-  .member{ background:var(--deep); padding:1.4rem 1rem; text-align:center; }
-  .member .photo{ position:relative; width:112px; height:112px; border-radius:50%; margin:0 auto 0.9rem; background:var(--teal); border:1px solid var(--line); overflow:hidden; }
-  .member .photo .initials{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.25rem; color:var(--ice-soft); }
+  /* =========================================================
+     TEAM
+     ========================================================= */
+  .story{
+    margin-top:clamp(2.2rem,5vw,3.4rem); display:grid; grid-template-columns:112px minmax(0,1fr); gap:clamp(1.4rem,4vw,3rem);
+    padding:clamp(1.6rem,4vw,2.8rem); border:1px solid var(--line); border-radius:var(--r-lg); background:var(--d1);
+  }
+  .mascot{ width:112px; height:112px; }
+  .mascot svg{ width:100%; height:100%; }
+  @media (prefers-reduced-motion:no-preference){ .mascot svg{ animation:bob 4.5s ease-in-out infinite; } }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-7px); } }
+  .letter{ max-width:64ch; }
+  .letter h3{ font-size:clamp(1.55rem,3vw,2.1rem); font-stretch:86%; }
+  .letter .why{ margin-top:1rem; font-size:clamp(1.06rem,1.7vw,1.22rem); line-height:1.7; }
+  .letter .signed{ margin-top:1.1rem; color:var(--coral); font-weight:600; }
+  .crew{ list-style:none; margin-top:clamp(2.4rem,5vw,3.4rem); display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:1.6rem 14px; }
+  .member{ text-align:center; }
+  .member .photo{
+    position:relative; width:min(148px, 82%); aspect-ratio:1; margin:0 auto 1rem; border-radius:50%; overflow:hidden; background:var(--d3);
+    box-shadow:0 0 0 1px var(--line-2), 0 0 0 7px var(--ink), 0 0 0 8px var(--line);
+  }
+  .member .photo .initials{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.3rem; color:var(--mist); }
   .member .photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
-  .member .name{ font-weight:600; font-size:0.95rem; }
+  .member .name{ font-weight:650; font-size:1rem; }
 
-  /* ---------- contact ---------- */
-  .twocol h3.col-title{ font-size:1.2rem; font-weight:600; margin-bottom:1rem; }
-  .linkbtns{ display:flex; flex-direction:column; gap:0.7rem; }
-  .linkbtn{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 1.2rem; border:1px solid var(--line); border-radius:12px; background:var(--deep); color:var(--foam); text-decoration:none; transition:border-color .2s ease; }
-  .linkbtn:hover{ border-color:var(--coral); }
-  .linkbtn b{ font-family:'Space Grotesk',sans-serif; font-weight:600; }
-  .linkbtn span{ color:var(--ice-soft); font-size:0.9rem; word-break:break-all; }
-  .sponsor-col .lead{ margin-top:0; margin-bottom:1rem; font-size:0.95rem; }
-  .sponsor-slot{ border:1px dashed var(--line); border-radius:10px; padding:1.1rem; text-align:center; color:var(--ice-soft); font-size:0.9rem; margin-bottom:0.7rem; }
+  /* =========================================================
+     APPS
+     ========================================================= */
+  .console{ margin-top:clamp(2rem,4vw,2.8rem); border:1px solid var(--line-2); border-radius:var(--r-lg); background:var(--d1); overflow:hidden; }
+  .console-head{ display:flex; gap:1.5rem; align-items:center; justify-content:space-between; flex-wrap:wrap; padding:1.4rem 1.5rem; }
+  .console-head h3{ font-size:1.4rem; font-stretch:88%; }
+  .console-head p{ margin-top:.3rem; max-width:62ch; color:var(--mist); font-size:.96rem; }
+  .console-head p.note{ color:var(--dim); font-size:.86rem; }
+  #gsFrame{ display:block; width:100%; height:min(880px, 82vh); border:0; border-top:1px solid var(--line-2); background:var(--ink); }
 
-  /* ---------- apps ---------- */
-  .appcard{ margin-top:2rem; display:flex; gap:1.5rem; align-items:center; justify-content:space-between; flex-wrap:wrap; border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.5rem; background:var(--deep); }
-  .appcard h3{ font-size:1.3rem; font-weight:600; }
-  .appcard p{ color:var(--ice-soft); font-size:0.95rem; margin-top:0.3rem; max-width:640px; }
-  .appcard p.note{ font-size:0.82rem; color:#6f8a96; }
-  .btnlink{ display:inline-block; background:var(--coral); color:#1a0b06; font-weight:600; text-decoration:none; padding:0.65rem 1.1rem; border-radius:8px; font-size:0.9rem; white-space:nowrap; }
-  .btnlink:hover{ filter:brightness(1.08); }
-  #gsFrame{ width:100%; height:min(880px, 88vh); margin-top:1.2rem; border:1px solid var(--line); border-radius:14px; background:var(--navy); }
-  .vwrap{ margin-top:1.1rem; max-width:860px; }
-  .vwrap video{ width:100%; max-height:72vh; border-radius:12px; border:1px solid var(--line); background:#000; display:block; }
-
-  /* ---------- kaiper core (entry of Work in progress) ---------- */
-  .corefigs{ margin-top:1.4rem; display:grid; grid-template-columns:1.1fr 0.6fr 1.15fr; gap:1.4rem; align-items:end; }
-  .corefig{ text-align:center; }
-  .corefig .imgbox{ height:340px; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:14px; padding:1rem; background:rgba(13,27,46,0.6); }
-  .corefig img{ max-width:100%; max-height:100%; object-fit:contain; cursor:zoom-in; }
-  .corefig figcaption{ margin-top:0.7rem; font-size:0.88rem; color:var(--ice-soft); }
-  .corepost .steps{ margin-top:2rem; }
-  @media (max-width:900px){ .corefigs{ grid-template-columns:1fr; } .corefig .imgbox{ height:300px; } }
+  /* =========================================================
+     CONTACT
+     ========================================================= */
+  .contact-grid{ margin-top:clamp(2.2rem,5vw,3.2rem); display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(2rem,5vw,4rem); align-items:start; }
+  .col-title{ margin-bottom:1rem; font-size:1.25rem; font-stretch:90%; }
+  .linkbtns{ display:grid; gap:.7rem; }
+  .linkbtn{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; min-height:64px; padding:.9rem 1rem .9rem 1.25rem;
+    border:1px solid var(--line); border-radius:var(--r-md); background:var(--d1); color:var(--foam); text-decoration:none;
+    transition:border-color .2s ease;
+  }
+  .linkbtn:hover{ border-color:var(--line-2); }
+  .linkbtn b{ display:block; font-weight:650; }
+  .linkbtn span{ display:block; color:var(--mist); font-size:.92rem; overflow-wrap:anywhere; }
+  .linkbtn .go{ position:static; flex:none; }
+  .linkbtn:hover .go{ background:var(--coral); border-color:var(--coral); color:var(--on-coral); }
+  .sponsor-col .lead{ margin:0 0 1.1rem; font-size:.98rem; }
+  .slots{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:.7rem; margin-bottom:1.3rem; }
+  .sponsor-slot{
+    display:grid; place-items:center; aspect-ratio:3/2; padding:.6rem; border:1px dashed var(--line-2); border-radius:var(--r-sm);
+    text-align:center; color:var(--dim); font-size:.82rem; line-height:1.3;
+  }
 
   /* ---------- footer ---------- */
-  footer{ border-top:1px solid var(--line); padding:1.4rem 5vw calc(1.4rem + env(safe-area-inset-bottom, 0px)); display:flex; flex-wrap:wrap; gap:1rem; justify-content:space-between; align-items:center; }
-  footer .small{ color:#6f8a96; font-size:0.82rem; }
+  footer{
+    display:flex; flex-wrap:wrap; gap:1rem; justify-content:space-between; align-items:center;
+    padding:1.4rem var(--edge) calc(1.4rem + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--line);
+  }
+  footer .small{ color:var(--dim); font-size:.84rem; }
   .socials{ display:flex; gap:1.3rem; }
-  .socials a{ color:var(--ice-soft); text-decoration:none; font-size:0.9rem; border-bottom:1px solid transparent; }
+  .socials a{ color:var(--mist); text-decoration:none; font-size:.92rem; border-bottom:1px solid transparent; }
   .socials a:hover{ color:var(--foam); border-color:var(--ice); }
 
-  @media (max-width:900px){
-    header{ flex-wrap:wrap; row-gap:0.4rem; padding:0.8rem 4vw; }
+  /* ---------- lightbox ---------- */
+  #lightbox{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:4vw; background:rgba(5,10,22,0.93); cursor:zoom-out; }
+  #lightbox img{ max-width:100%; max-height:100%; border-radius:var(--r-sm); }
+  .lb-close{
+    position:absolute; top:calc(14px + env(safe-area-inset-top, 0px)); right:14px; width:44px; height:44px; border-radius:50%;
+    border:1px solid var(--line-2); background:var(--d1); color:var(--foam); font:400 1.6rem/1 var(--font); cursor:pointer;
+  }
+
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+  @media (max-width:960px){
+    .top{ flex-wrap:wrap; row-gap:.45rem; }
     .lang{ margin-left:auto; }
-    nav{ order:3; width:100%; margin-left:0; overflow-x:auto; padding-bottom:0.1rem; }
-    .twocol{ grid-template-columns:1fr; gap:2.2rem; }
-    .cards{ grid-template-columns:1fr 1fr; }
-    .card{ grid-column:auto; }
-    .card.big, .card.wide{ grid-column:span 2; }
+    nav.main{
+      order:3; width:calc(100% + 2 * var(--g)); margin:0 calc(-1 * var(--g)); padding:0 var(--g) .1rem;
+      overflow-x:auto; scrollbar-width:none;
+      -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 var(--g), #000 calc(100% - 28px), transparent 100%);
+      mask-image:linear-gradient(90deg, transparent 0, #000 var(--g), #000 calc(100% - 28px), transparent 100%);
+    }
+    nav.main::-webkit-scrollbar{ display:none; }
+  }
+  @media (max-width:900px){
+    .sky{ display:block; min-height:min(calc(100svh - 96px), 780px); padding-bottom:150px; }
+    .chart{ inset:0 0 150px 0; }
+    .hero-copy{ padding:2.6rem var(--g) 3rem; }
+    .hero-copy .tag, .meaning, .cta-row{ max-width:calc(100% - 52px); }
+    .probe{ width:36px; height:66px; }
+    .alt-labels span:not(.major):not(.ground){ display:none; }
+    .readout{ top:calc(100% + 18px); left:var(--g); right:var(--g); width:auto; transform:none !important; }
+    .readout::before{ display:none; }
+    .readout dl{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:.6rem; }
+    .readout dl div{ flex-direction:column; align-items:flex-start; gap:.05rem; }
+    .readout dd{ font-size:1.12rem; }
+
+    .index{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .t-progress{ grid-column:1 / -1; grid-row:auto; min-height:380px; }
+    .t-mission, .t-cansat, .t-team, .t-apps{ grid-column:auto; grid-row:auto; }
+    .t-contact{ grid-column:1 / -1; }
+
+    .cs-grid{ grid-template-columns:1fr; }
+    .blueprint{ position:static; }
+    .corefigs{ grid-template-columns:1fr; }
+    .corefig .imgbox{ height:280px; }
+    .contact-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width:760px){
+    .layer{ grid-template-columns:1fr; }
+    .parts{ grid-template-columns:1fr; }
+    .crew{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .story{ grid-template-columns:1fr; }
+    .mascot{ width:88px; height:88px; }
   }
   @media (max-width:600px){
-    .cards{ grid-template-columns:1fr; }
-    .card.big, .card.wide{ grid-column:auto; }
-    .story{ flex-direction:column; align-items:center; text-align:center; }
-    .hero{ padding:2.6rem 5vw 1.6rem; }
+    .index{ grid-template-columns:1fr; }
+    .t-contact{ grid-column:auto; }
+    .tile{ min-height:0; }
+    .t-progress{ min-height:340px; }
+    .console-head .btn{ width:100%; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *, *::before, *::after{ animation:none !important; transition:none !important; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <a class="wordmark" href="#home"><img class="iso" data-src="images/isotipo.png" alt="Kaiper" onerror="this.style.display='none'">KAIPER</a>
-  <nav id="nav">
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c0 0-6.5 7.4-6.5 11.6a6.5 6.5 0 0 0 13 0C18.5 10.4 12 3 12 3z"/></symbol>
+  <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 9h11.5a3 3 0 1 0-3-3"/><path d="M3 15h15a3 3 0 1 1-3 3"/><path d="M3 12h7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.2c0 4.6-3.1 8.2-7 9.8-3.9-1.6-7-5.2-7-9.8V6z"/></symbol>
+  <symbol id="i-go" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></symbol>
+</svg>
+
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<header class="top">
+  <a class="brand" href="#home"><img class="iso" data-src="images/isotipo.png" alt="" onerror="this.style.display='none'">KAIPER</a>
+  <nav class="main" id="nav" aria-label="Main navigation" data-aria-i18n="nav_aria">
     <a href="#home" data-v="home" data-i18n="nav_home">Home</a>
     <a href="#cansat" data-v="cansat" data-i18n="nav_cansat">CanSat</a>
     <a href="#mission" data-v="mission" data-i18n="nav_mission">Mission</a>
@@ -213,162 +550,290 @@
     <a href="#contact" data-v="contact" data-i18n="nav_contact">Contact</a>
   </nav>
   <div class="lang">
-    <button class="lang-btn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Language">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>
+    <button class="lang-btn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" aria-label="Language">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>
       <span id="langCur">EN</span>
     </button>
     <ul class="lang-menu" id="langMenu" hidden>
-      <li><button type="button" data-lang="en">English</button></li>
-      <li><button type="button" data-lang="ca">Català</button></li>
-      <li><button type="button" data-lang="es">Castellano</button></li>
-      <li><button type="button" data-lang="zh">中文</button></li>
+      <li><button type="button" data-lang="en" lang="en">English</button></li>
+      <li><button type="button" data-lang="ca" lang="ca">Català</button></li>
+      <li><button type="button" data-lang="es" lang="es">Castellano</button></li>
+      <li><button type="button" data-lang="zh" lang="zh">中文</button></li>
     </ul>
   </div>
 </header>
 
-<main>
+<main id="main" tabindex="-1">
 
 <!-- ============ HOME ============ -->
 <section class="view" data-view="home">
-  <div class="hero">
-    <div class="hero-ring"></div><div class="hero-ring r2"></div>
-    <h1>KAIPER</h1>
-    <p class="tag" data-i18n="hero_tag">A high school CanSat team. We’re building a mini-satellite to explore, during its descent, whether an environment could support liquid water.</p>
-    <div class="meaning" data-i18n="hero_meaning">“Kai”: sea / ocean in Hawaiian, plus Kuiper Belt</div>
+  <div class="sky intro" id="sky">
+    <div class="chart" id="chart" role="img" aria-label="" data-aria-i18n="hero_chart_aria">
+      <svg id="isolines" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="alt-labels" id="altLabels" aria-hidden="true"></div>
+      <div class="trail" id="trail" aria-hidden="true"></div>
+      <div class="probe" id="probe" aria-hidden="true">
+        <svg viewBox="0 0 46 84">
+          <path d="M3 24C3 6 43 6 43 24Q38 20.5 33 24Q28 20.5 23 24Q18 20.5 13 24Q8 20.5 3 24Z" fill="#ff6f4d"/>
+          <path d="M13 23.5C13.8 13 17.5 8.2 23 7.2M33 23.5C32.2 13 28.5 8.2 23 7.2" fill="none" stroke="#c9472b" stroke-width="1"/>
+          <path d="M4 24L19.5 58M13 24L21.5 58M33 24L24.5 58M42 24L26.5 58" stroke="#8fd9e8" stroke-width=".8" stroke-opacity=".8"/>
+          <rect x="16" y="58" width="14" height="24" rx="3" fill="#e6f4f6"/>
+          <rect x="16" y="58" width="14" height="5" rx="2" fill="#3f8fd8"/>
+          <rect x="16" y="77" width="14" height="5" rx="2" fill="#ff6f4d"/>
+        </svg>
+      </div>
+      <div class="readout" id="readout" aria-hidden="true">
+        <div class="ro-title" data-i18n="tel_title">Simulated descent</div>
+        <dl>
+          <div><dt data-i18n="tel_alt">Altitude</dt><dd><span id="vAlt">1000</span><small>m</small></dd></div>
+          <div><dt data-i18n="tel_temp">Temperature</dt><dd><span id="vT">8.5</span><small>°C</small></dd></div>
+          <div><dt data-i18n="tel_pres">Pressure</dt><dd><span id="vP">898.7</span><small>hPa</small></dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <h1>KAIPER</h1>
+      <p class="tag" data-i18n="hero_tag">A high school CanSat team. We’re building a mini-satellite to explore, during its descent, whether an environment could support liquid water.</p>
+      <p class="meaning"><svg viewBox="0 0 30 10" aria-hidden="true"><path d="M1 5Q4.5 1 8 5T15 5T22 5T29 5"/></svg><span data-i18n="hero_meaning">“Kai”: sea / ocean in Hawaiian, plus Kuiper Belt</span></p>
+      <div class="cta-row">
+        <a class="btn" href="#mission" data-i18n="hero_cta_mission">Explore the mission</a>
+        <a class="btn ghost" href="#progress" data-i18n="hero_cta_progress">See our progress</a>
+      </div>
+    </div>
   </div>
-  <div class="cards">
-    <a class="card big photo" href="#progress" id="cardProgress"><span class="arrow">&rarr;</span><h2 data-i18n="wip_title">Work in progress</h2><p data-i18n="card_progress_d">Photos of our printed can and our sessions with our mentor.</p></a>
-    <a class="card" href="#mission"><span class="arrow">&rarr;</span><h2 data-i18n="mis_short">The Kaiper Index</h2><p data-i18n="card_mission_d">Our mission: mapping an invisible ocean.</p></a>
-    <a class="card" href="#cansat"><span class="arrow">&rarr;</span><h2 data-i18n="cs_title">What is CanSat?</h2><p data-i18n="card_cansat_d">How a satellite the size of a soda can works.</p></a>
-    <a class="card" href="#team"><span class="arrow">&rarr;</span><h2 data-i18n="team_title">The team</h2><p data-i18n="card_team_d">The team and the story behind the name.</p></a>
-    <a class="card" href="#apps"><span class="arrow">&rarr;</span><h2 data-i18n="nav_apps">Kaiper apps</h2><p data-i18n="card_apps_d">Tools for the mission, like our ground station.</p></a>
-    <a class="card wide" href="#contact"><span class="arrow">&rarr;</span><h2 data-i18n="contact_title">Contact and sponsors</h2><p data-i18n="card_contact_d">Write to us or support the project.</p></a>
+
+  <div class="index">
+    <a class="tile t-progress" href="#progress" id="cardProgress">
+      <span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span>
+      <img class="fallback" data-src="images/core/montado.png" alt="" onerror="this.style.display='none'">
+      <h2 data-i18n="wip_title">Work in progress</h2>
+      <p data-i18n="card_progress_d">Photos of our printed can and our sessions with our mentor.</p>
+    </a>
+    <a class="tile t-mission" href="#mission">
+      <span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span>
+      <ul class="prev qs" aria-hidden="true">
+        <li><svg><use href="#i-drop"/></svg><span data-i18n="l1_q">Could liquid water exist here?</span></li>
+        <li><svg><use href="#i-wind"/></svg><span data-i18n="l2_q">Is this environment stable?</span></li>
+        <li><svg><use href="#i-shield"/></svg><span data-i18n="l3_q">Would it be shielded from radiation?</span></li>
+      </ul>
+      <h2 data-i18n="mis_short">The Kaiper Index</h2>
+      <p data-i18n="card_mission_d">Our mission: mapping an invisible ocean.</p>
+    </a>
+    <a class="tile t-cansat" href="#cansat">
+      <span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span>
+      <div class="prev" aria-hidden="true">
+        <svg viewBox="0 0 40 70"><rect x="4" y="3" width="32" height="56" rx="4" fill="rgba(143,217,232,.08)" stroke="#8fd9e8" stroke-width="1.4"/><path d="M4 9H36M4 53H36" stroke="#8fd9e8" stroke-opacity=".5"/><path d="M20 0V62" stroke="#8fd9e8" stroke-opacity=".35" stroke-dasharray="5 2 1 2"/><path d="M4 66H36" stroke="#ff6f4d" stroke-width="1.4"/></svg>
+        <span class="dim-big">66 × 115<small>mm</small></span>
+      </div>
+      <h2 data-i18n="cs_title">What is CanSat?</h2>
+      <p data-i18n="card_cansat_d">How a satellite the size of a soda can works.</p>
+    </a>
+    <a class="tile t-team" href="#team">
+      <span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span>
+      <div class="prev avs" aria-hidden="true">
+        <span class="av">JM<img alt="" data-base="images/team/matias" data-tried="0" onerror="kaiperPhotoFallback(this)"></span>
+        <span class="av">AV<img alt="" data-base="images/team/aleix" data-tried="0" onerror="kaiperPhotoFallback(this)"></span>
+        <span class="av">EC<img alt="" data-base="images/team/eloi" data-tried="0" onerror="kaiperPhotoFallback(this)"></span>
+        <span class="av">AL<img alt="" data-base="images/team/alex-v" data-tried="0" onerror="kaiperPhotoFallback(this)"></span>
+      </div>
+      <h2 data-i18n="team_title">The team</h2>
+      <p data-i18n="card_team_d">The team and the story behind the name.</p>
+    </a>
+    <a class="tile t-apps" href="#apps">
+      <span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span>
+      <div class="prev" aria-hidden="true">
+        <svg class="spark" viewBox="0 0 220 64" preserveAspectRatio="none">
+          <path d="M0 16H220M0 40H220" stroke="#8fd9e8" stroke-opacity=".15"/>
+          <path d="M0 52L14 50L28 51L42 46L56 47L70 42L84 43L98 38L112 39L126 33L140 34L154 29L168 28L182 23L196 24L210 18L220 17V64H0Z" fill="rgba(255,111,77,.12)"/>
+          <path d="M0 52L14 50L28 51L42 46L56 47L70 42L84 43L98 38L112 39L126 33L140 34L154 29L168 28L182 23L196 24L210 18L220 17" fill="none" stroke="#ff6f4d" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+      <h2 data-i18n="nav_apps">Kaiper apps</h2>
+      <p data-i18n="card_apps_d">Tools for the mission, like our ground station.</p>
+    </a>
+    <a class="tile t-contact" href="#contact">
+      <span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span>
+      <div class="prev handles" aria-hidden="true"><span>@kaiper.cansat</span><span>kaiper.cansat@gmail.com</span></div>
+      <h2 data-i18n="contact_title">Contact and sponsors</h2>
+      <p data-i18n="card_contact_d">Write to us or support the project.</p>
+    </a>
   </div>
 </section>
 
 <!-- ============ CANSAT ============ -->
-<section class="view" data-view="cansat">
+<section class="view" data-view="cansat" hidden>
   <div class="page">
-    <h2 data-i18n="cs_title">What is CanSat?</h2>
-    <p class="lead" data-i18n="cs_lead">CanSat is an educational program of the European Space Agency (ESA), run in Spain together with ESERO. Student teams build a mini-satellite the size of a soda can, with its own sensors, radio and parachute.</p>
-    <div class="steps">
-      <div class="step"><div class="num">01</div><h3 data-i18n="cs1_t">Build</h3><p data-i18n="cs1_p">Fit everything inside a can-sized cylinder, 66 mm wide and 115 mm tall: sensors, a microcontroller, a radio and a parachute.</p></div>
-      <div class="step"><div class="num">02</div><h3 data-i18n="cs2_t">Launch</h3><p data-i18n="cs2_p">The CanSat is taken up high, usually around a kilometre, and released. It then falls back under its parachute.</p></div>
-      <div class="step"><div class="num">03</div><h3 data-i18n="cs3_t">Measure</h3><p data-i18n="cs3_p">While it descends it measures temperature and pressure (the primary mission) plus a second mission chosen by each team, and sends everything by radio to a ground station.</p></div>
-      <div class="step"><div class="num">04</div><h3 data-i18n="cs4_t">Compete</h3><p data-i18n="cs4_p">The best teams of each country go on to the European CanSat competition, organised by ESA.</p></div>
+    <div class="page-head">
+      <h2 data-i18n="cs_title">What is CanSat?</h2>
+      <p class="lead" data-i18n="cs_lead">CanSat is an educational program of the European Space Agency (ESA), run in Spain together with ESERO. Student teams build a mini-satellite the size of a soda can, with its own sensors, radio and parachute.</p>
+    </div>
+    <div class="cs-grid">
+      <figure class="blueprint">
+        <svg viewBox="0 0 260 290" role="img" aria-label="66 mm × 115 mm">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M0 1L9 5L0 9" fill="none" stroke="#8fd9e8" stroke-width="1.4"/>
+            </marker>
+          </defs>
+          <path d="M150 20V226" stroke="#8fd9e8" stroke-opacity=".35" stroke-dasharray="10 4 2 4"/>
+          <rect x="104" y="36" width="92" height="160" rx="8" fill="rgba(143,217,232,.07)" stroke="#8fd9e8" stroke-width="1.6"/>
+          <path d="M104 54H196M104 178H196" stroke="#8fd9e8" stroke-opacity=".5"/>
+          <path d="M104 186H196" stroke="#ff6f4d" stroke-opacity=".8" stroke-width="1.4"/>
+          <path d="M98 36H54M98 196H54" stroke="#8fd9e8" stroke-opacity=".45"/>
+          <path d="M62 36V196" stroke="#8fd9e8" stroke-width="1.2" marker-start="url(#ar)" marker-end="url(#ar)"/>
+          <text x="44" y="116" transform="rotate(-90 44 116)" text-anchor="middle" fill="#eef8f8" font-size="14" font-weight="600" font-family="inherit">115 mm</text>
+          <path d="M104 202V244M196 202V244" stroke="#8fd9e8" stroke-opacity=".45"/>
+          <path d="M104 236H196" stroke="#8fd9e8" stroke-width="1.2" marker-start="url(#ar)" marker-end="url(#ar)"/>
+          <text x="150" y="264" text-anchor="middle" fill="#eef8f8" font-size="14" font-weight="600" font-family="inherit">66 mm</text>
+        </svg>
+        <figcaption data-i18n="cs_fig">The size limit for every CanSat</figcaption>
+      </figure>
+      <ol class="flight">
+        <li><span class="num" aria-hidden="true">01</span><h3 data-i18n="cs1_t">Build</h3><p data-i18n="cs1_p">Fit everything inside a can-sized cylinder, 66 mm wide and 115 mm tall: sensors, a microcontroller, a radio and a parachute.</p></li>
+        <li><span class="num" aria-hidden="true">02</span><h3 data-i18n="cs2_t">Launch</h3><p data-i18n="cs2_p">The CanSat is taken up high, usually around a kilometre, and released. It then falls back under its parachute.</p></li>
+        <li><span class="num" aria-hidden="true">03</span><h3 data-i18n="cs3_t">Measure</h3><p data-i18n="cs3_p">While it descends it measures temperature and pressure (the primary mission) plus a second mission chosen by each team, and sends everything by radio to a ground station.</p></li>
+        <li><span class="num" aria-hidden="true">04</span><h3 data-i18n="cs4_t">Compete</h3><p data-i18n="cs4_p">The best teams of each country go on to the European CanSat competition, organised by ESA.</p></li>
+      </ol>
     </div>
     <a class="more" href="https://www.esa.int/Education/CanSat" target="_blank" rel="noopener" data-i18n="cs_more">Learn more on the ESA CanSat page</a>
   </div>
 </section>
 
 <!-- ============ MISSION ============ -->
-<section class="view" data-view="mission">
+<section class="view" data-view="mission" hidden>
   <div class="mission-banner"><div class="inner">
-    <h1 data-i18n="mis_title">The Kaiper Index: mapping an invisible ocean</h1>
+    <h2 data-i18n="mis_title">The Kaiper Index: mapping an invisible ocean</h2>
     <p class="lead" data-i18n="mis_lead">Just as the Kuiper Belt hides oceans beneath its icy surface, the atmosphere hides its own invisible ocean. Our CanSat crosses it and measures it in three layers of data during descent.</p>
   </div></div>
-  <div class="page">
-    <div class="layers">
-      <div class="layer"><div class="q" data-i18n="l1_q">Could liquid water exist here?</div><h3 data-i18n="l1_t">Habitability index</h3><p data-i18n="l1_p">Humidity, temperature, and UV radiation combined into a custom score that rates each stage of the descent.</p></div>
-      <div class="layer"><div class="q" data-i18n="l2_q">Is this environment stable?</div><h3 data-i18n="l2_t">Atmospheric turbulence map</h3><p data-i18n="l2_p">An inertial sensor (IMU) tracks the stability of the descent, the same data that matters in real parachute and reentry system design.</p></div>
-      <div class="layer"><div class="q" data-i18n="l3_q">Would it be shielded from radiation?</div><h3 data-i18n="l3_t">Cosmic radiation shielding gradient</h3><p data-i18n="l3_p">We measure how background radiation changes with altitude, the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.</p></div>
+  <div class="page mission-body">
+    <div class="strata">
+      <article class="layer">
+        <div class="lq"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg><p class="q" data-i18n="l1_q">Could liquid water exist here?</p></div>
+        <div class="lb"><h3 data-i18n="l1_t">Habitability index</h3><p data-i18n="l1_p">Humidity, temperature, and UV radiation combined into a custom score that rates each stage of the descent.</p><span class="chip" data-i18n="l1_s">Standard, well-tested sensors</span></div>
+      </article>
+      <article class="layer">
+        <div class="lq"><svg class="ic" aria-hidden="true"><use href="#i-wind"/></svg><p class="q" data-i18n="l2_q">Is this environment stable?</p></div>
+        <div class="lb"><h3 data-i18n="l2_t">Atmospheric turbulence map</h3><p data-i18n="l2_p">An inertial sensor (IMU) tracks the stability of the descent, the same data that matters in real parachute and reentry system design.</p><span class="chip" data-i18n="l2_s">Our safest bet</span></div>
+      </article>
+      <article class="layer">
+        <div class="lq"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg><p class="q" data-i18n="l3_q">Would it be shielded from radiation?</p></div>
+        <div class="lb"><h3 data-i18n="l3_t">Cosmic radiation shielding gradient</h3><p data-i18n="l3_p">We measure how background radiation changes with altitude, the same question astrobiologists ask about whether the ice on Kuiper Belt objects could shield a subsurface ocean.</p><span class="chip open" data-i18n="l3_s">The honest question mark</span></div>
+      </article>
     </div>
     <details class="ww">
       <summary data-i18n="ww_title">Why this should actually work</summary>
-      <div class="body"><p data-i18n="ww_p1">Each of the three sensors on its own is a fairly standard, well-tested piece of kit. That’s on purpose, we wanted the mission to be ambitious in what it asks, not in what it risks breaking. The humidity, temperature and UV readings are the same kind of data real habitability studies use to rule places in or out, so our index isn’t just a made-up score, it’s built the same way scientists actually reason about it.</p><p data-i18n="ww_p2">The turbulence data from the IMU is the part we’re most confident will simply work, since it’s just movement data, and it gives us something almost no other CanSat team measures: a real picture of how rough the descent was, stage by stage. That matters beyond the “cool factor”: it’s literally the kind of data engineers use to decide if a parachute or landing system design is safe.</p><p data-i18n="ww_p3">The radiation sensor is the one honest question mark. It’s the hardest part to source and calibrate for a team at our level, so if it doesn’t make it into the final build, the mission still stands on the other two layers. If it does work, it lets us actually test, at a tiny atmospheric scale, the same shielding question astrobiologists ask about Kuiper Belt objects: how much cover does it take to protect something underneath from radiation. That’s the number we’d be most excited to bring back.</p></div>
+      <div class="body">
+        <p data-i18n="ww_p1">Each of the three sensors on its own is a fairly standard, well-tested piece of kit.</p>
+        <p data-i18n="ww_p2">The turbulence data from the IMU is the part we’re most confident will simply work.</p>
+        <p data-i18n="ww_p3">The radiation sensor is the one honest question mark.</p>
+      </div>
     </details>
   </div>
 </section>
 
-<!-- ============ PROGRESS (blog) ============ -->
-<section class="view" data-view="progress">
+<!-- ============ PROGRESS (mission log) ============ -->
+<section class="view" data-view="progress" hidden>
   <div class="page">
-    <h2 data-i18n="wip_title">Work in progress</h2>
-    <p class="lead" data-i18n="wip_lead">Here is how Kaiper is coming together: our first 3D-printed can and the sessions with our mentor, who works for ESA.</p>
-    <div class="post corepost">
-      <h3 data-i18n="core_title">Kaiper Core</h3>
-      <p class="gnote" data-i18n="core_lead">Our new can, designed in three parts: shell, core and sled.</p>
-      <div class="corefigs">
-        <figure class="corefig"><div class="imgbox"><img data-src="images/core/montado.png" data-alt-i18n="core_v1" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v1">Assembled</figcaption></figure>
-        <figure class="corefig"><div class="imgbox"><img data-src="images/core/despiece.png" data-alt-i18n="core_v2" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v2">Exploded view: core, sled and shell</figcaption></figure>
-        <figure class="corefig"><div class="imgbox"><img data-src="images/core/corte.png" data-alt-i18n="core_v3" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v3">Cut-away: column, panel and sled</figcaption></figure>
-      </div>
-      <div class="steps">
-        <div class="step"><div class="num">01</div><h3 data-i18n="core_p1_t">Shell</h3><p data-i18n="core_p1_p">The outer skin of the can. It has a faceted diamond pattern, a band of horizontal vents and a tapered base.</p></div>
-        <div class="step"><div class="num">02</div><h3 data-i18n="core_p2_t">Core</h3><p data-i18n="core_p2_p">The blue lid with its openings and a perforated panel that hangs from it, full of holes and slots.</p></div>
-        <div class="step"><div class="num">03</div><h3 data-i18n="core_p3_t">Sled</h3><p data-i18n="core_p3_p">The orange tray at the base, with compartments. The panel stands on it, inside the shell.</p></div>
-      </div>
+    <div class="page-head">
+      <h2 data-i18n="wip_title">Work in progress</h2>
+      <p class="lead" data-i18n="wip_lead">Here is how Kaiper is coming together: our first 3D-printed can and the sessions with our mentor, who works for ESA.</p>
     </div>
-    <div id="posts"></div>
+    <div class="log">
+      <article class="post corepost">
+        <h3 data-i18n="core_title">Kaiper Core</h3>
+        <p class="gnote" data-i18n="core_lead">Our new can, designed in three parts: shell, core and sled.</p>
+        <div class="corefigs">
+          <figure class="corefig"><div class="imgbox"><img data-src="images/core/montado.png" data-alt-i18n="core_v1" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v1">Assembled</figcaption></figure>
+          <figure class="corefig"><div class="imgbox"><img data-src="images/core/despiece.png" data-alt-i18n="core_v2" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v2">Exploded view: core, sled and shell</figcaption></figure>
+          <figure class="corefig"><div class="imgbox"><img data-src="images/core/corte.png" data-alt-i18n="core_v3" alt="" onerror="this.style.display='none'"></div><figcaption data-i18n="core_v3">Cut-away: column, panel and sled</figcaption></figure>
+        </div>
+        <ul class="parts">
+          <li><span class="sw sw-shell" aria-hidden="true"></span><div><h4 data-i18n="core_p1_t">Shell</h4><p data-i18n="core_p1_p">The outer skin of the can.</p></div></li>
+          <li><span class="sw sw-core" aria-hidden="true"></span><div><h4 data-i18n="core_p2_t">Core</h4><p data-i18n="core_p2_p">The blue lid with its openings.</p></div></li>
+          <li><span class="sw sw-sled" aria-hidden="true"></span><div><h4 data-i18n="core_p3_t">Sled</h4><p data-i18n="core_p3_p">The orange tray at the base.</p></div></li>
+        </ul>
+      </article>
+      <div id="posts"></div>
+    </div>
   </div>
 </section>
 
 <!-- ============ TEAM ============ -->
-<section class="view" data-view="team">
+<section class="view" data-view="team" hidden>
   <div class="page">
-    <h2 data-i18n="team_title">The team</h2>
-    <p class="lead" data-i18n="team_lead">4th-year ESO students at Escola Vedruna Tona, working on electronics, structure, programming, and data analysis.</p>
-    <div class="twocol">
-      <div class="story">
-        <div class="mascot"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="80" cy="86" rx="68" ry="26" fill="none" stroke="#8fd9e8" stroke-width="2" opacity="0.55" transform="rotate(-14 80 86)"/>
-          <circle cx="80" cy="80" r="46" fill="#123647" stroke="#8fd9e8" stroke-width="2"/>
-          <path d="M42 68 Q80 58 118 70" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
-          <path d="M46 96 Q80 104 114 94" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
-        </svg></div>
-        <div>
-          <h3 data-i18n="why_title">Why Kaiper?</h3>
-          <p data-i18n="why_p">Hi, I’m Matias. This whole project started with a name before it started with a sensor. “Kai” means ocean in Hawaiian, and it’s also the name my partner and I would love to give our future son one day. So when I learned that the Kuiper Belt might hide oceans under its ice, in a place nobody could see, it felt like this project was meant to carry that name. Kaiper isn’t just a science mission to me. Every reading it sends back on the way down is us asking, in our own small way, whether there’s an ocean hiding somewhere nobody’s checked yet.</p>
-          <div class="signed" data-i18n="why_signed">Matias, Team Kaiper</div>
-        </div>
-      </div>
-      <div class="team-grid">
-        <div class="member"><div class="photo"><div class="initials">JM</div><img alt="J. Matias Lancheros H" data-base="images/team/matias" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">J. Matias Lancheros H</div></div>
-        <div class="member"><div class="photo"><div class="initials">AV</div><img alt="Aleix Vallbona" data-base="images/team/aleix" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Aleix Vallbona</div></div>
-        <div class="member"><div class="photo"><div class="initials">EC</div><img alt="Eloi Castaño" data-base="images/team/eloi" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Eloi Castaño</div></div>
-        <div class="member"><div class="photo"><div class="initials">AL</div><img alt="Alex Vilarrasa" data-base="images/team/alex-v" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Alex Vilarrasa</div></div>
+    <div class="page-head">
+      <h2 data-i18n="team_title">The team</h2>
+      <p class="lead" data-i18n="team_lead">4th-year ESO students at Escola Vedruna Tona, working on electronics, structure, programming, and data analysis.</p>
+    </div>
+    <div class="story">
+      <div class="mascot" aria-hidden="true"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="86" rx="68" ry="26" fill="none" stroke="#8fd9e8" stroke-width="2" opacity="0.55" transform="rotate(-14 80 86)"/>
+        <circle cx="80" cy="80" r="46" fill="#18385d" stroke="#8fd9e8" stroke-width="2"/>
+        <path d="M42 68 Q80 58 118 70" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
+        <path d="M46 96 Q80 104 114 94" stroke="#8fd9e8" stroke-width="1.4" fill="none" opacity="0.4"/>
+        <circle cx="146" cy="58" r="4" fill="#ff6f4d"/>
+      </svg></div>
+      <div class="letter">
+        <h3 data-i18n="why_title">Why Kaiper?</h3>
+        <p class="why" data-i18n="why_p">Hi, I’m Matias.</p>
+        <p class="signed" data-i18n="why_signed">Matias, Team Kaiper</p>
       </div>
     </div>
+    <ul class="crew">
+      <li class="member"><div class="photo"><div class="initials" aria-hidden="true">JM</div><img alt="J. Matias Lancheros H" data-base="images/team/matias" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">J. Matias Lancheros H</div></li>
+      <li class="member"><div class="photo"><div class="initials" aria-hidden="true">AV</div><img alt="Aleix Vallbona" data-base="images/team/aleix" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Aleix Vallbona</div></li>
+      <li class="member"><div class="photo"><div class="initials" aria-hidden="true">EC</div><img alt="Eloi Castaño" data-base="images/team/eloi" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Eloi Castaño</div></li>
+      <li class="member"><div class="photo"><div class="initials" aria-hidden="true">AL</div><img alt="Alex Vilarrasa" data-base="images/team/alex-v" data-tried="0" onerror="kaiperPhotoFallback(this)"></div><div class="name">Alex Vilarrasa</div></li>
+    </ul>
   </div>
 </section>
 
 <!-- ============ KAIPER APPS ============ -->
-<section class="view" data-view="apps">
+<section class="view" data-view="apps" hidden>
   <div class="page">
-    <h2 data-i18n="apps_title">Kaiper apps</h2>
-    <p class="lead" data-i18n="apps_lead">Tools made for the CanSat mission.</p>
-    <div class="appcard">
-      <div>
-        <h3 data-i18n="apps_gs_title">Ground station</h3>
-        <p data-i18n="apps_gs_desc">Receives the CanSat temperature by radio, plots it live and saves it to an Excel file.</p>
-        <p class="note" data-i18n="apps_note">Works with Chrome or Edge. If the radio does not connect here, open the app in full screen.</p>
-      </div>
-      <a class="btnlink" id="openGS" href="estacio_terra.html" target="_blank" rel="noopener" data-i18n="apps_open">Open full screen</a>
+    <div class="page-head">
+      <h2 data-i18n="apps_title">Kaiper apps</h2>
+      <p class="lead" data-i18n="apps_lead">Tools made for the CanSat mission.</p>
     </div>
-    <iframe id="gsFrame" title="Kaiper ground station" allow="serial" loading="lazy"></iframe>
+    <div class="console">
+      <div class="console-head">
+        <div>
+          <h3 data-i18n="apps_gs_title">Ground station</h3>
+          <p data-i18n="apps_gs_desc">Receives the CanSat temperature by radio, plots it live and saves it to an Excel file.</p>
+          <p class="note" data-i18n="apps_note">Works with Chrome or Edge. If the radio does not connect here, open the app in full screen.</p>
+        </div>
+        <a class="btn" id="openGS" href="estacio_terra.html" target="_blank" rel="noopener" data-i18n="apps_open">Open full screen</a>
+      </div>
+      <iframe id="gsFrame" title="Kaiper ground station" allow="serial" loading="lazy"></iframe>
+    </div>
   </div>
 </section>
 
 <!-- ============ CONTACT + SPONSORS ============ -->
-<section class="view" data-view="contact">
+<section class="view" data-view="contact" hidden>
   <div class="page">
-    <h2 data-i18n="contact_title">Contact and sponsors</h2>
-    <p class="lead" data-i18n="contact_lead">Questions, ideas, or want to support Kaiper? Write to us.</p>
-    <div class="twocol">
+    <div class="page-head">
+      <h2 data-i18n="contact_title">Contact and sponsors</h2>
+      <p class="lead" data-i18n="contact_lead">Questions, ideas, or want to support Kaiper? Write to us.</p>
+    </div>
+    <div class="contact-grid">
       <div>
         <h3 class="col-title" data-i18n="contact_block">Find us</h3>
         <div class="linkbtns">
-          <a class="linkbtn" href="https://www.instagram.com/kaiper.cansat" target="_blank" rel="noopener"><b>Instagram</b><span>@kaiper.cansat</span></a>
-          <a class="linkbtn" href="https://www.tiktok.com/@kaiperteam" target="_blank" rel="noopener"><b>TikTok</b><span>@kaiperteam</span></a>
-          <a class="linkbtn" href="mailto:kaiper.cansat@gmail.com"><b data-i18n="foot_email">Email</b><span>kaiper.cansat@gmail.com</span></a>
+          <a class="linkbtn" href="https://www.instagram.com/kaiper.cansat" target="_blank" rel="noopener"><div><b>Instagram</b><span>@kaiper.cansat</span></div><span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span></a>
+          <a class="linkbtn" href="https://www.tiktok.com/@kaiperteam" target="_blank" rel="noopener"><div><b>TikTok</b><span>@kaiperteam</span></div><span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span></a>
+          <a class="linkbtn" href="mailto:kaiper.cansat@gmail.com"><div><b data-i18n="foot_email">Email</b><span>kaiper.cansat@gmail.com</span></div><span class="go" aria-hidden="true"><svg><use href="#i-go"/></svg></span></a>
         </div>
       </div>
       <div class="sponsor-col">
         <h3 class="col-title" data-i18n="sp_title">Sponsors</h3>
         <p class="lead" data-i18n="sp_lead">Companies supporting team Kaiper.</p>
-        <div class="sponsor-slot" data-i18n="sp_slot" data-n="1">Sponsor slot 1</div>
-        <div class="sponsor-slot" data-i18n="sp_slot" data-n="2">Sponsor slot 2</div>
-        <div class="sponsor-slot" data-i18n="sp_slot" data-n="3">Sponsor slot 3</div>
+        <div class="slots">
+          <div class="sponsor-slot" data-i18n="sp_slot" data-n="1">Sponsor slot 1</div>
+          <div class="sponsor-slot" data-i18n="sp_slot" data-n="2">Sponsor slot 2</div>
+          <div class="sponsor-slot" data-i18n="sp_slot" data-n="3">Sponsor slot 3</div>
+        </div>
+        <a class="btn" href="mailto:kaiper.cansat@gmail.com" data-i18n="sp_cta">Become a sponsor</a>
       </div>
     </div>
   </div>
@@ -385,7 +850,10 @@
   </div>
 </footer>
 
-<div id="lightbox" hidden><img alt=""></div>
+<div id="lightbox" role="dialog" aria-modal="true" hidden>
+  <button class="lb-close" type="button" aria-label="Close" data-aria-i18n="lb_close">×</button>
+  <img alt="">
+</div>
 
 <script>
 var I18N = {
@@ -473,7 +941,22 @@ var I18N = {
   "card_mission_d": "Our mission: mapping an invisible ocean.",
   "card_progress_d": "Photos of our printed can and our sessions with our mentor.",
   "card_team_d": "The team and the story behind the name.",
-  "card_contact_d": "Write to us or support the project."
+  "card_contact_d": "Write to us or support the project.",
+  "skip": "Skip to content",
+  "nav_aria": "Main navigation",
+  "hero_cta_mission": "Explore the mission",
+  "hero_cta_progress": "See our progress",
+  "hero_chart_aria": "Animated chart: the CanSat falls from 1,000 m under its parachute, showing simulated altitude, temperature and pressure readings.",
+  "tel_title": "Simulated descent",
+  "tel_alt": "Altitude",
+  "tel_temp": "Temperature",
+  "tel_pres": "Pressure",
+  "cs_fig": "The size limit for every CanSat",
+  "l1_s": "Standard, well-tested sensors",
+  "l2_s": "Our safest bet",
+  "l3_s": "The honest question mark",
+  "sp_cta": "Become a sponsor",
+  "lb_close": "Close"
  },
  "ca": {
   "title": "Kaiper | Equip CanSat",
@@ -544,22 +1027,37 @@ var I18N = {
   "wip_logo_p": "Un vídeo curt de com vam fer el nostre logo.",
   "wip_video_empty": "El vídeo arribarà aviat.",
   "core_title": "Kaiper Core",
-  "core_lead": "La nostra nova llauna, dissenyada en tres peces: corteça, nucli i trineu.",
+  "core_lead": "La nostra nova llauna, dissenyada en tres peces: escorça, nucli i trineu.",
   "core_v1": "Muntada",
-  "core_v2": "Desplegada: nucli, trineu i corteça",
+  "core_v2": "Desplegada: nucli, trineu i escorça",
   "core_v3": "Tall: columna, panell i trineu",
-  "core_p1_t": "Corteça",
+  "core_p1_t": "Escorça",
   "core_p1_p": "La pell exterior de la llauna. Té un patró facetat de rombes, una banda de ventilacions horitzontals i una base cònica.",
   "core_p2_t": "Nucli",
   "core_p2_p": "La tapa blava amb les seves obertures i un panell perforat que en penja, ple de forats i ranures.",
   "core_p3_t": "Trineu",
-  "core_p3_p": "La safata taronja de la base, amb compartiments. El panell s’hi recolza, dins de la corteça.",
+  "core_p3_p": "La safata taronja de la base, amb compartiments. El panell s’hi recolza, dins de l’escorça.",
   "contact_block": "On trobar-nos",
   "card_cansat_d": "Com funciona un satèl·lit de la mida d’una llauna.",
   "card_mission_d": "La nostra missió: cartografiar un oceà invisible.",
   "card_progress_d": "Fotos de la llauna impresa i de les sessions amb el nostre mentor.",
   "card_team_d": "L’equip i la història del nom.",
-  "card_contact_d": "Escriu-nos o dona suport al projecte."
+  "card_contact_d": "Escriu-nos o dona suport al projecte.",
+  "skip": "Salta al contingut",
+  "nav_aria": "Navegació principal",
+  "hero_cta_mission": "Descobreix la missió",
+  "hero_cta_progress": "Mira com avancem",
+  "hero_chart_aria": "Gràfic animat: el CanSat cau des de 1.000 m amb el seu paracaigudes i mostra lectures simulades d’altitud, temperatura i pressió.",
+  "tel_title": "Descens simulat",
+  "tel_alt": "Altitud",
+  "tel_temp": "Temperatura",
+  "tel_pres": "Pressió",
+  "cs_fig": "La mida màxima de qualsevol CanSat",
+  "l1_s": "Sensors estàndard i ben provats",
+  "l2_s": "La nostra aposta més segura",
+  "l3_s": "L’única incògnita honesta",
+  "sp_cta": "Fes-te patrocinador",
+  "lb_close": "Tanca"
  },
  "es": {
   "title": "Kaiper | Equipo CanSat",
@@ -645,7 +1143,22 @@ var I18N = {
   "card_mission_d": "Nuestra misión: cartografiar un océano invisible.",
   "card_progress_d": "Fotos de la lata impresa y de las sesiones con nuestro mentor.",
   "card_team_d": "El equipo y la historia del nombre.",
-  "card_contact_d": "Escríbenos o apoya el proyecto."
+  "card_contact_d": "Escríbenos o apoya el proyecto.",
+  "skip": "Saltar al contenido",
+  "nav_aria": "Navegación principal",
+  "hero_cta_mission": "Descubre la misión",
+  "hero_cta_progress": "Mira cómo avanzamos",
+  "hero_chart_aria": "Gráfico animado: el CanSat cae desde 1.000 m con su paracaídas y muestra lecturas simuladas de altitud, temperatura y presión.",
+  "tel_title": "Descenso simulado",
+  "tel_alt": "Altitud",
+  "tel_temp": "Temperatura",
+  "tel_pres": "Presión",
+  "cs_fig": "El tamaño máximo de cualquier CanSat",
+  "l1_s": "Sensores estándar y bien probados",
+  "l2_s": "Nuestra apuesta más segura",
+  "l3_s": "La única incógnita honesta",
+  "sp_cta": "Hazte patrocinador",
+  "lb_close": "Cerrar"
  },
  "zh": {
   "title": "Kaiper | CanSat 团队",
@@ -731,7 +1244,22 @@ var I18N = {
   "card_mission_d": "我们的任务：绘制一片看不见的海洋。",
   "card_progress_d": "打印罐体和导师交流的照片。",
   "card_team_d": "团队和名字背后的故事。",
-  "card_contact_d": "给我们写信，或支持这个项目。"
+  "card_contact_d": "给我们写信，或支持这个项目。",
+  "skip": "跳到正文",
+  "nav_aria": "主导航",
+  "hero_cta_mission": "了解任务",
+  "hero_cta_progress": "查看进展",
+  "hero_chart_aria": "动画图表：CanSat 乘降落伞从 1000 米高空下降，显示模拟的高度、温度和气压读数。",
+  "tel_title": "模拟下降",
+  "tel_alt": "高度",
+  "tel_temp": "温度",
+  "tel_pres": "气压",
+  "cs_fig": "每个 CanSat 的尺寸上限",
+  "l1_s": "标准且经过验证的传感器",
+  "l2_s": "我们最有把握的部分",
+  "l3_s": "唯一的未知数",
+  "sp_cta": "成为赞助商",
+  "lb_close": "关闭"
  }
 };
 
@@ -795,7 +1323,7 @@ var POSTS = [
 
 /* Where the images live. On GitHub Pages (or opened as a local file) the relative paths work.
    Inside Google Sites the page runs in an isolated frame, so it needs the full address of the repository. */
-var GH_BASE = 'https://mattsinconexion.github.io/kaiper.cansat/';
+var GH_BASE = 'https://kaipercansat.github.io/kaiper.cansat/';
 var ASSET_BASE = (location.hostname.indexOf('github.io') > -1 || location.protocol === 'file:') ? '' : GH_BASE;
 
 var LANG = 'en';
@@ -808,18 +1336,149 @@ function t(key){
 }
 function pick(o){ return (o && (o[LANG] || o.en)) || ''; }
 
+/* ---------- hero: the sky drawn as a depth chart ---------- */
+var CH_TOP = 0.08, CH_SPAN = 0.84;   /* 1000 m sits at 8 % of the chart, the ground at 92 % */
+function altY(alt){ return CH_TOP + (1 - alt / 1000) * CH_SPAN; }
+
+function buildChart(){
+  var svg = document.getElementById('isolines');
+  var labels = document.getElementById('altLabels');
+  if(!svg || !labels) return;
+  var paths = '', lab = '';
+  for(var a = 1000; a >= 0; a -= 100){
+    var y = altY(a) * 1000;
+    var amp = a === 0 ? 0 : 3 + (a / 1000) * 9;
+    var ph = a * 0.0127;
+    var d = '';
+    for(var x = 0; x <= 1000; x += 20){
+      var yy = y + Math.sin(x / 1000 * Math.PI * 2.6 + ph) * amp + Math.sin(x / 1000 * Math.PI * 6.3 + ph * 1.9) * amp * 0.35;
+      d += (x ? ' L' : 'M') + x + ' ' + yy.toFixed(1);
+    }
+    var cls = a === 0 ? 'ground' : (a % 500 === 0 ? 'major' : '');
+    paths += '<path' + (cls ? ' class="' + cls + '"' : '') + ' d="' + d + '"/>';
+    lab += '<span' + (cls ? ' class="' + cls + '"' : '') + ' style="top:' + (y / 10).toFixed(2) + '%">' + a + ' m</span>';
+  }
+  svg.innerHTML = paths;
+  labels.innerHTML = lab;
+}
+
+/* A simulated descent with the standard atmosphere (ISA): temperature falls 6.5 °C per km, pressure follows the barometric formula. */
+var Descent = (function(){
+  var chart = document.getElementById('chart');
+  var probe = document.getElementById('probe');
+  var ro = document.getElementById('readout');
+  var trail = document.getElementById('trail');
+  var vA = document.getElementById('vAlt'), vT = document.getElementById('vT'), vP = document.getElementById('vP');
+  var noop = { setActive:function(){}, refresh:function(){} };
+  if(!chart || !probe || !ro) return noop;
+
+  var TOP = 1000, DUR = 26000, HOLD = 2200;
+  function mq(q){ return window.matchMedia ? window.matchMedia(q) : { matches:false }; }
+  var reduce = mq('(prefers-reduced-motion: reduce)');
+  var narrow = mq('(max-width: 900px)');
+  var W = 0, H = 0, PW = 46, PH = 84, RW = 220, RH = 120;
+  var raf = 0, t0 = 0, held = 0, lastTxt = 0, lastDot = TOP;
+  var active = false, onscreen = true, running = false;
+
+  function fmt(n, dec){
+    try{ return n.toLocaleString(LANG === 'zh' ? 'zh-CN' : LANG, { minimumFractionDigits:dec, maximumFractionDigits:dec, useGrouping:false }); }
+    catch(e){ return n.toFixed(dec); }
+  }
+  function readings(alt){
+    vA.textContent = fmt(Math.round(alt), 0);
+    vT.textContent = fmt(15 - 0.0065 * alt, 1);
+    vP.textContent = fmt(1013.25 * Math.pow(1 - 2.25577e-5 * alt, 5.25588), 1);
+  }
+  function measureBoxes(){ PW = probe.offsetWidth || 46; PH = probe.offsetHeight || 84; RW = ro.offsetWidth || 220; RH = ro.offsetHeight || 120; }
+  function measure(){ W = chart.clientWidth; H = chart.clientHeight; measureBoxes(); trail.innerHTML = ''; lastDot = TOP; }
+  function place(alt, s){
+    var nar = narrow.matches;
+    var x = W * (nar ? 0.85 : (W < 1200 ? 0.62 : 0.72)) + Math.sin(s * 0.9) * (nar ? 5 : 14);
+    var y = H * altY(alt);
+    var tilt = Math.sin(s * 1.6) * 5;
+    probe.style.transform = 'translate3d(' + (x - PW / 2).toFixed(1) + 'px,' + (y - PH * 70 / 84).toFixed(1) + 'px,0) rotate(' + tilt.toFixed(2) + 'deg)';
+    if(!nar){
+      var flip = x + 40 + RW > W - 12;
+      if(ro.classList.contains('flip') !== flip) ro.classList.toggle('flip', flip);
+      ro.style.transform = 'translate3d(' + (flip ? x - 40 - RW : x + 40).toFixed(1) + 'px,' + (y - RH / 2).toFixed(1) + 'px,0)';
+    } else if(ro.style.transform){
+      ro.style.transform = ''; ro.classList.remove('flip');
+    }
+    return [x, y];
+  }
+  function dot(x, y){
+    var d = document.createElement('i');
+    d.style.transform = 'translate(' + (x - 2.5).toFixed(1) + 'px,' + (y - 2.5).toFixed(1) + 'px)';
+    trail.appendChild(d);
+  }
+  function frame(now){
+    if(!t0) t0 = now - held;
+    var el = now - t0;
+    var p = Math.min(el / DUR, 1);
+    var alt = TOP * (1 - p);
+    var xy = place(alt, el / 1000);
+    if(alt <= lastDot - 40){ lastDot = alt; dot(xy[0], xy[1]); }
+    if(now - lastTxt > 90 || p >= 1){ readings(alt); lastTxt = now; }
+    var fading = el > DUR + HOLD - 450;
+    probe.style.opacity = fading ? '0' : '1';
+    trail.style.opacity = fading ? '0' : '1';
+    if(el > DUR + HOLD){ t0 = now; lastDot = TOP; trail.innerHTML = ''; }
+    raf = requestAnimationFrame(frame);
+  }
+  function stop(){
+    if(running){ held = t0 ? performance.now() - t0 : 0; }
+    running = false; cancelAnimationFrame(raf); t0 = 0;
+  }
+  function sync(){
+    if(reduce.matches){
+      stop();
+      if(active){ measure(); place(640, 0); readings(640); }
+      return;
+    }
+    var should = active && onscreen && !document.hidden;
+    if(should && !running){ running = true; measure(); raf = requestAnimationFrame(frame); }
+    else if(!should && running){ stop(); }
+  }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){ onscreen = entries[0].isIntersecting; sync(); }).observe(chart);
+  }
+  document.addEventListener('visibilitychange', sync);
+  var rz = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(rz);
+    rz = setTimeout(function(){ if(active){ measure(); if(!running) sync(); } }, 120);
+  });
+  return {
+    setActive:function(a){ active = a; sync(); },
+    refresh:function(){ if(active){ measureBoxes(); if(!running) sync(); } }
+  };
+})();
+
 /* ---------- views ---------- */
-function showView(name){
+function centerNav(link){
+  var nav = document.getElementById('nav');
+  if(!link || nav.scrollWidth <= nav.clientWidth) return;
+  nav.scrollLeft = link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2;
+}
+function showView(name, fromUser){
   if(VIEWS.indexOf(name) < 0) name = 'home';
   var secs = document.querySelectorAll('section.view');
   for(var i = 0; i < secs.length; i++){ secs[i].hidden = secs[i].getAttribute('data-view') !== name; }
   var links = document.querySelectorAll('#nav a');
+  var cur = null;
   for(var j = 0; j < links.length; j++){
-    if(links[j].getAttribute('data-v') === name) links[j].setAttribute('aria-current', 'page');
+    if(links[j].getAttribute('data-v') === name){ links[j].setAttribute('aria-current', 'page'); cur = links[j]; }
     else links[j].removeAttribute('aria-current');
   }
+  centerNav(cur);
   window.scrollTo(0, 0);
   if(name === 'apps') loadApp();
+  Descent.setActive(name === 'home');
+  if(fromUser){
+    var sec = document.querySelector('section.view[data-view="' + name + '"]');
+    var hd = sec ? sec.querySelector('h1, h2') : null;
+    if(hd){ hd.setAttribute('tabindex', '-1'); try{ hd.focus({ preventScroll:true }); }catch(e){} }
+  }
 }
 function route(){ showView((location.hash || '#home').slice(1)); }
 window.addEventListener('hashchange', route);
@@ -829,10 +1488,15 @@ window.addEventListener('popstate', route);
 document.addEventListener('click', function(e){
   var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
   if(!a) return;
+  if(a.classList.contains('skip')){
+    e.preventDefault();
+    document.getElementById('main').focus();
+    return;
+  }
   var name = a.getAttribute('href').slice(1);
   if(VIEWS.indexOf(name) < 0) return;
   e.preventDefault();
-  showView(name);
+  showView(name, true);
   var standalone = false;
   try{ standalone = (window.top === window); }catch(err){}
   if(standalone){ try{ history.pushState(null, '', '#' + name); }catch(err){} }
@@ -854,6 +1518,8 @@ function applyLang(l){
   }
   var alts = document.querySelectorAll('[data-alt-i18n]');
   for(var a = 0; a < alts.length; a++){ alts[a].alt = t(alts[a].getAttribute('data-alt-i18n')); }
+  var arias = document.querySelectorAll('[data-aria-i18n]');
+  for(var r = 0; r < arias.length; r++){ arias[r].setAttribute('aria-label', t(arias[r].getAttribute('data-aria-i18n'))); }
   document.getElementById('langCur').textContent = LABELS[l];
   document.getElementById('langBtn').setAttribute('aria-label', t('lang_aria'));
   var items = document.querySelectorAll('#langMenu button');
@@ -862,6 +1528,7 @@ function applyLang(l){
   }
   renderPosts();
   syncApp();
+  Descent.refresh();
   try{ localStorage.setItem('kaiperLang', l); }catch(e){}
 }
 
@@ -874,13 +1541,27 @@ function applyLang(l){
     var open = menu.hidden;
     menu.hidden = !open;
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if(open){ var c = menu.querySelector('button[aria-current="true"]') || menu.querySelector('button'); if(c) c.focus(); }
   });
   menu.addEventListener('click', function(e){
     var b = e.target.closest('button[data-lang]');
-    if(b){ applyLang(b.getAttribute('data-lang')); close(); }
+    if(b){ applyLang(b.getAttribute('data-lang')); close(); btn.focus(); }
+  });
+  menu.addEventListener('keydown', function(e){
+    if(e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    var list = Array.prototype.slice.call(menu.querySelectorAll('button'));
+    var i = list.indexOf(document.activeElement);
+    i = e.key === 'ArrowDown' ? (i + 1) % list.length : (i - 1 + list.length) % list.length;
+    list[i].focus();
   });
   document.addEventListener('click', close);
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ close(); closeLightbox(); } });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      if(!menu.hidden){ close(); btn.focus(); }
+      closeLightbox();
+    }
+  });
 })();
 
 /* ---------- team photos: try other extensions, then keep the initials ---------- */
@@ -948,7 +1629,7 @@ function videoBox(p){
       failed++;
       if(failed === exts.length){
         wrap.innerHTML = '';
-        var e = document.createElement('div'); e.className = 'wip-empty'; e.textContent = t('wip_video_empty');
+        var e = document.createElement('div'); e.className = 'wip-empty'; e.setAttribute('data-i18n', 'wip_video_empty'); e.textContent = t('wip_video_empty');
         wrap.appendChild(e);
       }
     });
@@ -961,7 +1642,7 @@ function renderPosts(){
   var host = document.getElementById('posts');
   host.innerHTML = '';
   POSTS.forEach(function(p){
-    var box = document.createElement('div'); box.className = 'post';
+    var box = document.createElement('article'); box.className = 'post';
     var h = document.createElement('h3'); h.textContent = pick(p.title);
     if(p.date){ var d = document.createElement('span'); d.className = 'pdate'; d.textContent = p.date; h.appendChild(d); }
     var tx = document.createElement('p'); tx.className = 'gnote'; tx.textContent = pick(p.text);
@@ -978,7 +1659,11 @@ function renderPosts(){
         var im = document.createElement('img');
         im.src = src; im.loading = 'lazy'; im.alt = pick(p.title) + ' ' + (i + 1);
         fig.appendChild(im);
+        fig.setAttribute('tabindex', '0');
+        fig.setAttribute('role', 'button');
+        fig.setAttribute('aria-label', im.alt);
         fig.addEventListener('click', function(){ openLightbox(src, im.alt); });
+        fig.addEventListener('keydown', function(ev){ if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openLightbox(src, im.alt); } });
         grid.appendChild(fig);
       });
       box.appendChild(grid);
@@ -992,12 +1677,27 @@ function renderPosts(){
 function updateHomeCard(){
   var first = null;
   for(var i = 0; i < POSTS.length && !first; i++){ if(POSTS[i].srcs && POSTS[i].srcs.length) first = POSTS[i].srcs[0]; }
-  if(first) document.getElementById('cardProgress').style.setProperty('--bg', 'url("' + first + '")');
+  if(first){
+    var c = document.getElementById('cardProgress');
+    c.style.setProperty('--bg', 'url("' + first + '")');
+    c.classList.add('has-photo');
+  }
 }
 
+/* ---------- lightbox ---------- */
 var lb = document.getElementById('lightbox');
-function openLightbox(src, alt){ lb.querySelector('img').src = src; lb.querySelector('img').alt = alt; lb.hidden = false; }
-function closeLightbox(){ lb.hidden = true; }
+var lbReturn = null;
+function openLightbox(src, alt){
+  lbReturn = document.activeElement;
+  lb.querySelector('img').src = src; lb.querySelector('img').alt = alt || '';
+  lb.hidden = false;
+  lb.querySelector('.lb-close').focus();
+}
+function closeLightbox(){
+  if(lb.hidden) return;
+  lb.hidden = true;
+  if(lbReturn && lbReturn.focus){ try{ lbReturn.focus(); }catch(e){} }
+}
 lb.addEventListener('click', closeLightbox);
 document.addEventListener('click', function(e){
   var im = e.target.closest ? e.target.closest('.corefig img') : null;
@@ -1019,6 +1719,7 @@ function initAssets(){
 }
 
 /* ---------- start ---------- */
+buildChart();
 var saved = null;
 try{ saved = localStorage.getItem('kaiperLang'); }catch(e){}
 var urlLang = (new URLSearchParams(location.search)).get('lang');
@@ -1026,6 +1727,7 @@ applyLang(urlLang && I18N[urlLang] ? urlLang : (saved && I18N[saved] ? saved : '
 initAssets();
 route();
 POSTS.forEach(probePost);
+setTimeout(function(){ var s = document.getElementById('sky'); if(s) s.classList.remove('intro'); }, 2600);
 </script>
 
 </body>
