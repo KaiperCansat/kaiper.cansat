@@ -236,8 +236,12 @@
   }
   .hero-can img{
     display:block; height:100%; max-height:560px; width:auto; max-width:82vw; object-fit:contain; object-position:bottom;
-    filter:drop-shadow(0 30px 40px rgba(2,6,15,0.7));
     opacity:0;
+  }
+  /* shadows and glows are gradients, never CSS filters: iOS Safari can paint filtered images as blank boxes */
+  .hero-can .can-in::after{
+    content:''; position:absolute; left:50%; bottom:-2px; width:min(300px,64vw); height:34px; transform:translateX(-50%); z-index:-1;
+    background:radial-gradient(closest-side, rgba(2,6,15,0.75), transparent);
   }
   .hero-can.ready img{ opacity:1; }
   @media (prefers-reduced-motion:no-preference){
@@ -248,7 +252,7 @@
     .hero.intro .hero-waves{ animation:wipe 2s var(--ease-out) .1s both; }
     .hero-can.ready img{ animation:canIn 1.4s var(--ease-out) both; }
   }
-  @keyframes blurIn{ from{ opacity:0; transform:translate3d(0,14px,0); filter:blur(8px); } to{ opacity:1; transform:none; filter:blur(0); } }
+  @keyframes blurIn{ from{ opacity:0; transform:translate3d(0,16px,0); } to{ opacity:1; transform:none; } }
   @keyframes canIn{ from{ opacity:0; transform:translate3d(0,56px,0) scale(.94); } to{ opacity:1; transform:none; } }
   @keyframes wipe{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0 0 0 0); } }
 
@@ -306,14 +310,17 @@
   }
   .cs-visual img{
     position:absolute; left:50%; top:0; height:100%; width:auto; max-width:100%; object-fit:contain;
-    opacity:0; transform:translateX(-50%) scale(.95) translateY(12px); filter:blur(10px);
-    transition:opacity .55s var(--ease-out), transform .8s var(--ease-out), filter .55s var(--ease-out);
-    filter:blur(10px) drop-shadow(0 24px 40px rgba(2,6,15,0.6));
+    opacity:0; transform:translateX(-50%) scale(.95) translateY(14px);
+    transition:opacity .5s var(--ease-out), transform .8s var(--ease-out);
+  }
+  .cs-visual::after{
+    content:''; position:absolute; left:50%; bottom:-14px; width:min(280px,70%); height:30px; transform:translateX(-50%);
+    background:radial-gradient(closest-side, rgba(2,6,15,0.8), transparent);
   }
   .core-scene[data-step="0"] .cs-visual img[data-i="0"],
   .core-scene[data-step="1"] .cs-visual img[data-i="1"],
   .core-scene[data-step="2"] .cs-visual img[data-i="2"]{
-    opacity:1; transform:translateX(-50%); filter:blur(0) drop-shadow(0 24px 40px rgba(2,6,15,0.6));
+    opacity:1; transform:translateX(-50%);
   }
   .cs-cap{ position:absolute; left:0; right:0; bottom:-2.2rem; display:grid; text-align:center; color:var(--dim); font-size:.9rem; }
   .cs-cap span{ grid-area:1 / 1; opacity:0; transition:opacity .4s var(--ease-out); }
@@ -337,7 +344,8 @@
   .trail{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
   .trail path{ fill:none; stroke:var(--coral); stroke-width:1.5; stroke-dasharray:2 6; stroke-linecap:round; opacity:.7; }
   .probe{ position:absolute; left:0; top:0; width:56px; height:102px; will-change:transform; }
-  .probe svg{ display:block; width:100%; height:100%; filter:drop-shadow(0 0 14px rgba(255,111,77,0.35)); }
+  .probe svg{ position:relative; display:block; width:100%; height:100%; }
+  .probe::before{ content:''; position:absolute; left:-60%; top:-30%; width:220%; height:90%; background:radial-gradient(closest-side, rgba(255,111,77,0.28), transparent); }
   .readout{
     position:absolute; left:0; top:0; width:228px; will-change:transform;
     padding:.85rem 1rem .9rem; border:1px solid var(--line-2); border-radius:var(--r-md);
@@ -784,14 +792,17 @@
   .b-half{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; will-change:transform; }
   .b-half.l{ clip-path:polygon(0% 0%, 52% 0%, 52% 1%, 47.5% 12%, 54% 22%, 46% 33%, 53.5% 44%, 45% 55%, 52.5% 66%, 47% 78%, 53% 88%, 50% 99%, 50% 100%, 0% 100%); transform-origin:30% 80%; }
   .b-half.r{ clip-path:polygon(52% 0%, 100% 0%, 100% 100%, 50% 100%, 50% 99%, 53% 88%, 47% 78%, 52.5% 66%, 45% 55%, 53.5% 44%, 46% 33%, 54% 22%, 47.5% 12%, 52% 1%); transform-origin:70% 80%; }
-  .b-crack{ position:absolute; inset:0; width:100%; height:100%; overflow:visible;
-    filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(143,217,232,0.95)) drop-shadow(0 0 18px rgba(143,217,232,0.75)); }
-  .b-crack path{ fill:none; stroke:#fff; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; }
+  .b-crack{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .b-crack path{ fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; }
+  .b-crack .g3 path{ stroke:#8fd9e8; stroke-opacity:.16; stroke-width:9; }
+  .b-crack .g2 path{ stroke:#8fd9e8; stroke-opacity:.38; stroke-width:4.5; }
+  .b-crack .g1 path{ stroke:#e9fbff; stroke-opacity:.8; stroke-width:2.4; }
+  .b-crack .g0 path{ stroke:#fff; stroke-width:1.2; }
   .b-crack path.br{ stroke-width:.8; }
+  .b-crack .g3 path.br{ stroke-width:5; } .b-crack .g2 path.br{ stroke-width:2.6; } .b-crack .g1 path.br{ stroke-width:1.5; }
   .b-leak{
-    position:absolute; left:28%; top:-12%; width:44%; height:124%; opacity:0; pointer-events:none; mix-blend-mode:screen;
-    background:radial-gradient(closest-side, rgba(255,255,255,0.95), rgba(190,240,250,0.55) 35%, rgba(143,217,232,0.18) 65%, transparent 100%);
-    filter:blur(6px);
+    position:absolute; left:26%; top:-14%; width:48%; height:128%; opacity:0; pointer-events:none;
+    background:radial-gradient(closest-side, rgba(255,255,255,0.9), rgba(190,240,250,0.5) 30%, rgba(143,217,232,0.16) 60%, transparent 100%);
   }
   .b-hole{
     position:absolute; left:50%; top:50%; width:78%; aspect-ratio:1; border-radius:50%; opacity:0; transform:translate(-50%,-50%) scale(0);
@@ -813,7 +824,7 @@
   .b-cur{ position:absolute; left:0; top:0; z-index:3; width:24px; height:24px; margin:-3px 0 0 -4px; will-change:transform; }
   .b-cur.named{ z-index:4; }
   .b-rot{ position:absolute; inset:0; transform-origin:4px 3px; }
-  .b-cur svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; filter:drop-shadow(0 1px 2px rgba(2,6,15,0.55)); }
+  .b-cur svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
   /* name tags, Figma-style: they stay upright while the arrow turns */
   .b-name{
     position:absolute; left:15px; top:20px; padding:3px 7px; border-radius:3px 9px 9px 9px;
@@ -836,7 +847,7 @@
   .b-ph svg{ width:22px; height:22px; stroke:var(--mist); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
   .b-hide{ visibility:hidden !important; }
   .b-pop{ animation:bPop .5s var(--ease-out) both; }
-  @keyframes bPop{ from{ opacity:0; transform:scale(.94); filter:blur(4px); } to{ opacity:1; transform:none; filter:blur(0); } }
+  @keyframes bPop{ from{ opacity:0; transform:scale(.92); } to{ opacity:1; transform:none; } }
   .b-wipe{ animation:wipe 1.1s var(--ease-out) both; }
   /* an empty inline (not inline-block) caret adds no line-break opportunity, so text never jumps while it is typed */
   .b-caret{ position:relative; display:inline; }
@@ -1444,11 +1455,14 @@
       <img class="b-half r" data-src="images/isotipo-intro.webp" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)">
       <div class="b-leak"></div>
       <svg class="b-crack" id="bCrack" viewBox="0 0 100 100">
-        <path class="m" pathLength="1" d="M52 1L47.5 12L54 22L46 33L53.5 44L45 55L52.5 66L47 78L53 88L50 99"/>
-        <path class="br" pathLength="1" d="M46 33L38.5 37L33 35.5"/>
-        <path class="br" pathLength="1" d="M53.5 44L61 47.5L67 46"/>
-        <path class="br" pathLength="1" d="M47 78L40.5 81.5"/>
-        <path class="br" pathLength="1" d="M54 22L60 19"/>
+        <defs><g id="crackLines">
+          <path class="m" pathLength="1" d="M52 1L47.5 12L54 22L46 33L53.5 44L45 55L52.5 66L47 78L53 88L50 99"/>
+          <path class="br" pathLength="1" d="M46 33L38.5 37L33 35.5"/>
+          <path class="br" pathLength="1" d="M53.5 44L61 47.5L67 46"/>
+          <path class="br" pathLength="1" d="M47 78L40.5 81.5"/>
+          <path class="br" pathLength="1" d="M54 22L60 19"/>
+        </g></defs>
+        <g class="g3"></g><g class="g2"></g><g class="g1"></g><g class="g0"></g>
       </svg>
     </div>
   </div>
@@ -2984,6 +2998,11 @@ var Intro = (function(){
   var halfL = logo.querySelector('.b-half.l');
   var halfR = logo.querySelector('.b-half.r');
   var crackSvg = document.getElementById('bCrack');
+  (function(){
+    var src = document.getElementById('crackLines');
+    ['g3','g2','g1','g0'].forEach(function(c){ crackSvg.querySelector('.' + c).innerHTML = src.innerHTML; });
+    src.parentNode.parentNode.removeChild(src.parentNode);
+  })();
   var crackMain = crackSvg.querySelectorAll('.m');
   var crackBranch = crackSvg.querySelectorAll('.br');
   var leak = logo.querySelector('.b-leak');
@@ -3193,7 +3212,7 @@ var Intro = (function(){
     for(var j = 0; j < crackBranch.length; j++) crackBranch[j].style.strokeDashoffset = (1 - q).toFixed(3);
   }
   function resetLogo(){
-    logo.style.opacity = '0'; logo.style.transform = 'scale(.86)'; logo.style.filter = 'blur(10px)';
+    logo.style.opacity = '0'; logo.style.transform = 'scale(.86)';
     halfL.style.transform = ''; halfR.style.transform = ''; halfL.style.opacity = ''; halfR.style.opacity = '';
     crackSvg.style.opacity = ''; setCrack(0);
     leak.style.opacity = '0'; hole.style.opacity = '0'; hole.style.transform = 'translate(-50%,-50%) scale(0)';
@@ -3252,7 +3271,6 @@ var Intro = (function(){
       return tween(600, function(p){
         logo.style.opacity = p.toFixed(3);
         logo.style.transform = 'scale(' + (0.86 + 0.14 * p).toFixed(4) + ')';
-        logo.style.filter = p < 1 ? 'blur(' + (10 * (1 - p)).toFixed(2) + 'px)' : '';
       });
     }).then(function(){ return wait(200); }).then(function(){
       /* 2. it starts to shake, harder and harder, and a crack runs through it */
