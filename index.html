@@ -13,14 +13,21 @@
 <meta property="og:image" content="https://kaipercansat.github.io/kaiper.cansat/images/isotipo.png">
 <link rel="icon" href="images/isotipo-small.png">
 <script>
-/* Decide before the first paint whether the "cursors build the page" intro plays, so the finished page never flashes first.
-   It plays on the first visit to the home page (or with ?intro=1), never with reduced motion. */
+/* Decide before the first paint whether the intro plays, so the finished page never flashes first. */
 (function(){ try{
-  var force = /[?&]intro=1(&|$)/.test(location.search);
-  var seen = false; try{ seen = localStorage.getItem('kaiperIntroSeen') === '1'; }catch(e){}
+  /* Inside Google Sites the page runs in a frame: show the "open the full site" notice and skip the intro there */
+  var framed = true; try{ framed = window.self !== window.top; }catch(e){}
+  var anc = '';
+  try{ if(location.ancestorOrigins && location.ancestorOrigins.length) anc = Array.prototype.join.call(location.ancestorOrigins, ' '); }catch(e){}
+  if(!anc) anc = document.referrer || '';
+  var inSites = /googleusercontent\.com$/.test(location.hostname) || (framed && (/google/i.test(anc) || !anc));
+  if(inSites) document.documentElement.classList.add('in-sites');
+
+  /* the intro plays every time the home page is opened (not inside Sites, not with reduced motion,
+     not when a link opens another section directly, e.g. #mission) */
   var home = !location.hash || location.hash === '#home';
   var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(home && !rm && (force || !seen)) document.documentElement.classList.add('b-pre');
+  if(!inSites && home && !rm) document.documentElement.classList.add('b-pre');
 }catch(e){} })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -700,6 +707,70 @@
   .toast svg{ width:18px; height:18px; stroke:#1a7f4b; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 
   /* =========================================================
+     GOOGLE SITES NOTICE — only when the page is seen inside Sites
+     ========================================================= */
+  .sites-note{ display:none; }
+  html.in-sites .sites-note{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .5s var(--ease-out); }
+  html.in-sites .sites-note.show{ grid-template-rows:1fr; }
+  .sites-note > div{ overflow:hidden; min-height:0; }
+  .sn-inner{
+    position:relative; display:flex; align-items:center; gap:1rem 1.4rem;
+    max-width:calc(var(--maxw) + 2 * var(--g)); margin:0 auto; padding:.85rem calc(var(--g) + 44px) .85rem var(--g);
+    opacity:0; transform:translateY(-6px); transition:opacity .35s ease, transform .5s var(--ease-out);
+  }
+  .sites-note.show .sn-inner{ opacity:1; transform:none; }
+  .sites-note{ background:linear-gradient(90deg, rgba(255,111,77,0.16), rgba(143,217,232,0.08) 70%); border-bottom:1px solid var(--line-2); }
+  .sn-ic{ flex:none; width:34px; height:34px; border-radius:10px; display:grid; place-items:center; background:rgba(255,111,77,0.16); }
+  .sn-ic svg{ width:18px; height:18px; stroke:var(--coral); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .sn-text{ flex:1; min-width:0; font-size:.95rem; line-height:1.4; color:var(--mist); }
+  .sn-text b{ display:block; color:var(--foam); font-weight:650; }
+  .sn-btn{ flex:none; min-height:40px; padding:.5rem 1rem; font-size:.92rem; }
+  .sn-btn svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .sn-x{
+    position:absolute; right:max(10px, calc(var(--g) - 8px)); top:50%; margin-top:-17px; width:34px; height:34px; border-radius:50%;
+    display:grid; place-items:center; border:0; background:transparent; color:var(--mist); cursor:pointer;
+    transition:transform .16s var(--ease-out), background-color .2s ease, color .2s ease;
+  }
+  .sn-x:active{ transform:scale(.92); }
+  @media (hover:hover) and (pointer:fine){ .sn-x:hover{ background:rgba(143,217,232,0.1); color:var(--foam); } }
+  .sn-x svg{ width:14px; height:14px; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+  /* the iOS-style alert that greets visitors inside Sites */
+  .alert-root{ position:fixed; inset:0; z-index:85; display:grid; place-items:center; padding:24px; }
+  .alert-backdrop{ position:absolute; inset:0; background:rgba(2,6,15,0.55); opacity:0; transition:opacity .3s ease; }
+  .alert{
+    position:relative; width:min(304px, 100%); border-radius:16px; overflow:hidden; text-align:center;
+    background:rgba(28,41,70,0.8); -webkit-backdrop-filter:blur(28px) saturate(180%); backdrop-filter:blur(28px) saturate(180%);
+    box-shadow:0 30px 80px rgba(2,6,15,0.6), inset 0 0 0 .5px rgba(255,255,255,0.14);
+    opacity:0; transform:scale(1.12);
+    transition:opacity .22s ease, transform .4s var(--ease-drawer);
+  }
+  .alert-root.open .alert-backdrop{ opacity:1; }
+  .alert-root.open .alert{ opacity:1; transform:none; }
+  .alert-root.closing .alert-backdrop{ opacity:0; transition-duration:.22s; }
+  .alert-root.closing .alert{ opacity:0; transform:scale(.96); transition:opacity .18s ease, transform .22s ease; }
+  .alert:focus{ outline:none; }
+  .alert-body{ padding:22px 20px 18px; }
+  .alert-ic{ display:block; width:48px; height:48px; margin:0 auto 12px; padding:7px; border-radius:12px; background:var(--abyss); box-shadow:inset 0 0 0 .5px rgba(255,255,255,0.14); object-fit:contain; }
+  .alert h2{ font-size:1.08rem; font-weight:700; line-height:1.25; letter-spacing:-0.01em; }
+  .alert p{ margin-top:.45rem; color:var(--mist); font-size:.9rem; line-height:1.42; }
+  .alert-btn{
+    display:block; width:100%; min-height:48px; padding:.75rem 1rem; border:0; border-top:.5px solid rgba(255,255,255,0.18);
+    background:transparent; color:var(--ice); font:400 1.02rem/1.25 var(--font); text-decoration:none; cursor:pointer;
+    transition:background-color .15s ease;
+  }
+  .alert-btn.strong{ color:var(--coral); font-weight:650; }
+  .alert-btn:active{ background:rgba(255,255,255,0.09); }
+  @media (hover:hover) and (pointer:fine){ .alert-btn:hover{ background:rgba(255,255,255,0.05); } }
+  .alert-btn:focus-visible{ outline:none; background:rgba(255,255,255,0.09); box-shadow:inset 0 0 0 2px var(--ice); border-radius:0; }
+
+  @media (max-width:700px){
+    .sn-inner{ flex-wrap:wrap; align-items:flex-start; padding-right:calc(var(--g) + 36px); }
+    .sn-ic{ display:none; }
+    .sn-text{ flex-basis:100%; font-size:.9rem; }
+    .sn-x{ top:.55rem; margin-top:0; }
+  }
+
+  /* =========================================================
      INTRO — a crowd of cursors builds the first screen
      ========================================================= */
   #build{ position:fixed; inset:0; z-index:95; display:none; }
@@ -707,15 +778,49 @@
   #build.out{ opacity:0; transition:opacity .45s var(--ease-out); }
   .b-cover{ position:absolute; inset:0; background:var(--abyss); display:grid; place-items:center; transition:opacity .6s var(--ease-out); }
   .b-cover.gone{ opacity:0; }
-  .b-cover img{ width:56px; height:56px; object-fit:contain; animation:bBreath 1.8s ease-in-out infinite; }
-  @keyframes bBreath{ 50%{ transform:scale(1.06); opacity:.75; } }
+  /* the logo that cracks open */
+  .b-logo{ position:relative; width:min(54vw, 236px); aspect-ratio:1; opacity:0; will-change:transform, opacity; }
+  .b-logo::before{ content:''; position:absolute; inset:-45%; border-radius:50%; background:radial-gradient(closest-side, rgba(59,111,208,0.22), transparent 70%); }
+  .b-half{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; will-change:transform; }
+  .b-half.l{ clip-path:polygon(0% 0%, 52% 0%, 52% 1%, 47.5% 12%, 54% 22%, 46% 33%, 53.5% 44%, 45% 55%, 52.5% 66%, 47% 78%, 53% 88%, 50% 99%, 50% 100%, 0% 100%); transform-origin:30% 80%; }
+  .b-half.r{ clip-path:polygon(52% 0%, 100% 0%, 100% 100%, 50% 100%, 50% 99%, 53% 88%, 47% 78%, 52.5% 66%, 45% 55%, 53.5% 44%, 46% 33%, 54% 22%, 47.5% 12%, 52% 1%); transform-origin:70% 80%; }
+  .b-crack{ position:absolute; inset:0; width:100%; height:100%; overflow:visible;
+    filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(143,217,232,0.95)) drop-shadow(0 0 18px rgba(143,217,232,0.75)); }
+  .b-crack path{ fill:none; stroke:#fff; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; }
+  .b-crack path.br{ stroke-width:.8; }
+  .b-leak{
+    position:absolute; left:28%; top:-12%; width:44%; height:124%; opacity:0; pointer-events:none; mix-blend-mode:screen;
+    background:radial-gradient(closest-side, rgba(255,255,255,0.95), rgba(190,240,250,0.55) 35%, rgba(143,217,232,0.18) 65%, transparent 100%);
+    filter:blur(6px);
+  }
+  .b-hole{
+    position:absolute; left:50%; top:50%; width:78%; aspect-ratio:1; border-radius:50%; opacity:0; transform:translate(-50%,-50%) scale(0);
+    background:radial-gradient(circle, #ffffff 0%, #effdff 16%, rgba(178,235,246,0.9) 30%, rgba(143,217,232,0.45) 48%, rgba(143,217,232,0.12) 62%, transparent 72%);
+  }
+  .b-hole::before{
+    content:''; position:absolute; inset:-60%; border-radius:50%;
+    background:repeating-conic-gradient(from 0deg, rgba(255,255,255,0.22) 0deg 4deg, transparent 4deg 15deg);
+    -webkit-mask:radial-gradient(closest-side, #000 18%, transparent 100%); mask:radial-gradient(closest-side, #000 18%, transparent 100%);
+    animation:bSpin 16s linear infinite;
+  }
+  @keyframes bSpin{ to{ transform:rotate(360deg); } }
+  .b-bloom{ position:absolute; inset:0; opacity:0; pointer-events:none; background:radial-gradient(circle at 50% 50%, rgba(143,217,232,0.55), rgba(143,217,232,0.14) 28%, transparent 60%); }
   .b-layer{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
   .b-guide{ position:absolute; background:rgba(255,111,77,0.5); opacity:0; transition:opacity .5s ease; }
   .b-guide.v{ top:0; bottom:0; width:1px; }
   .b-guide.h{ left:0; right:0; height:1px; }
   #build.building .b-guide{ opacity:1; }
-  .b-cur{ position:absolute; left:0; top:0; z-index:3; width:24px; height:24px; margin:-3px 0 0 -4px; transform-origin:4px 3px; will-change:transform; }
+  .b-cur{ position:absolute; left:0; top:0; z-index:3; width:24px; height:24px; margin:-3px 0 0 -4px; will-change:transform; }
+  .b-cur.named{ z-index:4; }
+  .b-rot{ position:absolute; inset:0; transform-origin:4px 3px; }
   .b-cur svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; filter:drop-shadow(0 1px 2px rgba(2,6,15,0.55)); }
+  /* name tags, Figma-style: they stay upright while the arrow turns */
+  .b-name{
+    position:absolute; left:15px; top:20px; padding:3px 7px; border-radius:3px 9px 9px 9px;
+    background:var(--c); color:var(--ct, #fff); font:650 11px/1.15 var(--font); letter-spacing:.01em; white-space:nowrap;
+    box-shadow:0 2px 6px rgba(2,6,15,0.4);
+  }
+  .b-cur.ibeam .b-name{ left:20px; top:22px; }
   .b-cur .arrow path{ fill:var(--c); stroke:#fff; stroke-width:1.5; stroke-linejoin:round; }
   .b-cur .beam{ display:none; }
   .b-cur .beam path{ fill:none; stroke:var(--c); stroke-width:2; stroke-linecap:round; }
@@ -746,7 +851,7 @@
     color:var(--foam); font-size:.84rem; white-space:nowrap; pointer-events:auto;
   }
   .b-avs{ display:flex; }
-  .b-avs span{ width:20px; height:20px; margin-left:-6px; border-radius:50%; border:2px solid #0b1630; display:grid; place-items:center; font-size:9px; font-weight:800; color:#0b1630; }
+  .b-avs span{ width:22px; height:22px; margin-left:-6px; border-radius:50%; border:2px solid #0b1630; display:grid; place-items:center; font-size:8.5px; font-weight:800; letter-spacing:-.02em; }
   .b-avs span:first-child{ margin-left:0; }
   .b-stat{ display:grid; }
   .b-stat > span{ grid-area:1 / 1; display:flex; gap:.85rem; align-items:center; transition:opacity .3s ease, transform .3s var(--ease-out); }
@@ -869,6 +974,14 @@
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 
 <div class="app" id="app">
+<aside class="sites-note" id="sitesNote" aria-label="Google Sites">
+  <div><div class="sn-inner">
+    <span class="sn-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span>
+    <p class="sn-text"><b data-i18n="sites_t">You’re viewing the Google Sites version.</b><span data-i18n="sites_p">For the full experience, open the original site.</span></p>
+    <a class="btn sn-btn" id="sitesLink" href="https://kaipercansat.github.io/kaiper.cansat/" target="_blank" rel="noopener noreferrer"><span data-i18n="sites_cta">Open the full site</span><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-go"/></svg></a>
+    <button class="sn-x" id="sitesClose" type="button" aria-label="Close notice" data-aria-i18n="sites_close"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div></div>
+</aside>
 <header class="top">
   <div class="top-inner">
     <a class="brand" href="#home"><img class="iso" data-src="images/isotipo-small.png" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)">KAIPER</a>
@@ -1302,6 +1415,20 @@
   </div>
 </div>
 
+<!-- shown only inside Google Sites -->
+<div class="alert-root" id="sitesAlert" hidden>
+  <div class="alert-backdrop"></div>
+  <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="alertT" aria-describedby="alertP">
+    <div class="alert-body">
+      <img class="alert-ic" data-src="images/isotipo-small.png" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)">
+      <h2 id="alertT" data-i18n="sites_t">You’re viewing the Google Sites version.</h2>
+      <p id="alertP" data-i18n="sites_p">For the full experience, open the original site.</p>
+    </div>
+    <a class="alert-btn strong" id="alertOpen" href="https://kaipercansat.github.io/kaiper.cansat/" target="_blank" rel="noopener noreferrer" data-i18n="sites_cta">Open the full site</a>
+    <button class="alert-btn" id="alertStay" type="button" data-i18n="sites_stay">Stay here</button>
+  </div>
+</div>
+
 <div id="lightbox" role="dialog" aria-modal="true" hidden>
   <button class="lb-close" type="button" aria-label="Close" data-aria-i18n="lb_close"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button>
   <img alt="">
@@ -1309,12 +1436,27 @@
 
 <!-- intro: cursors build the first screen -->
 <div id="build">
-  <div class="b-cover" id="bCover" aria-hidden="true"><img data-src="images/isotipo-small.png" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)"></div>
+  <div class="b-cover" id="bCover" aria-hidden="true">
+    <div class="b-bloom"></div>
+    <div class="b-logo" id="bLogo">
+      <div class="b-hole"></div>
+      <img class="b-half l" data-src="images/isotipo-intro.webp" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)">
+      <img class="b-half r" data-src="images/isotipo-intro.webp" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)">
+      <div class="b-leak"></div>
+      <svg class="b-crack" id="bCrack" viewBox="0 0 100 100">
+        <path class="m" pathLength="1" d="M52 1L47.5 12L54 22L46 33L53.5 44L45 55L52.5 66L47 78L53 88L50 99"/>
+        <path class="br" pathLength="1" d="M46 33L38.5 37L33 35.5"/>
+        <path class="br" pathLength="1" d="M53.5 44L61 47.5L67 46"/>
+        <path class="br" pathLength="1" d="M47 78L40.5 81.5"/>
+        <path class="br" pathLength="1" d="M54 22L60 19"/>
+      </svg>
+    </div>
+  </div>
   <div class="b-layer" id="bLayer" aria-hidden="true"></div>
   <div class="b-pill" id="bPill" data-phase="scan" role="group" aria-label="Intro">
-    <span class="b-avs" aria-hidden="true"><span style="background:#ff6f4d">K</span><span style="background:#8fd9e8">A</span><span style="background:#ffd166">I</span><span style="background:#6fdc8c">P</span><span style="background:#b388ff">E</span></span>
+    <span class="b-avs" aria-hidden="true"><span style="background:#facc15;color:#2a2000">JM</span><span style="background:#2563eb;color:#fff">AV</span><span style="background:#dc2626;color:#fff">EC</span><span style="background:#22c55e;color:#04210d">AL</span></span>
     <span class="b-stat" aria-hidden="true">
-      <span class="b-scan"><span data-i18n="build_scan">Scanning page…</span></span>
+      <span class="b-scan"><span data-i18n="build_wake">Waking Kaiper up…</span></span>
       <span class="b-counts"><span><b id="bAgents">12</b> <span class="b-mut" data-i18n="build_agents">agents</span></span><span><b id="bDone">0</b><span class="b-mut"> / <span id="bTotal">0</span> <span data-i18n="build_layers">layers</span></span></span></span>
       <span class="b-done"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="build_done">Done</span></span>
     </span>
@@ -1452,7 +1594,13 @@ var I18N = {
   "build_done": "Done",
   "build_skip": "Skip",
   "build_speed": "Speed",
-  "build_replay": "Watch it being built"
+  "build_replay": "Watch it being built",
+  "sites_t": "You’re viewing the Google Sites version.",
+  "sites_p": "For the full experience, with every animation and the ground station, open the original site on GitHub.",
+  "sites_cta": "Open the full site",
+  "sites_close": "Close notice",
+  "sites_stay": "Stay here",
+  "build_wake": "Waking Kaiper up…"
  },
  "ca": {
   "title": "Kaiper | Equip CanSat",
@@ -1578,7 +1726,13 @@ var I18N = {
   "build_done": "Fet",
   "build_skip": "Salta",
   "build_speed": "Velocitat",
-  "build_replay": "Mira com es construeix"
+  "build_replay": "Mira com es construeix",
+  "sites_t": "Estàs veient la versió de Google Sites.",
+  "sites_p": "Per a l’experiència completa, amb totes les animacions i l’estació de terra, obre la web original a GitHub.",
+  "sites_cta": "Obre la web completa",
+  "sites_close": "Tanca l’avís",
+  "sites_stay": "Continua aquí",
+  "build_wake": "Despertant Kaiper…"
  },
  "es": {
   "title": "Kaiper | Equipo CanSat",
@@ -1704,7 +1858,13 @@ var I18N = {
   "build_done": "Listo",
   "build_skip": "Saltar",
   "build_speed": "Velocidad",
-  "build_replay": "Ver cómo se construye"
+  "build_replay": "Ver cómo se construye",
+  "sites_t": "Estás viendo la versión de Google Sites.",
+  "sites_p": "Para la experiencia completa, con todas las animaciones y la estación de tierra, abre la web original en GitHub.",
+  "sites_cta": "Abrir la web completa",
+  "sites_close": "Cerrar aviso",
+  "sites_stay": "Seguir aquí",
+  "build_wake": "Despertando a Kaiper…"
  },
  "zh": {
   "title": "Kaiper | CanSat 团队",
@@ -1830,7 +1990,13 @@ var I18N = {
   "build_done": "完成",
   "build_skip": "跳过",
   "build_speed": "速度",
-  "build_replay": "观看搭建过程"
+  "build_replay": "观看搭建过程",
+  "sites_t": "你正在浏览 Google Sites 版本。",
+  "sites_p": "如需完整体验（包括所有动画和地面站），请在 GitHub 上打开原网站。",
+  "sites_cta": "打开完整网站",
+  "sites_close": "关闭提示",
+  "sites_stay": "留在这里",
+  "build_wake": "正在唤醒 Kaiper…"
  }
 };
 
@@ -2207,6 +2373,7 @@ function showView(name, fromUser){
     else links[j].removeAttribute('aria-current');
   }
   CURRENT_VIEW = name;
+  if(window.SitesNote) SitesNote.sync();
   placeNavHL();
   window.scrollTo(0, 0);
   if(name === 'apps') loadApp();
@@ -2354,6 +2521,7 @@ function applyLang(l){
   var pills = document.querySelectorAll('.sheet-lang button');
   for(var m = 0; m < pills.length; m++) pills[m].setAttribute('aria-pressed', pills[m].getAttribute('data-lang') === l ? 'true' : 'false');
   Statement.split();
+  if(window.SitesNote) SitesNote.sync();
   buildNavHL();
   renderPosts();
   renderSponsors();
@@ -2725,6 +2893,82 @@ function initAssets(){
 }
 
 /* =========================================================
+   Google Sites notice: link to the same page and language on GitHub
+   ========================================================= */
+var SitesNote = (function(){
+  var note = document.getElementById('sitesNote');
+  var link = document.getElementById('sitesLink');
+  var alertRoot = document.getElementById('sitesAlert');
+  var alertOpen = document.getElementById('alertOpen');
+  var on = document.documentElement.classList.contains('in-sites');
+  function href(){
+    return GH_BASE + '?lang=' + LANG + (CURRENT_VIEW && CURRENT_VIEW !== 'home' ? '#' + CURRENT_VIEW : '');
+  }
+  function sync(){ if(on){ link.href = href(); alertOpen.href = href(); } }
+  function store(k, v){ try{ sessionStorage.setItem(k, v); }catch(e){} }
+  function read(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+
+  /* the slim bar at the top: a reminder that stays after the alert */
+  function showBar(){
+    if(read('kaiperSitesNote') === 'closed'){ note.style.display = 'none'; return; }
+    note.classList.add('show');
+  }
+
+  /* the alert in the middle of the screen, once per visit */
+  var alertShown = false;
+  function openAlert(){
+    alertShown = true;
+    sync();
+    alertRoot.hidden = false;
+    void alertRoot.offsetWidth;
+    alertRoot.classList.add('open');
+    document.getElementById('app').inert = true;
+    document.documentElement.classList.add('locked');
+    /* focus the alert itself (no ring on open); Tab moves between its two buttons */
+    var box = alertRoot.querySelector('.alert');
+    box.setAttribute('tabindex', '-1');
+    setTimeout(function(){ try{ box.focus({ preventScroll:true }); }catch(e){} }, 80);
+  }
+  function closeAlert(){
+    if(!alertShown || alertRoot.hidden || alertRoot.classList.contains('closing')) return;
+    store('kaiperSitesAlert', 'seen');
+    alertRoot.classList.add('closing');
+    alertRoot.classList.remove('open');
+    document.getElementById('app').inert = false;
+    document.documentElement.classList.remove('locked');
+    setTimeout(function(){ alertRoot.hidden = true; alertRoot.classList.remove('closing'); showBar(); }, 230);
+  }
+
+  if(on){
+    if(read('kaiperSitesAlert') === 'seen') setTimeout(showBar, 250);
+    else setTimeout(openAlert, 600);
+    alertOpen.addEventListener('pointerdown', sync);
+    alertOpen.addEventListener('click', function(){ setTimeout(closeAlert, 60); });   /* the tab opens, the alert steps aside */
+    document.getElementById('alertStay').addEventListener('click', closeAlert);
+    alertRoot.querySelector('.alert-backdrop').addEventListener('click', closeAlert);
+    document.addEventListener('keydown', function(e){
+      if(alertRoot.hidden) return;
+      if(e.key === 'Escape'){ closeAlert(); return; }
+      if(e.key === 'Tab'){
+        var f = [alertOpen, document.getElementById('alertStay')];
+        var i = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      }
+    });
+    document.getElementById('sitesClose').addEventListener('click', function(){
+      note.classList.remove('show');
+      store('kaiperSitesNote', 'closed');
+      setTimeout(function(){ note.style.display = 'none'; }, 520);
+    });
+    /* keep the link pointing at the page being viewed, at the moment it is pressed */
+    link.addEventListener('pointerdown', sync);
+    link.addEventListener('focus', sync);
+  }
+  return { sync:sync };
+})();
+
+/* =========================================================
    Intro: a crowd of cursors scans the page, then builds the first screen
    (draws a selection box around each piece, types the texts, drops in the render)
    ========================================================= */
@@ -2736,7 +2980,22 @@ var Intro = (function(){
   var bar = document.getElementById('bBar');
   var speedBtn = document.getElementById('bSpeed');
   var skipBtn = document.getElementById('bSkip');
-  var COLORS = ['#ff6f4d','#8fd9e8','#ffd166','#6fdc8c','#b388ff','#ff7eb6','#4fc3f7','#f4a261','#a3e635','#f472b6','#60a5fa','#facc15'];
+  var logo = document.getElementById('bLogo');
+  var halfL = logo.querySelector('.b-half.l');
+  var halfR = logo.querySelector('.b-half.r');
+  var crackSvg = document.getElementById('bCrack');
+  var crackMain = crackSvg.querySelectorAll('.m');
+  var crackBranch = crackSvg.querySelectorAll('.br');
+  var leak = logo.querySelector('.b-leak');
+  var hole = logo.querySelector('.b-hole');
+  var bloom = cover.querySelector('.b-bloom');
+  /* the team, with their colours: only the four of us build the page */
+  var TEAM = [
+    { name:'J. Matias', c:'#facc15', ct:'#2a2000' },
+    { name:'Aleix',     c:'#2563eb', ct:'#ffffff' },
+    { name:'Eloi',      c:'#dc2626', ct:'#ffffff' },
+    { name:'Álex',      c:'#22c55e', ct:'#04210d' }
+  ];
   var speed = 1, skipped = false, running = false;
   var hiddenEls = [], typedRecs = [], agents = [];
 
@@ -2761,27 +3020,36 @@ var Intro = (function(){
   }
   function wait(ms){ return tween(ms, function(){}, lin); }
   function rnd(a, b){ return a + Math.random() * (b - a); }
+  function imgReady(img, ms){
+    var t = new Promise(function(r){ setTimeout(r, ms); });
+    if(img.complete && img.naturalWidth) return Promise.resolve();
+    return Promise.race([img.decode ? img.decode().catch(function(){}) : new Promise(function(r){ img.addEventListener('load', r); img.addEventListener('error', r); }), t]);
+  }
 
   /* ---- cursors ---- */
   function Agent(i){
     var el = document.createElement('div');
-    el.className = 'b-cur';
-    el.style.setProperty('--c', COLORS[i % COLORS.length]);
-    el.innerHTML = '<svg class="arrow" viewBox="0 0 24 24"><path d="M4 3l15.5 8.4-6.8 1.7L9.6 20.5z"/></svg>' +
-                   '<svg class="beam" viewBox="0 0 24 24"><path d="M9 3c2 0 3 .8 3 2v14c0 1.2-1 2-3 2M15 3c-2 0-3 .8-3 2v14c0 1.2 1 2 3 2M10 12h4"/></svg>';
+    var who = TEAM[i];
+    el.className = 'b-cur named';
+    el.style.setProperty('--c', who.c);
+    el.style.setProperty('--ct', who.ct);
+    el.innerHTML = '<div class="b-rot"><svg class="arrow" viewBox="0 0 24 24"><path d="M4 3l15.5 8.4-6.8 1.7L9.6 20.5z"/></svg>' +
+                   '<svg class="beam" viewBox="0 0 24 24"><path d="M9 3c2 0 3 .8 3 2v14c0 1.2-1 2-3 2M15 3c-2 0-3 .8-3 2v14c0 1.2 1 2 3 2M10 12h4"/></svg></div>';
+    var tag = document.createElement('span'); tag.className = 'b-name'; tag.textContent = who.name; el.appendChild(tag);
     layer.appendChild(el);
-    this.el = el; this.x = 0; this.y = 0; this.r = 0;
+    this.el = el; this.rot = el.firstChild; this.idx = i; this.x = 0; this.y = 0; this.r = 0;
   }
   Agent.prototype.set = function(x, y, r){
-    this.x = x; this.y = y; if(r !== undefined) this.r = r;
-    this.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + this.r.toFixed(1) + 'deg)';
+    this.x = x; this.y = y;
+    this.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    if(r !== undefined && r !== this.r){ this.r = r; this.rot.style.transform = r ? 'rotate(' + r.toFixed(1) + 'deg)' : ''; }
   };
-  /* fly along a slight arc; "face" turns the arrow towards where it is going, like a paper plane */
+  /* fly along a slight arc; "face" turns the arrow towards where it is going */
   Agent.prototype.move = function(x, y, ms, face){
     var a = this, x0 = a.x, y0 = a.y, dx = x - x0, dy = y - y0;
     var my = a.tok = (a.tok || 0) + 1;          /* a newer move takes over from this one */
     var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    if(!ms) ms = clamp(200 + dist * 0.4, 220, 600);
+    if(!ms) ms = clamp(180 + dist * 0.3, 200, 480);
     var bend = rnd(-1, 1) * Math.min(dist * 0.22, 70);
     var nx = -dy / dist, ny = dx / dist;
     var r0 = a.r, r1 = face ? Math.atan2(dy, dx) * 180 / Math.PI + 135 : 0;
@@ -2820,7 +3088,7 @@ var Intro = (function(){
     setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 300);
   };
 
-  /* ---- what gets built, in order ---- */
+  /* ---- what gets built, and by whom (who = position in TEAM) ---- */
   function hide(el){ if(el && hiddenEls.indexOf(el) < 0){ el.classList.add('b-hide'); hiddenEls.push(el); } }
   function reveal(el, cls){
     el.classList.remove('b-hide');
@@ -2832,22 +3100,24 @@ var Intro = (function(){
   function visible(el){ return el && el.getClientRects().length > 0; }
   function targets(){
     var T = [];
-    function add(el, kind, o){ if(visible(el)){ o = o || {}; o.el = el; o.kind = kind; T.push(o); } }
-    var top = document.querySelector('.top');
-    add(top, 'frame', { rect:top.querySelector('.top-inner') });
-    add(document.querySelector('.brand'), 'pop');
-    var links = document.querySelectorAll('#navList a');
-    for(var i = 0; i < links.length; i++) add(links[i], 'type', { per:32, delay:60 + i * 50 });
-    add(document.getElementById('langBtn'), 'pop', { delay:250 });
-    add(document.getElementById('menuBtn'), 'pop', { delay:120 });
-    add(document.querySelector('.kicker'), 'type', { per:16, delay:80 });
-    add(document.querySelector('.hero h1'), 'type', { per:85, delay:120 });
-    add(document.querySelector('.hero .tag'), 'type', { per:6, delay:260 });
-    add(document.querySelector('.hero .btn'), 'pop', { delay:600 });
+    function add(el, kind, who, o){ if(visible(el)){ o = o || {}; o.el = el; o.kind = kind; o.who = who; T.push(o); } }
     var tl = document.querySelector('.hero .tlink');
-    add(tl, 'type', { per:22, delay:700, text:tl.querySelector('span') });
-    add(document.getElementById('heroImg'), 'image', { delay:450 });
-    add(document.getElementById('heroWaves'), 'wipe', { delay:900, rect:document.getElementById('heroWaves') });
+    var nav = document.getElementById('navList');
+    /* J. Matias: the name, then the line above it and the logo up top */
+    add(document.querySelector('.hero h1'), 'type', 0, { per:75 });
+    add(document.querySelector('.kicker'), 'type', 0, { per:11 });
+    add(document.querySelector('.brand'), 'pop', 0);
+    /* Aleix: the description, then the menu */
+    add(document.querySelector('.hero .tag'), 'type', 1, { per:4.5 });
+    if(visible(nav)) add(nav, 'navtype', 1, { per:12, items:nav.querySelectorAll('a') });
+    add(document.getElementById('menuBtn'), 'pop', 1);
+    /* Eloi: the render of the can, then the waves */
+    add(document.getElementById('heroImg'), 'image', 2);
+    add(document.getElementById('heroWaves'), 'wipe', 2, { rect:document.getElementById('heroWaves') });
+    /* Álex: the button, the link next to it, and the language selector */
+    add(document.querySelector('.hero .btn'), 'pop', 3);
+    add(tl, 'type', 3, { per:15, text:tl.querySelector('span') });
+    add(document.getElementById('langBtn'), 'pop', 3);
     return T;
   }
 
@@ -2862,50 +3132,72 @@ var Intro = (function(){
     caret.className = 'b-caret'; rest.className = 'b-rest'; rest.textContent = text;
     el.appendChild(done); el.appendChild(caret); el.appendChild(rest);
     agent.el.classList.add('ibeam');
-    var i = 0;
-    function step(){
-      if(i >= chars.length || skipped){ el.textContent = text; rec.done = true; agent.el.classList.remove('ibeam'); return Promise.resolve(); }
-      i++;
-      done.textContent = chars.slice(0, i).join('');
-      rest.textContent = chars.slice(i).join('');
+    /* typed by time, not one letter per frame: long texts take exactly as long as planned */
+    var n = chars.length, shown = 0;
+    agent.tok = (agent.tok || 0) + 1;
+    return tween(Math.max(n * per, 120), function(p){
+      var k = Math.min(n, Math.ceil(p * n));
+      if(k === shown) return;
+      shown = k;
+      done.textContent = chars.slice(0, k).join('');
+      rest.textContent = chars.slice(k).join('');
       var c = caret.getBoundingClientRect();
       agent.set(c.left + 7, c.top + c.height * 0.55, 0);
-      return wait(per * rnd(0.5, 1.5)).then(step);
-    }
-    return step();
+    }, function(p){ return p + Math.sin(p * Math.PI * 9) * 0.012; }).then(function(){
+      el.textContent = text; rec.done = true; agent.el.classList.remove('ibeam');
+    });
   }
 
   function work(a, t){
     var box = (t.rect || t.el).getBoundingClientRect();
     var x = box.left, y = box.top, w = box.width, h = box.height;
     var sel;
-    return wait(t.delay || 0).then(function(){
-      return a.move(x, y);
-    }).then(function(){
+    return a.move(x, y).then(function(){
       sel = new Sel(); sel.draw(x, y, 0, 0);
-      var ms = clamp(180 + Math.sqrt(w * h) * 0.45, 220, 480);
+      var ms = clamp(160 + Math.sqrt(w * h) * 0.35, 200, 400);
       return tween(ms, function(p){ sel.draw(x, y, w * p, h * p); a.set(x + w * p, y + h * p, 0); }, easeInOut);
     }).then(function(){
       tick(0.5);
       if(t.kind === 'type'){ reveal(t.el); return typeInto(t.text || t.el, t.per, a); }
-      if(t.kind === 'pop'){ reveal(t.el, 'b-pop'); return wait(300); }
-      if(t.kind === 'wipe'){ reveal(t.el, 'b-wipe'); return wait(450); }
+      if(t.kind === 'navtype'){
+        return Array.prototype.reduce.call(t.items, function(pr, link){
+          return pr.then(function(){ reveal(link); return typeInto(link, t.per, a); });
+        }, Promise.resolve());
+      }
+      if(t.kind === 'pop'){ reveal(t.el, 'b-pop'); return wait(240); }
+      if(t.kind === 'wipe'){ reveal(t.el, 'b-wipe'); return wait(380); }
       if(t.kind === 'image'){
         var ph = sel.placeholder();
-        return wait(420).then(function(){
+        /* the render's bottom edge sits at the fold: step to its side so the cursor (and its name) stays in view */
+        a.move(x + w + 8, y + h * 0.42, 260);
+        return wait(340).then(function(){
           reveal(t.el);
           var can = document.getElementById('heroCan');
           can.classList.remove('ready'); void can.offsetWidth; can.classList.add('ready');
           ph.style.opacity = '0';
-          return wait(450);
+          return wait(380);
         });
       }
       return wait(200);
     }).then(function(){
       tick(0.5);
       sel.remove();
-      return a.move(x + w + rnd(10, 40), y + h + rnd(8, 30), 300);
+      return a.move(x + w + rnd(10, 40), y + h + rnd(8, 30), 240);
     });
+  }
+
+  /* ---- the logo: shake, crack, light, hole ---- */
+  function setCrack(p){
+    for(var i = 0; i < crackMain.length; i++) crackMain[i].style.strokeDashoffset = (1 - p).toFixed(3);
+    var q = clamp((p - 0.55) / 0.45, 0, 1);
+    for(var j = 0; j < crackBranch.length; j++) crackBranch[j].style.strokeDashoffset = (1 - q).toFixed(3);
+  }
+  function resetLogo(){
+    logo.style.opacity = '0'; logo.style.transform = 'scale(.86)'; logo.style.filter = 'blur(10px)';
+    halfL.style.transform = ''; halfR.style.transform = ''; halfL.style.opacity = ''; halfR.style.opacity = '';
+    crackSvg.style.opacity = ''; setCrack(0);
+    leak.style.opacity = '0'; hole.style.opacity = '0'; hole.style.transform = 'translate(-50%,-50%) scale(0)';
+    bloom.style.opacity = '0'; cover.style.opacity = '';
   }
 
   /* ---- the pill: agents, layers, progress ---- */
@@ -2935,56 +3227,81 @@ var Intro = (function(){
     running = true; skipped = false; speed = 1; speedBtn.textContent = '1×';
     startW = window.innerWidth;
     speedBtn.setAttribute('aria-label', t('build_speed') + ': 1×');
-    try{ localStorage.setItem('kaiperIntroSeen', '1'); }catch(e){}
     var app = document.getElementById('app');
-    var heroEl = document.getElementById('hero');
-    heroEl.classList.remove('intro');
+    document.getElementById('hero').classList.remove('intro');
     window.scrollTo(0, 0);
     document.documentElement.classList.add('locked');
     app.inert = true;
     root.classList.remove('out', 'building');
     root.classList.add('on');
-    cover.classList.remove('gone');
     layer.innerHTML = '';
     hiddenEls = []; typedRecs = []; agents = [];
     phase('scan');
     bar.style.transform = 'scaleX(0)';
+    resetLogo();
 
-    var W = window.innerWidth, H = window.innerHeight, nar = W < 700;
-    var n = nar ? 8 : 12;
-    document.getElementById('bAgents').textContent = n;
-    for(var i = 0; i < n; i++) agents.push(new Agent(i));
+    var W = window.innerWidth, H = window.innerHeight;
+    document.getElementById('bAgents').textContent = TEAM.length;
+    for(var i = 0; i < TEAM.length; i++){ var ag = new Agent(i); ag.el.style.opacity = '0'; agents.push(ag); }
 
-    /* 1. scan: the cursors fly in from the edges and swarm around the logo */
-    var cx = W / 2, cy = H / 2, scanning = true;
-    var clusters = nar ? [[cx - 70, cy - 120], [cx + 60, cy + 110]] : [[cx - 230, cy + 40], [cx + 210, cy - 20]];
-    agents.forEach(function(a, i){
-      var side = i % 4;
-      a.set(side === 0 ? -40 : side === 1 ? W + 40 : rnd(0, W), side === 2 ? -40 : side === 3 ? H + 40 : rnd(0, H), 0);
-    });
-    function swarm(a, i){
-      var c = clusters[i % 2];
-      function next(){
-        if(!scanning || skipped) return Promise.resolve();
-        return a.move(c[0] + rnd(-80, 80), c[1] + rnd(-60, 60), rnd(450, 800), true).then(next);
-      }
-      return next();
-    }
-    var fonts = (document.fonts && document.fonts.ready) ? Promise.race([document.fonts.ready, new Promise(function(r){ setTimeout(r, 1500); })]) : Promise.resolve();
-    var img = document.getElementById('heroImg');
-    var imgReady = img.decode ? Promise.race([img.decode().catch(function(){}), new Promise(function(r){ setTimeout(r, 1500); })]) : Promise.resolve();
-    agents.forEach(swarm);
-    var scanBar = tween(1300, function(p){ bar.style.transform = 'scaleX(' + p.toFixed(3) + ')'; }, lin);
+    var fonts = (document.fonts && document.fonts.ready) ? Promise.race([document.fonts.ready, new Promise(function(r){ setTimeout(r, 2500); })]) : Promise.resolve();
+    var heroReady = imgReady(document.getElementById('heroImg'), 2500);
 
-    Promise.all([scanBar, fonts, imgReady]).then(function(){
-      scanning = false;           /* no waiting for the swarm: their next move cancels the current one */
+    imgReady(halfL, 1800).then(function(){
+      /* 1. the logo appears out of the dark */
+      return tween(600, function(p){
+        logo.style.opacity = p.toFixed(3);
+        logo.style.transform = 'scale(' + (0.86 + 0.14 * p).toFixed(4) + ')';
+        logo.style.filter = p < 1 ? 'blur(' + (10 * (1 - p)).toFixed(2) + 'px)' : '';
+      });
+    }).then(function(){ return wait(200); }).then(function(){
+      /* 2. it starts to shake, harder and harder, and a crack runs through it */
+      var shake = tween(900, function(p){
+        var amp = p >= 1 ? 0 : 0.6 + p * p * 6;
+        var x = rnd(-1, 1) * amp, y = rnd(-1, 1) * amp * 0.55, r = rnd(-1, 1) * amp * 0.35;
+        logo.style.transform = p >= 1 ? '' : 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) rotate(' + r.toFixed(2) + 'deg)';
+      }, lin);
+      var crack = wait(420).then(function(){ return tween(560, setCrack, easeOut); });
+      /* 3. light starts to pour out of it */
+      var light = wait(700).then(function(){ return tween(500, function(p){ leak.style.opacity = p.toFixed(3); }, easeOut); });
+      return Promise.all([shake, crack, light]);
+    }).then(function(){ return wait(140); }).then(function(){
+      /* 4. the crack opens into a hole of light... */
+      var open = tween(760, function(p){
+        halfL.style.transform = 'translateX(' + (-30 * p).toFixed(2) + '%) rotate(' + (-10 * p).toFixed(2) + 'deg)';
+        halfR.style.transform = 'translateX(' + (30 * p).toFixed(2) + '%) rotate(' + (10 * p).toFixed(2) + 'deg)';
+        hole.style.opacity = Math.min(1, p * 1.8).toFixed(3);
+        hole.style.transform = 'translate(-50%,-50%) scale(' + (1.25 * p).toFixed(4) + ')';
+        crackSvg.style.opacity = (1 - p).toFixed(3);
+        leak.style.opacity = (1 - p).toFixed(3);
+        bloom.style.opacity = (Math.sin(Math.min(1, p * 1.4) * Math.PI) * 0.7).toFixed(3);
+      }, easeOut);
+      /* 5. ...and the four of us come out of it */
+      var out = wait(280).then(function(){
+        var r = logo.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var d = Math.min(W, H) * 0.17 + 40;
+        var dirs = [[-0.9, -1], [0.95, -0.85], [-1, 0.9], [0.85, 1]];
+        return Promise.all(agents.map(function(a, i){
+          a.set(cx, cy, 0);
+          return wait(i * 110).then(function(){
+            var fade = tween(180, function(p){ a.el.style.opacity = p.toFixed(3); }, lin);
+            return Promise.all([fade, a.move(cx + dirs[i][0] * d * rnd(0.85, 1.15), cy + dirs[i][1] * d * rnd(0.8, 1.1), 560, true)]);
+          });
+        }));
+      });
+      return Promise.all([open, out]);
     }).then(function(){
-      /* 2. build: hide the pieces, lift the cover, and hand out the work */
+      return Promise.all([heroReady, fonts]);
+    }).then(function(){
+      /* 6. the dark lifts, and the four of us build the page */
       var T = targets();
       total = document.querySelectorAll('#app *').length;
       document.getElementById('bTotal').textContent = total;
       units = T.length; unitsDone = 0; tick(0);
-      T.forEach(function(tk){ if(tk.kind !== 'frame') hide(tk.el); });
+      T.forEach(function(tk){
+        if(tk.kind === 'navtype') Array.prototype.forEach.call(tk.items, hide);
+        else hide(tk.el);
+      });
       var hl = document.getElementById('navHL'); hide(hl);
       /* layout guides on the edges of the content column */
       var col = document.querySelector('.top-inner').getBoundingClientRect();
@@ -2993,28 +3310,40 @@ var Intro = (function(){
       var gh = document.createElement('div'); gh.className = 'b-guide h'; gh.style.top = document.querySelector('.top').getBoundingClientRect().bottom.toFixed(0) + 'px'; layer.appendChild(gh);
       phase('build');
       root.classList.add('building');
-      cover.classList.add('gone');
+      var lift = tween(650, function(p){
+        cover.style.opacity = (1 - p).toFixed(3);
+        hole.style.transform = 'translate(-50%,-50%) scale(' + (1.25 + 0.6 * p).toFixed(4) + ')';
+        halfL.style.transform = 'translateX(' + (-30 - 14 * p).toFixed(2) + '%) rotate(' + (-10 - 6 * p).toFixed(2) + 'deg)';
+        halfR.style.transform = 'translateX(' + (30 + 14 * p).toFixed(2) + '%) rotate(' + (10 + 6 * p).toFixed(2) + 'deg)';
+      }, easeOut);
       var queue = T.slice();
+      /* each of us takes our own pieces first, then helps with whatever is left */
+      function take(a){
+        var k, i;
+        for(i = 0; i < queue.length; i++) if(queue[i].who === a.idx){ k = i; break; }
+        if(k === undefined) for(i = 0; i < queue.length; i++) if(queue[i].who === undefined || !agents[queue[i].who]){ k = i; break; }
+        return k === undefined ? null : queue.splice(k, 1)[0];
+      }
       var crews = agents.map(function(a, i){
         function next(){
-          var tk = queue.shift();
-          if(!tk) return a.move(a.x + rnd(-60, 60), a.y + rnd(-40, 40), 500);
+          var tk = take(a);
+          if(!tk) return a.move(a.x + rnd(-50, 50), a.y + rnd(-30, 30), 450);
           return work(a, tk).then(next);
         }
-        return wait(i * 50).then(next);
+        return wait(80 + i * 50).then(next);
       });
-      return Promise.all(crews).then(function(){
+      return Promise.all(crews.concat([lift])).then(function(){
         reveal(hl, 'b-pop'); placeNavHL();
-        return wait(250);
+        return wait(150);
       });
     }).then(function(){
-      /* 3. done: the cursors leave and the page is handed back */
+      /* 7. done: we leave and the page is handed back */
       phase('done');
       tick(units - unitsDone);
       root.classList.remove('building');
       return Promise.all(agents.map(function(a, i){
         var ang = rnd(0, Math.PI * 2);
-        return wait(i * 25).then(function(){ return a.move(W / 2 + Math.cos(ang) * W, H / 2 + Math.sin(ang) * H, 550, true); });
+        return wait(i * 40).then(function(){ return a.move(W / 2 + Math.cos(ang) * W, H / 2 + Math.sin(ang) * H, 450, true); });
       }));
     }).catch(function(){ /* never leave the page half built */ }).then(finish);
   }
@@ -3033,8 +3362,9 @@ var Intro = (function(){
     setTimeout(function(){
       root.classList.remove('on', 'out', 'building');
       layer.innerHTML = '';
+      resetLogo();
       running = false;
-    }, skipped ? 250 : 460);
+    }, skipped ? 250 : 420);
   }
 
   document.getElementById('replayIntro').addEventListener('click', function(){
