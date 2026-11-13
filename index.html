@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kaiper | CanSat Team</title>
 <meta name="description" content="Kaiper is a high school CanSat team from Escola Vedruna Tona building a mini-satellite that asks, during its descent, whether an environment could support liquid water.">
-<meta name="theme-color" content="#060d1f">
+<meta name="theme-color" content="#030a14">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Kaiper | CanSat Team">
 <meta property="og:description" content="A high school CanSat team mapping an invisible ocean in the atmosphere.">
@@ -32,7 +32,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400..800&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
 <style>
   /* =========================================================
      KAIPER — a product page for a satellite the size of a can.
@@ -968,6 +968,276 @@
     .big .w{ opacity:1; }
     html.sheet-open .app{ transform:none; }
   }
+
+  /* =========================================================
+     KAIPER — CINEMATIC LAYER
+     The real Kaiper Core in 3D, floating in the invisible ocean.
+     Deep ocean gradients that morph, glass controls, Unbounded for display,
+     Manrope for reading, one soft apricot accent from the sled.
+     ========================================================= */
+  @property --bg-inner{ syntax:'<color>'; inherits:true; initial-value:#0d4f86; }
+  @property --bg-mid{ syntax:'<color>'; inherits:true; initial-value:#05284a; }
+  @property --bg-outer{ syntax:'<color>'; inherits:true; initial-value:#020a14; }
+  :root{
+    --abyss:#030a14;
+    --ink:#04101e;
+    --d1:#0a1a30; --d2:#0d2240; --d3:#123056; --d4:#1a4a70;
+    --accent:#ffd0b5;
+    --on-accent:#2a1004;
+    --glass:rgba(255,255,255,0.06);
+    --glass-2:rgba(255,255,255,0.1);
+    --glass-line:rgba(255,255,255,0.14);
+    --glass-line-2:rgba(255,255,255,0.24);
+    --mist:#b4c6d3;
+    --dim:#8ea3b4;
+    --display:'Unbounded','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    --font:'Manrope','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --bg-inner:#0d4f86; --bg-mid:#05284a; --bg-outer:#020a14;
+  }
+  html{ background:var(--bg-outer); }
+  body{
+    background:
+      radial-gradient(90% 70% at 50% 34%, var(--bg-inner) 0%, var(--bg-mid) 48%, var(--bg-outer) 100%) fixed;
+    transition:--bg-inner 1.5s cubic-bezier(.4,0,.2,1), --bg-mid 1.5s cubic-bezier(.4,0,.2,1), --bg-outer 1.5s cubic-bezier(.4,0,.2,1);
+    font-feature-settings:"ss01";
+  }
+  body.k-teal{ --bg-inner:#0a6f72; --bg-mid:#043a3f; --bg-outer:#010d10; }
+  body::after{
+    /* film grain */
+    content:''; position:fixed; inset:-50%; z-index:200; pointer-events:none; opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{ background:var(--accent); color:var(--on-accent); }
+  .app{ background:transparent; }
+  h1, h2, h3, h4{ font-family:var(--display); font-weight:600; letter-spacing:-0.035em; }
+  :lang(zh) h1, :lang(zh) h2, :lang(zh) h3, :lang(zh) h4{ font-family:var(--font); letter-spacing:0; }
+  :focus-visible{ outline-color:var(--accent); }
+
+  /* ---------- header: transparent, with a glass pill nav ---------- */
+  .top{
+    background:linear-gradient(180deg, rgba(2,8,16,0.72), rgba(2,8,16,0.35));
+    border-bottom:0;
+    -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
+  }
+  :root{ --hh:68px; }
+  .brand{ font-family:var(--display); font-weight:700; font-size:1.02rem; letter-spacing:.08em; }
+  .brand .iso{ width:30px; height:30px; }
+  nav.main{
+    padding:.32rem; border-radius:100px;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.18);
+    box-shadow:0 8px 32px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.06);
+    -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
+  }
+  nav.main .nav-hl{ inset:.32rem; }
+  .nav-list a, .nav-list span{ font-family:var(--font); font-size:.84rem; font-weight:600; padding:.5rem 1rem; }
+  .nav-list a{ color:rgba(255,255,255,0.72); }
+  .nav-hl{ background:var(--accent); }
+  .nav-hl span{ color:var(--on-accent); font-weight:600; }
+  .pill-btn{ background:rgba(0,0,0,0.38); border-color:rgba(255,255,255,0.16); font-family:var(--font); font-weight:600; min-height:40px; padding:.35rem .9rem; }
+  .pill-btn svg{ stroke:var(--accent); }
+  .lang-menu{ background:rgba(8,20,36,0.92); border-radius:18px; }
+  .lang-menu button[aria-current="true"]::after{ background:var(--accent); }
+
+  /* ---------- buttons: dark glass pill with an accent chip ---------- */
+  .btn{
+    gap:1.1rem; min-height:50px; padding:.4rem .4rem .4rem 1.4rem;
+    background:rgba(0,0,0,0.48); border:1px solid rgba(255,255,255,0.12); color:#fff;
+    font:700 .98rem/1.2 var(--font);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:transform .3s var(--ease-out), background-color .3s ease, border-color .3s ease;
+  }
+  .btn::after{
+    content:''; flex:none; width:40px; height:40px; border-radius:50%;
+    background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 17L17 7M9 7h8v8' fill='none' stroke='%232a1004' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat;
+    transition:transform .4s var(--ease-out);
+  }
+  .btn.sn-btn::after, .console-head .btn::after{ width:30px; height:30px; background-size:14px; }
+  .btn.sn-btn{ padding-left:1rem; }
+  .btn.sn-btn svg{ display:none; }
+  @media (hover:hover) and (pointer:fine){
+    .btn:hover{ background:rgba(0,0,0,0.7); border-color:rgba(255,255,255,0.22); transform:translateY(-3px); }
+    .btn:hover::after{ transform:rotate(45deg); }
+  }
+  .tlink{ color:#fff; font-weight:600; }
+  .tlink svg{ stroke:var(--accent); }
+  @media (hover:hover) and (pointer:fine){ .tlink:hover{ color:var(--accent); } }
+
+  /* =========================================================
+     HERO — the real can in 3D
+     ========================================================= */
+  .hero.kh{
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(0,auto); grid-template-rows:minmax(0,1fr);
+    align-items:stretch; text-align:left;
+    height:calc(100vh - var(--hh)); height:calc(100svh - var(--hh)); min-height:640px;
+    padding:clamp(1.6rem,5vh,3.6rem) var(--g) clamp(1.6rem,4.5vh,3rem);
+  }
+  .hero.kh::before{
+    /* soft light falling from above */
+    left:50%; top:-35%; bottom:auto; width:min(1100px,130vw); aspect-ratio:1; transform:translateX(-50%);
+    background:radial-gradient(closest-side, rgba(180,230,255,0.16), rgba(120,190,255,0.05) 55%, transparent 100%);
+  }
+  .hero.kh::after{ height:140px; background:linear-gradient(180deg, transparent, rgba(2,8,16,0.55)); }
+  .hero.kh .hero-waves, .hero.kh .hero-can{ display:none; }
+  .kh-canvas{ position:absolute; inset:0; z-index:0; width:100%; height:100%; display:block; transition:filter .2s linear; }
+  .kh-fallback{ display:none; position:absolute; left:50%; top:50%; height:68%; width:auto; transform:translate(-50%,-50%) rotate(-14deg); z-index:0; filter:drop-shadow(0 40px 60px rgba(0,0,0,.5)); }
+  .hero.kh.no3d .kh-fallback{ display:block; }
+  .hero.kh.no3d .kh-canvas{ display:none; }
+  .kh-load{
+    position:absolute; left:50%; top:50%; z-index:1; width:44px; height:44px; margin:-22px 0 0 -22px; border-radius:50%;
+    border:2px solid rgba(255,255,255,0.14); border-top-color:var(--accent); animation:khSpin 1s linear infinite; transition:opacity .4s ease;
+  }
+  .hero.kh.ready .kh-load, .hero.kh.no3d .kh-load{ opacity:0; pointer-events:none; }
+  @keyframes khSpin{ to{ transform:rotate(360deg); } }
+  .kh-bubbles{ position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+  .kh-bubble{
+    position:absolute; bottom:-40px; border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95) 0 9%, rgba(210,240,255,0.22) 20%, rgba(170,225,255,0.12) 55%, rgba(225,245,255,0.6) 70%, transparent 75%);
+    animation:khRise linear forwards;
+  }
+  @keyframes khRise{
+    0%{ transform:translate3d(0,0,0); opacity:0; }
+    10%{ opacity:var(--o, .5); }
+    90%{ opacity:var(--o, .5); }
+    100%{ transform:translate3d(var(--dx, 30px),-110vh,0); opacity:0; }
+  }
+  .kh-left{
+    position:relative; z-index:3; display:flex; flex-direction:column; gap:1.6rem; min-width:0; pointer-events:none;
+    will-change:auto !important;
+  }
+  .kh-left > *{ pointer-events:auto; }
+  .hero.kh h1{
+    margin:0; padding:0; font-family:var(--display); font-weight:700;
+    font-size:clamp(3.6rem,8.4vw,9.6rem); line-height:.86; letter-spacing:-0.055em;
+    background:none; -webkit-background-clip:border-box; background-clip:border-box; color:#fff;
+    text-shadow:0 20px 60px rgba(0,0,0,0.25);
+  }
+  .hero.kh h1 .k2{ display:block; color:transparent; -webkit-text-stroke:1.5px rgba(255,255,255,0.85); }
+  .hero.kh .tag{ margin:0; max-width:34ch; font-size:clamp(1rem,1.15vw,1.12rem); line-height:1.6; font-weight:500; color:rgba(255,255,255,0.74); }
+  .hero.kh .cta-row{ justify-content:flex-start; margin-top:0; gap:.8rem 1.6rem; }
+  .kh-badge{ display:flex; align-items:center; gap:.9rem; margin-top:auto; }
+  .kh-badge-ic{
+    flex:none; width:52px; height:52px; display:grid; place-items:center; border-radius:14px;
+    background:var(--glass); border:1px solid var(--glass-line);
+  }
+  .kh-badge-ic img{ width:36px; height:36px; object-fit:contain; display:block; }
+  .kh-badge-t{ display:flex; flex-direction:column; gap:.15rem; }
+  .kh-badge-t .kicker{ margin:0; font-size:.88rem; font-weight:700; color:#fff; }
+  .kh-badge-t .kh-sub{ font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,0.62); font-weight:600; }
+
+  .kh-right{
+    position:relative; z-index:3; width:min(420px, 34vw); display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end;
+    text-align:right; pointer-events:none;
+  }
+  .kh-carousel{ display:flex; flex-direction:column; align-items:flex-end; gap:1.3rem; pointer-events:auto; padding-top:5.5rem; }
+  .kh-cards{ display:flex; gap:.9rem; }
+  .kh-card{
+    position:relative; width:138px; padding:5.2rem .9rem .95rem; border-radius:28px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:1.1rem; text-align:center;
+    background:var(--glass); border:1px solid var(--glass-line); color:#fff; font:inherit;
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:background-color .4s ease, border-color .4s ease, transform .4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .kh-card img{
+    position:absolute; left:50%; top:-5.6rem; height:150px; width:auto; transform:translateX(-50%);
+    filter:drop-shadow(0 20px 30px rgba(0,0,0,0.5)); pointer-events:none;
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .kh-card:not([aria-pressed="true"]) img{ filter:drop-shadow(0 20px 30px rgba(0,0,0,0.5)) brightness(.72); }
+  .kh-card[aria-pressed="true"]{ border-color:var(--accent); }
+  .kh-card:active{ transform:scale(.97); }
+  @media (hover:hover) and (pointer:fine){
+    .kh-card:hover{ background:var(--glass-2); border-color:rgba(255,255,255,0.4); }
+    .kh-card[aria-pressed="true"]:hover{ border-color:var(--accent); }
+    .kh-card:hover img{ transform:translateX(-50%) translateY(-22px) rotate(-10deg) scale(1.1); }
+  }
+  .kh-ci{ display:flex; flex-direction:column; gap:.15rem; font-size:.72rem; line-height:1.3; width:100%; }
+  .kh-ci b{ font-weight:700; }
+  .kh-ci span{ color:rgba(255,255,255,0.66); }
+  .kh-arrows{ display:flex; gap:.7rem; }
+  .kh-arrow{
+    width:40px; height:40px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+    background:var(--glass); border:1px solid var(--glass-line); color:#fff; transition:background-color .3s ease, transform .16s var(--ease-out);
+  }
+  .kh-arrow svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .kh-arrow:active{ transform:scale(.94); }
+  @media (hover:hover) and (pointer:fine){ .kh-arrow:hover{ background:var(--glass-2); } }
+  .kh-side{
+    margin:0; max-width:11ch; font-family:var(--display); font-weight:600; text-wrap:balance;
+    font-size:clamp(1.9rem,3.2vw,3.4rem); line-height:.98; letter-spacing:-0.045em; color:#fff;
+  }
+  :lang(zh) .kh-side{ font-family:var(--font); letter-spacing:0; }
+  .kh-side em{ font-style:normal; color:transparent; -webkit-text-stroke:1.2px rgba(255,255,255,0.85); }
+
+  @media (prefers-reduced-motion:no-preference){
+    .hero.kh.intro .kh-right{ animation:blurIn 1s var(--ease-out) .3s both; }
+    .hero.kh.intro .kh-badge{ animation:blurIn 1s var(--ease-out) .45s both; }
+  }
+
+  @media (max-width:1100px){
+    .kh-right{ width:min(360px, 38vw); }
+    .kh-card{ width:124px; }
+  }
+  @media (max-width:900px){
+    .hero.kh{
+      height:auto; min-height:0; grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto;
+      padding-top:min(56svh, 470px); row-gap:2.4rem; text-align:left;
+    }
+    .kh-canvas, .kh-fallback{ height:min(60svh, 500px); bottom:auto; }
+    .kh-fallback{ top:30svh; height:44svh; }
+    .kh-load{ top:min(28svh, 230px); }
+    .hero.kh h1{ font-size:clamp(3.4rem,17vw,6rem); }
+    .kh-badge{ margin-top:.4rem; }
+    .kh-right{ width:auto; align-items:stretch; text-align:left; gap:2rem; }
+    .kh-carousel{ align-items:flex-start; padding-top:5.4rem; }
+    .kh-side{ max-width:14ch; }
+  }
+
+  /* =========================================================
+     The rest of the page in the same light
+     ========================================================= */
+  .big{ font-family:var(--font); font-weight:700; letter-spacing:-0.03em; }
+  .page-head h2, .cs-head h2, .ds-copy h2, .specs h2, .band h2, .mission-banner h2{ font-weight:600; letter-spacing:-0.045em; }
+  .page-head h2{ font-size:clamp(2.3rem,5.6vw,4.4rem); }
+  .cs-head h2, .ds-copy h2{ font-size:clamp(2rem,3.8vw,3.4rem); }
+  .specs h2{ font-size:clamp(2.1rem,4.6vw,3.8rem); max-width:18ch; }
+  .band h2{ font-size:clamp(2rem,4.4vw,3.6rem); }
+  .mission-banner h2{ font-size:clamp(2.3rem,5.4vw,4.4rem); }
+  .spec dd span{ font-family:var(--display); font-weight:600; letter-spacing:-0.05em; font-size:clamp(2.8rem,6vw,5rem); }
+  .tile, .ww, .story, .console, .linkbtn, .corefig .imgbox, .blueprint, .wip-grid figure, .vwrap video{
+    background-color:var(--glass); border-color:var(--glass-line);
+    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  }
+  .tile, .ww, .story, .console{ border-radius:30px; }
+  .t-progress{ background-color:rgba(255,255,255,0.08); }
+  @media (hover:hover) and (pointer:fine){
+    .tile:hover, a.linkbtn:hover{ background-color:var(--glass-2); border-color:var(--glass-line-2); }
+    .tile:hover .go, a.linkbtn:hover .go{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+  }
+  .go{ background:rgba(0,0,0,0.35); border-color:var(--glass-line); color:#fff; }
+  .tile h3, .ix h3, .flight h3, .post h3, .letter h3, .console-head h3, .lb h3{ letter-spacing:-0.03em; }
+  .tile h3{ font-size:1.25rem; }
+  .t-progress h3{ font-size:clamp(1.7rem,2.8vw,2.4rem); }
+  .readout{ background:rgba(3,10,20,0.6); border-color:var(--glass-line); border-radius:18px; }
+  .cs-steps li.on button{ background:var(--glass); }
+  .chip{ border-color:var(--glass-line-2); }
+  .chip.open{ color:var(--accent); border-color:rgba(255,208,181,0.6); }
+  .band{ background:transparent; border-top:1px solid var(--glass-line); }
+  .sponsor-logo{ border-radius:22px; }
+  .mission-banner{ border-radius:0 0 36px 36px; }
+  .sheet{ background:rgba(6,16,30,0.94); -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px); border-color:var(--glass-line); }
+  .sheet-nav a{ font-family:var(--display); font-weight:600; font-size:1.4rem; letter-spacing:-0.03em; }
+  .sheet-nav a[aria-current="page"]{ color:var(--accent); }
+  .sheet-nav a[aria-current="page"]::after{ background:var(--accent); }
+  .sheet-lang button[aria-pressed="true"]{ background:var(--accent); color:var(--on-accent); }
+  .toast{ background:var(--accent); color:var(--on-accent); }
+  .toast svg{ stroke:var(--on-accent); }
+  footer{ border-top-color:var(--glass-line); }
+  .b-cover{ background:var(--bg-outer); }
+  @media (prefers-reduced-motion:reduce){
+    .kh-bubbles{ display:none; }
+    .kh-load{ animation:none; }
+    .spec .wrap{ transform:none; }
+  }
 </style>
 </head>
 <body>
@@ -1034,19 +1304,43 @@
 <!-- ============ HOME ============ -->
 <section class="view" data-view="home">
 
-  <div class="hero intro" id="hero">
+  <div class="hero intro kh" id="hero">
     <svg class="hero-waves" id="heroWaves" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true"></svg>
-    <div class="hero-copy" id="heroCopy">
-      <p class="kicker" data-i18n="hero_kicker">The CanSat team of Escola Vedruna Tona</p>
+    <canvas class="kh-canvas" id="khCanvas" role="img" aria-label="" data-aria-i18n="hero_can_alt"></canvas>
+    <img class="kh-fallback" data-src="images/core/montado.png" alt="" aria-hidden="true">
+    <span class="kh-load" aria-hidden="true"></span>
+    <div class="kh-bubbles" id="khBubbles" aria-hidden="true"></div>
+    <div class="hero-can" id="heroCan"><div class="can-in"><img id="heroImg" data-src="images/core/montado.png" alt=""></div></div>
+    <div class="kh-left hero-copy" id="heroCopy">
       <h1>KAIPER</h1>
       <p class="tag" data-i18n="hero_tag">A high school CanSat team.</p>
       <div class="cta-row">
         <a class="btn" href="#mission" data-i18n="hero_cta_mission">Explore the mission</a>
         <a class="tlink" href="#progress"><span data-i18n="hero_cta_progress">See our progress</span><svg aria-hidden="true"><use href="#i-chev"/></svg></a>
       </div>
+      <div class="kh-badge">
+        <span class="kh-badge-ic"><img data-src="images/isotipo-small.png" data-fallback="images/isotipo.png" alt="" onerror="isoFallback(this)"></span>
+        <span class="kh-badge-t"><span class="kicker" data-i18n="hero_kicker">The CanSat team of Escola Vedruna Tona</span><span class="kh-sub" data-i18n="foot_small">CanSat · ESA / ESERO Spain</span></span>
+      </div>
     </div>
-    <div class="hero-can" id="heroCan">
-      <div class="can-in"><img id="heroImg" data-src="images/core/montado.png" data-alt-i18n="hero_can_alt" alt=""></div>
+    <div class="kh-right">
+      <div class="kh-carousel">
+        <div class="kh-cards" role="group" aria-label="Kaiper Core">
+          <button class="kh-card" type="button" data-mode="assembled" aria-pressed="true">
+            <img data-src="images/core/montado.png" alt="">
+            <span class="kh-ci"><b data-i18n="core_v1">Assembled</b><span>66 &times; 115 mm</span></span>
+          </button>
+          <button class="kh-card" type="button" data-mode="exploded" aria-pressed="false">
+            <img data-src="images/core/despiece.png" alt="">
+            <span class="kh-ci"><b data-i18n="core_scene_title">Three parts. One can.</b></span>
+          </button>
+        </div>
+        <div class="kh-arrows">
+          <button class="kh-arrow" type="button" aria-label="&larr;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button class="kh-arrow" type="button" aria-label="&rarr;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <p class="kh-side" data-i18n="l1_q">Could liquid water exist here?</p>
     </div>
   </div>
 
@@ -3410,5 +3704,315 @@ Scenes.measure();
 if(document.documentElement.classList.contains('b-pre')) Intro.play();
 </script>
 
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+/* =========================================================
+   KAIPER 3D HERO — the real Kaiper Core (shell, core, sled) from the team's CAD,
+   tilting toward the pointer, surrounded by icy Kuiper-belt fragments that dodge it.
+   Clicking Assembled / Exploded spins the can 720° and takes it apart.
+   ========================================================= */
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const hero = document.getElementById('hero');
+const cv = document.getElementById('khCanvas');
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)');
+const GH = 'https://kaipercansat.github.io/kaiper.cansat/';
+const inSites = document.documentElement.classList.contains('in-sites');
+const MODEL_URLS = inSites ? [GH + 'images/kaiper.glb'] : ['images/kaiper.glb', GH + 'images/kaiper.glb'];
+
+function fail(){ hero.classList.add('no3d'); }
+
+let renderer;
+try{
+  renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, powerPreference: 'high-performance' });
+}catch(e){ fail(); throw e; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+const cam = new THREE.PerspectiveCamera(30, 1, 0.01, 20);
+cam.position.set(0, 0, 0.44);
+const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(0.5, 0.9, 0.7); scene.add(key);
+const rim = new THREE.DirectionalLight(0x9fdcff, 1.6); rim.position.set(-0.8, 0.3, -0.6); scene.add(rim);
+const warm = new THREE.PointLight(0xffb48a, 0.25, 2); warm.position.set(0.25, -0.2, 0.3); scene.add(warm);
+
+/* ---------- the can ---------- */
+const rig = new THREE.Group(); scene.add(rig);
+const tiltHolder = new THREE.Group(); tiltHolder.rotation.z = -0.36; rig.add(tiltHolder);
+const spinner = new THREE.Group(); tiltHolder.add(spinner);
+const parts = {};
+const EXPLODE = { core: 0.062, sled: -0.058, shell: 0 };
+
+/* ---------- icy fragments of the Kuiper belt ---------- */
+function rockGeometry(seed, detail){
+  const g = new THREE.IcosahedronGeometry(1, detail);
+  const p = g.attributes.position;
+  const v = new THREE.Vector3();
+  for(let i = 0; i < p.count; i++){
+    v.fromBufferAttribute(p, i);
+    const n = Math.sin(v.x * 3.1 + seed) * Math.cos(v.y * 2.7 - seed * 1.3) * Math.sin(v.z * 3.7 + seed * 0.7);
+    v.multiplyScalar(1 + n * 0.3);
+    p.setXYZ(i, v.x, v.y * 0.86, v.z);
+  }
+  g.computeVertexNormals();
+  return g.toNonIndexed();
+}
+const iceMat = new THREE.MeshStandardMaterial({ color: 0xd6eef7, roughness: 0.28, metalness: 0.05, flatShading: true });
+const iceDim = new THREE.MeshStandardMaterial({ color: 0x8fb6c8, roughness: 0.45, metalness: 0.0, flatShading: true });
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x55667a, roughness: 0.75, metalness: 0.0, flatShading: true });
+const fg = new THREE.Group(), bg = new THREE.Group();
+scene.add(bg); scene.add(fg);
+/* x, y as fractions of the visible frame at their depth, size in metres, depth z */
+const ROCKS = [
+  [-0.06, 0.30, 0.0105, 0.06, 'ice'], [0.17, 0.32, 0.0055, 0.04, 'ice'], [0.24, 0.02, 0.012, 0.07, 'ice'],
+  [-0.14,-0.30, 0.0065, 0.05, 'rock'], [0.16,-0.30, 0.008, 0.03, 'ice'], [-0.20, 0.06, 0.0045, 0.02, 'rock'],
+  [0.33, 0.22, 0.004, 0.02, 'ice'], [0.05, -0.40, 0.0042, 0.03, 'rock'],
+  [-0.16, 0.36, 0.006, -0.14, 'dim'], [0.03,-0.30, 0.005, -0.18, 'dim'], [0.36,-0.16, 0.007, -0.22, 'dim'],
+  [-0.32, -0.10, 0.005, -0.26, 'dim'], [0.40, 0.36, 0.005, -0.28, 'dim']
+];
+const rocks = ROCKS.map(function(r, i){
+  const mat = r[4] === 'ice' ? iceMat : (r[4] === 'rock' ? rockMat : iceDim);
+  const m = new THREE.Mesh(rockGeometry(i * 1.7 + 0.3, r[2] > 0.007 ? 1 : 0), mat);
+  m.scale.setScalar(r[2]);
+  m.rotation.set(i, i * 2.1, i * 0.6);
+  (r[3] > 0 ? fg : bg).add(m);
+  return { m: m, fx: r[0], fy: r[1], z: r[3], s: r[2], base: new THREE.Vector2(), off: new THREE.Vector2(), push: new THREE.Vector2(),
+           ang: Math.random() * 6.28, speed: 0.12 + Math.random() * 0.25, scaleK: 1, dur: [5,7,6,8,5.5,6.5,9,11,10][i % 9] };
+});
+
+/* ---------- layout ---------- */
+let W = 1, H = 1, narrow = false, camDist = 0.44, camTarget = 0.44;
+const camByMode = { assembled: 0.44, exploded: 0.62 };
+function frameAt(z){ const d = camDist * (narrow ? 1.18 : 1) - z; const h = 2 * d * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)); return { h: h, w: h * cam.aspect }; }
+function layout(){
+  const r = cv.getBoundingClientRect();
+  W = Math.max(1, r.width); H = Math.max(1, r.height);
+  renderer.setSize(W, H, false);
+  cam.aspect = W / H; cam.updateProjectionMatrix();
+  narrow = window.innerWidth <= 900;
+  placeRocks();
+}
+function placeRocks(){
+  rocks.forEach(function(k){
+    const f = frameAt(k.z);
+    k.base.set(k.fx * f.w * (narrow ? 0.9 : 1), k.fy * f.h);
+  });
+}
+
+/* ---------- pointer ---------- */
+const mouse = { x: 0, y: 0, px: -9999, py: -9999 };
+const cur = { x: 0, y: 0 };
+window.addEventListener('pointermove', function(e){
+  mouse.x = e.clientX / window.innerWidth - 0.5;
+  mouse.y = e.clientY / window.innerHeight - 0.5;
+  mouse.px = e.clientX; mouse.py = e.clientY;
+}, { passive: true });
+
+/* ---------- a tiny tween engine (one clock for everything) ---------- */
+const tweens = [];
+const E = {
+  in2: function(t){ return t * t * t; },
+  out3: function(t){ return 1 - Math.pow(1 - t, 3); },
+  inOut: function(t){ return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; },
+  back: function(s){ return function(t){ const c3 = s + 1; return 1 + c3 * Math.pow(t - 1, 3) + s * Math.pow(t - 1, 2); }; }
+};
+function tween(ms, step, ease, delay){
+  setTimeout(loop, 0);
+  return new Promise(function(res){ tweens.push({ t0: performance.now() + (delay || 0), ms: ms, step: step, ease: ease || E.out3, res: res }); });
+}
+function runTweens(now){
+  for(let i = tweens.length - 1; i >= 0; i--){
+    const tw = tweens[i];
+    if(now < tw.t0) continue;
+    const p = Math.min(1, (now - tw.t0) / tw.ms);
+    tw.step(tw.ease(p));
+    if(p >= 1){ tweens.splice(i, 1); tw.res(); }
+  }
+}
+
+/* ---------- state ---------- */
+let loaded = false, intro = 0, switchSpin = 0, explodeK = 0, mode = 'assembled', switching = false, scrollK = 0;
+
+function applyExplode(){
+  ['core', 'sled', 'shell'].forEach(function(n){ if(parts[n]) parts[n].position.y = parts[n].userData.y0 + EXPLODE[n] * explodeK; });
+}
+
+function setMode(next, fromUser){
+  if(!loaded || switching || next === mode){ syncCards(next); return; }
+  switching = true; syncCards(next);
+  const reduce = REDUCE.matches;
+  const from = explodeK, to = next === 'exploded' ? 1 : 0;
+  if(reduce){
+    document.body.classList.toggle('k-teal', next === 'exploded');
+    explodeK = to; applyExplode(); camTarget = camDist = camByMode[next]; mode = next; switching = false; return;
+  }
+  // 1. the background morphs (CSS transition on the registered colour properties)
+  document.body.classList.toggle('k-teal', next === 'exploded');
+  // 2. the can spins up with a motion blur…
+  tween(600, function(p){ switchSpin = p * Math.PI * 2; cv.style.filter = 'blur(' + (p * 6).toFixed(2) + 'px)'; }, E.in2).then(function(){
+    mode = next; camTarget = camByMode[next];
+    // …and settles 720° later, taken apart or put back together
+    tween(1500, function(p){
+      switchSpin = Math.PI * 2 + p * Math.PI * 2;
+      cv.style.filter = p < 1 ? 'blur(' + ((1 - p) * 6).toFixed(2) + 'px)' : '';
+      explodeK = from + (to - from) * Math.min(1, p * 1.25); applyExplode();
+    }, E.back(0.7)).then(function(){ switchSpin = 0; cv.style.filter = ''; switching = false; });
+  });
+  // 3. the fragments implode to the can, then burst out to new places
+  rocks.forEach(function(k, i){
+    const sx = k.off.x, sy = k.off.y;
+    const nx = (Math.random() - 0.5) * 0.05, ny = (Math.random() - 0.5) * 0.05;
+    tween(500, function(p){ k.off.set(sx + (-k.base.x - sx) * p, sy + (-k.base.y - sy) * p); k.scaleK = 1 - p * 0.9; }, E.in2, i * 12).then(function(){
+      return tween(900, function(p){ k.off.set(-k.base.x + (nx + k.base.x) * p, -k.base.y + (ny + k.base.y) * p); k.scaleK = 0.1 + p * 0.9; }, E.back(1.5), 300);
+    });
+  });
+}
+
+/* ---------- the cards ---------- */
+const cards = Array.prototype.slice.call(document.querySelectorAll('.kh-card'));
+function syncCards(m){ cards.forEach(function(c){ c.setAttribute('aria-pressed', c.getAttribute('data-mode') === m ? 'true' : 'false'); }); }
+cards.forEach(function(c){ c.addEventListener('click', function(){ setMode(c.getAttribute('data-mode'), true); }); });
+document.querySelectorAll('.kh-arrow').forEach(function(b){
+  b.addEventListener('click', function(){ setMode(mode === 'assembled' ? 'exploded' : 'assembled', true); });
+});
+
+/* ---------- load the model ---------- */
+function loadFrom(i){
+  if(i >= MODEL_URLS.length){ fail(); return; }
+  new GLTFLoader().load(MODEL_URLS[i], function(g){
+    const root = g.scene;
+    root.traverse(function(o){
+      if(o.isMesh){
+        const n = (o.material && o.material.name) || o.name;
+        o.material.envMapIntensity = 1.1;
+        if(/shell/.test(n)){ o.material.color.setHex(0x9fabb8); o.material.roughness = 0.42; o.material.metalness = 0.18; }
+        if(/core/.test(n)){ o.material.color.setHex(0x1748c2); o.material.roughness = 0.32; }
+        if(/sled/.test(n)){ o.material.color.setHex(0xe8641c); }
+      }
+    });
+    ['shell', 'core', 'sled'].forEach(function(n){
+      const node = root.getObjectByName(n);
+      if(node){ node.userData.y0 = node.position.y; parts[n] = node; }
+    });
+    spinner.add(root);
+    loaded = true;
+    hero.classList.add('ready');
+    tween(1500, function(p){ intro = p; }, E.out3);
+    loop();
+  }, undefined, function(){ loadFrom(i + 1); });
+}
+
+/* ---------- render loop: only while the hero is on screen ---------- */
+let visible = true, raf = 0;
+function onScreen(){ const r = hero.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 && r.top < window.innerHeight; }
+function shouldRun(){ return onScreen() && !document.hidden && (window.CURRENT_VIEW === undefined || window.CURRENT_VIEW === 'home'); }
+const tmp = new THREE.Vector3();
+function frame(now){
+  raf = 0;
+  if(!shouldRun()) return;
+  runTweens(now);
+  const t = now * 0.001;
+  const still = REDUCE.matches;
+  cur.x += (mouse.x - cur.x) * 0.05;
+  cur.y += (mouse.y - cur.y) * 0.05;
+  camDist += (camTarget - camDist) * 0.06;
+  cam.position.set(0, narrow ? 0.006 : 0, camDist * (narrow ? 1.18 : 1));
+  cam.lookAt(0, narrow ? 0.006 : 0, 0);
+
+  /* the can: tilt toward the cursor, bob, descend a little as you scroll away */
+  const bob = still ? 0 : Math.sin(t * Math.PI * 2 / 6) * 0.004;
+  rig.position.set(narrow ? 0 : 0.004, bob - scrollK * 0.05, 0);
+  const s = 0.82 + 0.18 * intro;
+  rig.scale.setScalar(s);
+  spinner.rotation.y = (still ? 0 : t * 0.18) + cur.x * 0.9 + switchSpin + (1 - intro) * -1.2;
+  rig.rotation.x = cur.y * 0.35;
+
+  /* parallax */
+  fg.position.set(cur.x * 0.012, -cur.y * 0.012, 0);
+  bg.position.set(cur.x * -0.006, cur.y * 0.006, 0);
+
+  /* fragments: float, spin, dodge the pointer */
+  const rect = cv.getBoundingClientRect();
+  rocks.forEach(function(k, i){
+    const phase = (t + i * 0.7) * (Math.PI * 2 / k.dur);
+    const fy = still ? 0 : Math.sin(phase) * 0.004;
+    let speed = 1;
+    if(!switching){
+      tmp.set(k.base.x + k.off.x + k.push.x, k.base.y + k.off.y + k.push.y, k.z);
+      (k.z > 0 ? fg : bg).localToWorld(tmp);
+      tmp.project(cam);
+      const sx = rect.left + (tmp.x * 0.5 + 0.5) * rect.width, sy = rect.top + (-tmp.y * 0.5 + 0.5) * rect.height;
+      const dx = mouse.px - sx, dy = mouse.py - sy, dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      let tx = 0, ty = 0;
+      if(dist < 320){
+        const force = (320 - dist) / 320, f = frameAt(k.z);
+        tx = -(dx / dist) * force * f.w * 0.07;
+        ty = (dy / dist) * force * f.h * 0.07;
+        speed = 1 + force * 5;
+      }
+      k.push.x += (tx - k.push.x) * 0.1; k.push.y += (ty - k.push.y) * 0.1;
+    }
+    if(!still) k.ang += 0.004 * k.speed * speed;
+    k.m.position.set(k.base.x + k.off.x + k.push.x, k.base.y + k.off.y + k.push.y + fy, k.z);
+    k.m.rotation.set(k.ang, k.ang * 1.3, Math.cos(phase) * 0.1);
+    k.m.scale.setScalar(k.s * k.scaleK * (0.4 + 0.6 * intro));
+  });
+
+  renderer.render(scene, cam);
+  if(!still || tweens.length || Math.abs(camTarget - camDist) > 0.0005) loop();
+}
+let rafAt = 0;
+function loop(){ if(!raf && shouldRun()){ rafAt = performance.now(); raf = requestAnimationFrame(frame); } }
+
+/* hero on screen? */
+if('IntersectionObserver' in window){
+  new IntersectionObserver(function(es){ visible = es[0].isIntersecting; if(visible) layout(); loop(); }, { threshold: 0 }).observe(hero);
+}
+document.addEventListener('visibilitychange', loop);
+window.addEventListener('hashchange', function(){ setTimeout(loop, 50); });
+document.addEventListener('click', function(){ setTimeout(loop, 60); });
+window.addEventListener('pointermove', function(){ if(REDUCE.matches) loop(); }, { passive: true });
+window.addEventListener('scroll', function(){
+  const r = hero.getBoundingClientRect();
+  scrollK = Math.min(1, Math.max(0, -r.top / Math.max(r.height, 1)));
+  if(REDUCE.matches) loop();
+}, { passive: true });
+let rz = 0;
+window.addEventListener('resize', function(){ clearTimeout(rz); rz = setTimeout(function(){ layout(); loop(); }, 60); });
+
+/* ---------- bubbles rising out of the invisible ocean ---------- */
+const bubbles = document.getElementById('khBubbles');
+setInterval(function(){
+  if(!shouldRun() || REDUCE.matches || !bubbles) return;
+  const b = document.createElement('span');
+  const size = 6 + Math.random() * 18, dur = 5 + Math.random() * 6;
+  b.className = 'kh-bubble';
+  b.style.width = b.style.height = size.toFixed(1) + 'px';
+  b.style.left = (Math.random() * 100).toFixed(2) + '%';
+  b.style.setProperty('--o', (0.25 + Math.random() * 0.35).toFixed(2));
+  b.style.setProperty('--dx', ((Math.random() - 0.3) * 60).toFixed(0) + 'px');
+  b.style.animationDuration = dur.toFixed(2) + 's';
+  bubbles.appendChild(b);
+  setTimeout(function(){ b.remove(); }, dur * 1000 + 100);
+}, 450);
+
+/* re-measure and wake up whenever the page switches view */
+if(typeof window.showView === 'function'){
+  const show = window.showView;
+  window.showView = function(){ const r = show.apply(this, arguments); requestAnimationFrame(function(){ visible = true; layout(); loop(); }); return r; };
+}
+layout();
+syncCards('assembled');
+/* views switch without events we can hear: keep the size right and wake the loop when needed */
+setInterval(function(){ if(raf && performance.now() - rafAt > 300){ cancelAnimationFrame(raf); raf = 0; } const r = cv.getBoundingClientRect(); if(r.width && (Math.abs(r.width - W) > 1 || Math.abs(r.height - H) > 1)) layout(); loop(); }, 400);
+loadFrom(0);
+loop();
+</script>
 </body>
 </html>
