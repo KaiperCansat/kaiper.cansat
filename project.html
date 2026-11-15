@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaiper · Project write-up · ESA CanSat 2027</title>
+<meta name="description" content="Kaiper, a soda-can satellite for ESA CanSat 2027: mission, electronics, mechanical design, parachute, ground station and why we need a custom carrier PCB.">
+<meta property="og:image" content="https://kaipercansat.github.io/kaiper.cansat/images/pcbway/01-hero.jpg">
+<link rel="icon" href="images/isotipo-small.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03050b;--text:#eef3ff;--muted:#b4bed8;--blue:#86acff;--line:rgba(150,180,255,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(60vw 40vw at 85% -5%,rgba(61,123,255,.18),transparent 60%),var(--bg);color:var(--text);font:400 18px/1.7 'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--blue)}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+header{padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font:700 15px 'Unbounded';letter-spacing:.14em;color:var(--text);text-decoration:none}
+.brand img{width:32px;height:32px;border-radius:50%}
+.back{font-weight:700;font-size:15px;text-decoration:none;padding:9px 16px;border-radius:999px;color:var(--text);background:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 0 0 1px rgba(255,255,255,.08)}
+.kicker{margin-top:56px;font:600 13px 'Manrope';letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{font:800 clamp(32px,6vw,54px)/1.05 'Unbounded';letter-spacing:-.025em;margin:14px 0 22px}
+h2{font:700 clamp(22px,3.2vw,30px)/1.15 'Unbounded';letter-spacing:-.015em;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+p{margin:0 0 16px;color:#d8dff2}
+strong{color:#fff}
+ul{margin:0 0 18px 22px;color:#d8dff2}
+li{margin-bottom:8px}
+figure{margin:26px 0;border-radius:18px;overflow:hidden;box-shadow:0 0 0 1px var(--line),0 30px 60px -30px rgba(0,0,0,.9)}
+figure img{display:block;width:100%;height:auto}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:22px 0}
+.specs div{padding:16px;border-radius:16px;background:rgba(16,24,46,.7);box-shadow:inset 0 0 0 1px var(--line)}
+.specs b{display:block;font:700 22px 'Unbounded'}
+.specs span{font-size:14px;color:var(--muted)}
+footer{margin:64px 0 40px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="./"><img src="images/isotipo-small.png" alt="">KAIPER</a>
+  <a class="back" href="./">← Main site</a>
+</header>
+
+<p class="kicker">Project write-up · ESA CanSat 2027</p>
+<h1>Kaiper, a soda-can satellite for ESA's CanSat competition</h1>
+
+<p>We're <strong>Team Kaiper</strong>: Matias, Aleix, Eloi and Àlex, four 15-year-old students (4th ESO) from Escola Vedruna Tona, near Barcelona (Spain). We're building a CanSat for <strong>ESA CanSat 2027</strong> (run in Spain by ESERO): a satellite the size of a soda can (Ø66 × 115 mm, 300–350 g) that a rocket launches to about 1 km. It falls back under its own parachute while it measures the air and radios everything to a ground station we built ourselves.</p>
+<figure><img src="images/pcbway/01-hero.jpg" alt="Kaiper v2 and its parachute" width="1400" height="800"></figure>
+<p>The name: "Kai" means ocean in Hawaiian, plus the Kuiper Belt, a region that may hide oceans under its ice. Our mission asks a similar question about the air Kaiper falls through: could liquid water exist here?</p>
+<div class="specs">
+  <div><b>Ø66 × 115</b><span>mm, competition size</span></div>
+  <div><b>~1 km</b><span>release altitude</span></div>
+  <div><b>8–11 m/s</b><span>target descent speed</span></div>
+  <div><b>3</b><span>layers of mission data</span></div>
+</div>
+
+<h2>The mission</h2>
+<p><strong>Primary mission (mandatory):</strong> measure air temperature and pressure from about 1 km down to the ground and send every reading by radio, second by second.</p>
+<p><strong>Secondary mission, the Kaiper Index:</strong> three layers of data on the way down.</p>
+<ul>
+  <li><strong>Habitability index:</strong> humidity, temperature and UV radiation combined into our own score for each stage of the descent.</li>
+  <li><strong>Turbulence map:</strong> an IMU tracks how rough the descent is, stage by stage, the same kind of data used to design parachutes and re-entry systems.</li>
+  <li><strong>Radiation shielding gradient:</strong> how background radiation changes with altitude. This is our honest question mark: the hardest sensor to source and calibrate at our level. If it doesn't make the final build, the mission still stands on the other two layers.</li>
+</ul>
+
+<h2>Electronics</h2>
+<p>Built around the school kit: <strong>Arduino Uno</strong>, a <strong>microSD shield</strong> (onboard backup of every reading), <strong>APC220 radio + GPS</strong>, <strong>BMP180</strong> (pressure) and <strong>DHT</strong> (humidity and temperature), powered by a 9 V battery. We keep a version log of the base board:</p>
+<ul>
+  <li><strong>v01 (2 Nov):</strong> every practice that already worked, merged on one board. Our first signal on the serial monitor: "Hola, soc el CanSat Kaiper!"… and our first real bug: "SD card not found".</li>
+  <li><strong>v02 (in progress):</strong> adds GPS, radio communications, DHT and BMP180.</li>
+</ul>
+<figure><img src="images/pcbway/07-first-signal.jpg" alt="Serial monitor showing the first message from the CanSat" loading="lazy" width="1024" height="768"></figure>
+
+<h2>Mechanical design</h2>
+<p>Everything is modelled by the team and printed on the school's Bambu Lab P1S. The current can, <strong>Kaiper v2</strong>, has four parts designed around the real electronics:</p>
+<ul>
+  <li><strong>Shell:</strong> diamond facets on top and ventilation louvres below so air reaches the sensors.</li>
+  <li><strong>Core:</strong> lid and spine in one piece, engraved "KAIPER · ESA CANSAT 2027 · VEDRUNA TONA", with the SMA antenna connector and the power switch. Every board mounts on this central spine.</li>
+  <li><strong>Battery holder:</strong> holds the 9 V battery and the microSD shield.</li>
+  <li><strong>Sensor sled:</strong> the compartmented base for the breadboard and sensors.</li>
+</ul>
+<figure><img src="images/pcbway/02-can-v2.jpg" alt="Kaiper v2: closed, front, back, exploded and lid" loading="lazy" width="1400" height="700"></figure>
+<p>It took three cans in six weeks to get here. Each version was printed, tested and redesigned from what failed in the previous one:</p>
+<figure><img src="images/pcbway/03-evolution.jpg" alt="Evolution of the can: v1, v2 and v3" loading="lazy" width="1400" height="720"></figure>
+<figure><img src="images/pcbway/08-printed-parts.jpg" alt="First printed parts" loading="lazy" width="1024" height="768"></figure>
+
+<h2>Parachute</h2>
+<p>We designed our own parachute to slow the can to the competition's <strong>8–11 m/s</strong> target: a canopy of about 34 cm with black and blue gores, a reinforced hem, a mesh skirt and a single anchor point on the lid. Next step: drop tests to measure the real descent speed.</p>
+<figure><img src="images/pcbway/04-parachute.jpg" alt="Parachute renders" loading="lazy" width="1400" height="720"></figure>
+
+<h2>Ground station</h2>
+<p>We also wrote our own <a href="estacio_terra.html">ground-station web app</a>. It connects to the receiver over USB (Web Serial), plots every reading live and exports the whole flight to Excel.</p>
+
+<h2>Why we need PCBWay</h2>
+<p>Right now our electronics live on a breadboard with jumper wires: fine on a desk, risky under launch acceleration (around 20 g) and vibration. We want to replace them with a <strong>custom carrier PCB</strong> that connects the microcontroller, radio, GPS, IMU and sensors and mounts on the can's central spine, with locking connectors instead of loose wires.</p>
+<ul>
+  <li><strong>5 carrier PCBs</strong>, 2 layers, about 50 × 70 mm, and, if possible, assembly of the connectors</li>
+  <li>Designed in KiCad by the team</li>
+  <li>Shaped to fit the 66 mm can and the core's mounting points</li>
+</ul>
+<p>Like most school teams, our budget is small. PCBWay's support means we can go from a breadboard to a real flight board this season.</p>
+
+<h2>What we'll give back</h2>
+<ul>
+  <li>We'll publish the full design (KiCad files, Gerbers and 3D model) on PCBWay's community.</li>
+  <li>PCBWay's logo is already on our website's sponsor section, and it will go on our can's cap and our team T-shirts.</li>
+  <li>We'll post build updates tagging PCBWay on Instagram and TikTok (@kaiper.cansat).</li>
+</ul>
+<figure><img src="images/pcbway/06-identity.jpg" alt="Team keychain, medallion and T-shirts" loading="lazy" width="1400" height="640"></figure>
+
+<h2>The team</h2>
+<figure><img src="images/pcbway/05-team.jpg" alt="Matias, Aleix, Eloi and Àlex" loading="lazy" width="1400" height="520"></figure>
+<p>Sessions with our mentor, who works for ESA, shaped how we designed the mission and which questions are worth asking.</p>
+<figure><img src="images/pcbway/09-mentor.jpg" alt="Session with our ESA mentor" loading="lazy" width="1024" height="768"></figure>
+
+<footer>
+  <p>Thank you! Matias, Aleix, Eloi and Àlex, Team Kaiper</p>
+  <p><a href="./">kaipercansat.github.io/kaiper.cansat</a> · Instagram / TikTok: <a href="https://www.instagram.com/kaiper.cansat">@kaiper.cansat</a> · <a href="mailto:kaiper.cansat@gmail.com">kaiper.cansat@gmail.com</a></p>
+</footer>
+</div>
+</body>
+</html>
