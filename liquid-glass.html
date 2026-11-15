@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaiper · Liquid Glass</title>
+<meta name="description" content="Componentes Liquid Glass de Kaiper: refracción real con feDisplacementMap, aberración cromática y reflejo especular.">
+<link rel="icon" href="images/isotipo-small.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --text:#f4f7ff; --muted:#c9d3ec;
+  --display:'Unbounded',system-ui,sans-serif; --body:'Manrope',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --spring:cubic-bezier(.34,1.56,.64,1); --ease:cubic-bezier(.22,1,.36,1);
+  --tint:.30;           /* glass darkness → guarantees text contrast */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--body);color:var(--text);background:#03050b;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+img{display:block;max-width:100%}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- a busy backdrop, so the refraction has something to bend ---------- */
+.scene{position:fixed;inset:0;overflow:hidden;z-index:0}
+.scene .blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.9;animation:float 18s ease-in-out infinite alternate}
+.scene .b1{width:46vmax;height:46vmax;left:-8vmax;top:-12vmax;background:radial-gradient(circle,#3d7bff,transparent 65%)}
+.scene .b2{width:40vmax;height:40vmax;right:-10vmax;top:10vh;background:radial-gradient(circle,#ff7a3d,transparent 62%);animation-duration:22s}
+.scene .b3{width:38vmax;height:38vmax;left:30vw;bottom:-18vmax;background:radial-gradient(circle,#19a9e6,transparent 62%);animation-duration:26s}
+@keyframes float{to{transform:translate3d(6vw,5vh,0) scale(1.15)}}
+.scene .grid{position:absolute;inset:-2px;background-image:linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px);background-size:48px 48px}
+.scene .word{position:absolute;left:0;top:50%;transform:translateY(-50%);white-space:nowrap;font:800 clamp(120px,22vw,320px)/1 var(--display);letter-spacing:-.03em;color:rgba(255,255,255,.08);animation:slide 40s linear infinite}
+.scene .word b{color:rgba(168,216,255,.16)}
+@keyframes slide{to{transform:translate(-50%,-50%)}}
+.scene .shot{position:absolute;filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
+.scene .s1{width:min(36vw,420px);right:6vw;top:8vh;animation:bob 7s ease-in-out infinite}
+.scene .s2{width:min(16vw,190px);left:8vw;bottom:8vh;animation:bob 9s ease-in-out infinite reverse}
+@keyframes bob{50%{transform:translateY(-18px) rotate(-2deg)}}
+
+/* ================= THE LIQUID GLASS MATERIAL ================= */
+.glass{
+  position:relative;isolation:isolate;
+  /* tint layer: keeps text readable on any backdrop */
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 42%,rgba(255,255,255,.02) 70%,rgba(255,255,255,.10)),
+    rgba(12,18,38,var(--tint));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65),          /* sharp specular line on the top edge */
+    inset 0 -1px 1px rgba(255,255,255,.18),        /* faint bounce light on the bottom edge */
+    inset 0 0 0 1px rgba(255,255,255,.10),
+    inset 0 10px 24px -14px rgba(255,255,255,.45), /* soft sheen under the top edge */
+    0 18px 40px -18px rgba(0,0,0,.75),
+    0 2px 6px rgba(0,0,0,.25);
+  text-shadow:0 1px 2px rgba(0,0,0,.45);
+}
+/* frosted fallback for browsers without SVG backdrop filters (Safari, Firefox) */
+.glass.lg-fallback,.glass:not(.lg-on){-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%)}
+/* gradient rim: brighter top-left and bottom-right, like light caught in the glass edge */
+.glass::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.25px;pointer-events:none;z-index:2;
+  background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(255,255,255,.12) 30%,rgba(255,255,255,0) 52%,rgba(255,255,255,.18) 78%,rgba(255,255,255,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+/* moving specular highlight (follows the pointer) */
+.glass::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;opacity:0;transition:opacity .4s;
+  background:radial-gradient(180px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.30),transparent 62%);mix-blend-mode:soft-light}
+.glass:hover::after{opacity:1}
+.glass > *{position:relative;z-index:3}
+
+/* ---------- layout ---------- */
+.page{position:relative;z-index:1;min-height:100%;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;padding:28px;max-width:1300px;margin:0 auto}
+header.top{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:10px 12px 10px 18px;border-radius:999px}
+.brand{display:flex;align-items:center;gap:10px;font:700 15px var(--display);letter-spacing:.14em}
+.brand img{width:32px;height:32px;border-radius:50%}
+.top .tag{margin-left:auto;font:500 12px var(--mono);color:var(--muted);letter-spacing:.06em}
+.status{font:600 12px var(--mono);padding:7px 12px;border-radius:999px}
+.stage{display:flex;flex-direction:column;gap:22px;min-height:70vh}
+h1{font:800 clamp(34px,5vw,64px)/1 var(--display);letter-spacing:-.03em;margin-top:6px}
+h1 span{color:#a8d8ff}
+.lede{color:var(--muted);max-width:56ch;font-size:17px;line-height:1.55}
+
+/* notification card (draggable) */
+.notif{width:min(440px,100%);border-radius:30px;padding:18px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;cursor:grab;touch-action:none;user-select:none;transition:transform .5s var(--spring)}
+.notif.dragging{cursor:grabbing;transition:none}
+.notif .app{width:54px;height:54px;border-radius:16px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -6px rgba(0,0,0,.6);background:radial-gradient(circle at 50% 70%,rgba(61,123,255,.5),#081024)}
+.notif .app img{width:100%;height:100%;object-fit:contain;padding:4px}
+.notif .who{font:700 15px var(--body);display:flex;gap:8px;align-items:baseline}
+.notif .who small{font:500 12px var(--mono);color:var(--muted)}
+.notif p{font-size:15px;line-height:1.45;color:#e9eefc;margin-top:3px}
+.notif .x{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;cursor:pointer;border:0}
+.notif .x .ico{width:15px;height:15px}
+.notif .actions{grid-column:2/-1;display:flex;gap:8px;margin-top:6px}
+.drag-tip{font:500 12px var(--mono);color:var(--muted);display:flex;gap:8px;align-items:center}
+
+/* buttons */
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:15px;padding:14px 24px;border-radius:999px;border:0;cursor:pointer;white-space:nowrap;
+  transition:transform .5s var(--spring),box-shadow .3s;color:var(--text)}
+.btn:hover{transform:translateY(-2px) scale(1.04)}
+.btn:active{transform:scale(.95);transition-duration:.12s}
+.btn.sm{padding:10px 16px;font-size:14px}
+.btn.icon{width:52px;height:52px;padding:0;justify-content:center}
+.btn.blue{--tint:0;background:linear-gradient(180deg,rgba(130,172,255,.55),rgba(45,95,235,.55) 60%,rgba(80,130,255,.6))}
+.btn.light{--tint:0;color:#0a1022;text-shadow:none;background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(228,236,255,.72))}
+
+/* segmented + toggle */
+.seg{display:inline-flex;padding:5px;border-radius:999px;gap:2px;position:relative}
+.seg button{position:relative;z-index:3;border:0;background:none;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted);padding:10px 18px;border-radius:999px;transition:color .3s}
+.seg button[aria-pressed=true]{color:#0a1022;text-shadow:none}
+.seg .thumb{position:absolute;z-index:2;top:5px;bottom:5px;left:0;border-radius:999px;background:linear-gradient(180deg,#fff,#e2eaff);box-shadow:inset 0 1px 0 #fff,0 6px 16px rgba(120,160,255,.35);transition:transform .55s var(--spring),width .55s var(--spring)}
+.switch{width:66px;height:38px;border-radius:999px;position:relative;cursor:pointer;border:0;--tint:.2}
+.switch i{position:absolute;top:4px;left:4px;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#fff,#dfe7ff);box-shadow:0 3px 10px rgba(0,0,0,.35),inset 0 1px 0 #fff;transition:transform .5s var(--spring);z-index:3}
+.switch[aria-checked=true]{background:linear-gradient(180deg,rgba(80,220,140,.6),rgba(30,160,90,.55))}
+.switch[aria-checked=true] i{transform:translateX(28px)}
+
+/* sponsor tiles */
+.sponsors{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.sp{border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit;overflow:hidden;transition:transform .5s var(--spring)}
+.sp:hover{transform:translateY(-4px)}
+.sp .logo{height:84px;border-radius:16px;display:grid;place-items:center;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 70% 90% at 50% 100%,var(--c),transparent 70%),rgba(4,8,20,.35);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.sp .logo img{max-height:60px;max-width:80%;width:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));transition:transform .6s var(--spring)}
+.sp:hover .logo img{transform:scale(1.08) rotate(-2deg)}
+.sp b{font:700 15px var(--display);display:block}
+.sp small{font:500 12px var(--mono);color:var(--muted)}
+.sp.add .logo{background:rgba(168,216,255,.06);outline:1.5px dashed rgba(168,216,255,.45);outline-offset:-8px;font:700 30px var(--display);color:#a8d8ff}
+
+/* dock */
+.dock{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;display:flex;gap:6px;padding:8px;border-radius:30px;align-items:center}
+.dock a{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;color:#fff;transition:transform .45s var(--spring);position:relative}
+.dock a:hover{transform:translateY(-8px) scale(1.18)}
+.dock a .ico{width:23px;height:23px}
+.dock .ig{background:linear-gradient(135deg,#feda75,#fa7e1e 25%,#d62976 50%,#962fbf 75%,#4f5bd5)}
+.dock .tt{background:linear-gradient(135deg,#25f4ee,#111 50%,#fe2c55)}
+.dock .ml{background:linear-gradient(135deg,#86acff,#2a5fe6)}
+.dock a{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 14px -4px rgba(0,0,0,.6)}
+.dock .sep{width:1px;height:30px;background:rgba(255,255,255,.2);margin:0 4px}
+
+/* control panel */
+.panel{border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:16px;align-self:start;position:sticky;top:20px}
+.panel h2{font:700 17px var(--display)}
+.panel label{display:grid;gap:6px;font-weight:700;font-size:14px}
+.panel label span{display:flex;justify-content:space-between}
+.panel label output{font:500 12px var(--mono);color:#a8d8ff}
+.panel input[type=range]{width:100%;accent-color:#86acff}
+.panel .note{font-size:13px;color:var(--muted);line-height:1.5;padding:12px 14px;border-radius:16px;background:rgba(0,0,0,.25)}
+.panel .note b{color:#fff}
+.section-t{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#a8d8ff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+
+@media (max-width:900px){
+  .page{grid-template-columns:1fr;padding:16px;padding-bottom:120px}
+  .panel{position:relative;top:0}
+  .top .tag{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></symbol>
+  <symbol id="i-tt" viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.6 2.4 4.5 5 5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+  <symbol id="i-drag" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+</svg>
+
+<div class="scene" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grid"></div>
+  <div class="word">KAIPER <b>CANSAT</b> 2027 · KAIPER <b>CANSAT</b> 2027 · </div>
+  <img class="shot s1" src="images/cut/para-34.webp" alt="">
+  <img class="shot s2" src="images/cut/v3-closed.webp" alt="">
+</div>
+
+<div class="page">
+  <header class="top glass">
+    <span class="brand"><img src="images/isotipo-small.png" alt="">KAIPER</span>
+    <span class="tag">LIQUID GLASS · feDisplacementMap</span>
+    <span class="status glass" id="status">…</span>
+  </header>
+
+  <main class="stage">
+    <div>
+      <p class="section-t">Componentes</p>
+      <h1>Cristal que <span>dobla la luz</span></h1>
+      <p class="lede" style="margin-top:12px">Arrastra la notificación por encima de las rayas, el texto y el paracaídas: los bordes refractan lo que hay detrás, con aberración cromática y un reflejo que sigue a tu cursor.</p>
+    </div>
+
+    <article class="notif glass" id="notif" data-lg-bezel="22" aria-label="Notificación">
+      <div class="app"><img src="images/cut/para-34.webp" alt=""></div>
+      <div>
+        <div class="who">Kaiper · Diario <small>ahora</small></div>
+        <p>Nueva entrada: <b>nuestro paracaídas en 3D</b>. Frena la lata a 8–11 m/s.</p>
+      </div>
+      <button class="x glass" type="button" aria-label="Cerrar" id="notifX"><svg class="ico"><use href="#i-x"/></svg></button>
+      <div class="actions">
+        <button class="btn sm blue glass" type="button">Ver entrada <svg class="ico" style="width:16px;height:16px"><use href="#i-arrow"/></svg></button>
+        <button class="btn sm glass" type="button">Más tarde</button>
+      </div>
+    </article>
+    <p class="drag-tip"><svg class="ico" style="width:16px;height:16px"><use href="#i-drag"/></svg>Arrastra la tarjeta · doble clic para volver a su sitio</p>
+
+    <div>
+      <p class="section-t" style="margin-bottom:12px">Botones y controles</p>
+      <div class="row">
+        <button class="btn blue glass" type="button">Descubre la misión <svg class="ico"><use href="#i-arrow"/></svg></button>
+        <button class="btn glass" type="button">Ver el progreso</button>
+        <button class="btn light glass" type="button"><svg class="ico"><use href="#i-heart"/></svg>Patrocinar</button>
+        <button class="btn icon glass" type="button" aria-label="Instagram"><svg class="ico"><use href="#i-ig"/></svg></button>
+        <div class="seg glass" id="seg" role="group" aria-label="Vista">
+          <span class="thumb"></span>
+          <button type="button" aria-pressed="true">Cerrada</button>
+          <button type="button" aria-pressed="false">Despiece</button>
+          <button type="button" aria-pressed="false">Paracaídas</button>
+        </div>
+        <button class="switch glass" type="button" role="switch" aria-checked="true" aria-label="Telemetría"><i></i></button>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-t" style="margin-bottom:12px">Patrocinadores</p>
+      <div class="sponsors">
+        <a class="sp glass" href="https://www.chupachups.es" target="_blank" rel="noopener" style="--c:rgba(255,190,0,.55)">
+          <span class="logo"><img src="images/sponsors/patrocinador1.png" alt="Chupa Chups"></span>
+          <span><b>Chupa Chups</b><small>Patrocinador</small></span>
+        </a>
+        <a class="sp glass" href="https://www.pcbway.com" target="_blank" rel="noopener" style="--c:rgba(40,190,90,.45)">
+          <span class="logo"><img src="images/sponsors/patrocinador2.png" alt="PCBWay"></span>
+          <span><b>PCBWay</b><small>Patrocinador · PCBs</small></span>
+        </a>
+        <a class="sp add glass" href="mailto:kaiper.cansat@gmail.com?subject=Patrocinio%20Kaiper">
+          <span class="logo">+</span>
+          <span><b>Tu logo aquí</b><small>kaiper.cansat@gmail.com</small></span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <aside class="panel glass" id="panel" data-lg-refraction="24">
+    <h2>Ajusta el cristal</h2>
+    <label><span>Refracción <output id="oR">38</output></span><input type="range" id="r" min="0" max="90" value="38"></label>
+    <label><span>Bisel (px) <output id="oB">16</output></span><input type="range" id="b" min="4" max="40" value="16"></label>
+    <label><span>Aberración cromática <output id="oA">0.10</output></span><input type="range" id="a" min="0" max="0.4" step="0.01" value="0.10"></label>
+    <label><span>Desenfoque <output id="oZ">1.2</output></span><input type="range" id="z" min="0" max="8" step="0.2" value="1.2"></label>
+    <label><span>Tinte (contraste) <output id="oT">0.30</output></span><input type="range" id="t" min="0" max="0.7" step="0.02" value="0.30"></label>
+    <p class="note" id="note"></p>
+  </aside>
+</div>
+
+<nav class="dock glass" aria-label="Redes" data-lg-bezel="20">
+  <a class="ig" href="https://www.instagram.com/kaiper.cansat" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ico"><use href="#i-ig"/></svg></a>
+  <a class="tt" href="https://www.tiktok.com/@kaiper.cansat" target="_blank" rel="noopener" aria-label="TikTok"><svg class="ico"><use href="#i-tt"/></svg></a>
+  <a class="ml" href="mailto:kaiper.cansat@gmail.com" aria-label="Gmail"><svg class="ico"><use href="#i-mail"/></svg></a>
+  <span class="sep"></span>
+  <button class="btn sm blue glass" type="button"><svg class="ico" style="width:16px;height:16px"><use href="#i-heart"/></svg>Patrocínanos</button>
+</nav>
+
+<script src="js/liquid-glass.js"></script>
+<script>
+(function(){
+  var $ = function(s){ return document.querySelector(s); };
+  LiquidGlass.auto('.glass');
+
+  /* status + explanation */
+  $('#status').textContent = LiquidGlass.supported ? '● Refracción real' : '● Modo cristal esmerilado';
+  $('#status').style.color = LiquidGlass.supported ? '#8ff0bd' : '#ffd28f';
+  $('#note').innerHTML = LiquidGlass.supported
+    ? 'Tu navegador aplica <b>filtros SVG al fondo</b>: cada pieza tiene su propio mapa de desplazamiento calculado a partir de su forma.'
+    : 'Tu navegador aún no aplica filtros SVG al fondo (<b>Safari / Firefox</b>), así que ves la versión esmerilada. Ábrelo en <b>Chrome o Edge</b> para la refracción real.';
+
+  /* live controls */
+  var all = function(){ return document.querySelectorAll('.glass'); };
+  function bind(id, out, key, fmt){
+    var i = $('#' + id);
+    i.addEventListener('input', function(){
+      $('#' + out).textContent = fmt ? (+i.value).toFixed(2) : i.value;
+      if(key === 'tint'){ document.documentElement.style.setProperty('--tint', i.value); return; }
+      var o = {}; o[key] = +i.value;
+      all().forEach(function(el){ if(el.id !== 'panel') LiquidGlass.update(el, o); });
+    });
+  }
+  bind('r', 'oR', 'refraction'); bind('b', 'oB', 'bezel'); bind('a', 'oA', 'aberration', 1); bind('z', 'oZ', 'blur'); bind('t', 'oT', 'tint', 1);
+
+  /* draggable notification with springy release */
+  var n = $('#notif'), sx = 0, sy = 0, ox = 0, oy = 0, drag = false;
+  n.addEventListener('pointerdown', function(e){
+    if(e.target.closest('button')) return;
+    drag = true; n.classList.add('dragging'); n.setPointerCapture(e.pointerId);
+    sx = e.clientX - ox; sy = e.clientY - oy;
+  });
+  n.addEventListener('pointermove', function(e){
+    if(!drag) return;
+    ox = e.clientX - sx; oy = e.clientY - sy;
+    var tilt = Math.max(-6, Math.min(6, e.movementX * .4));
+    n.style.transform = 'translate(' + ox + 'px,' + oy + 'px) rotate(' + tilt + 'deg)';
+  });
+  function release(){ if(!drag) return; drag = false; n.classList.remove('dragging'); n.style.transform = 'translate(' + ox + 'px,' + oy + 'px)'; }
+  n.addEventListener('pointerup', release); n.addEventListener('pointercancel', release);
+  n.addEventListener('dblclick', function(){ ox = oy = 0; n.style.transform = ''; });
+  $('#notifX').addEventListener('click', function(){ n.style.transform = 'translate(' + ox + 'px,' + (oy - 30) + 'px) scale(.9)'; n.style.opacity = '0'; setTimeout(function(){ ox = oy = 0; n.style.transform = ''; n.style.opacity = ''; }, 900); });
+  n.style.transition += ',opacity .4s';
+
+  /* segmented control */
+  var seg = $('#seg'), th = seg.querySelector('.thumb');
+  function move(){ var on = seg.querySelector('[aria-pressed=true]'); th.style.width = on.offsetWidth + 'px'; th.style.transform = 'translateX(' + on.offsetLeft + 'px)'; }
+  seg.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ seg.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x === b); }); move(); }); });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(move); addEventListener('resize', move);
+
+  /* switch */
+  document.querySelectorAll('.switch').forEach(function(s){ s.addEventListener('click', function(){ s.setAttribute('aria-checked', s.getAttribute('aria-checked') !== 'true'); }); });
+})();
+</script>
+</body>
+</html>
